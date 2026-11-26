@@ -84,8 +84,8 @@ amber banner on every page while active, and is contract-tested against the real
 
 ## Pages
 
-Live ticker (all pages) · `/` Live Center (live hero + tabs live/recent/upcoming, search, format filters, provider badges) ·
-`/match/[provider]/[id]` Match Center (persistent score header, Overview/Scorecard/Commentary/Squads/Table tabs; commentary carries a ball re-enactment) ·
+`/` Live Center (live hero + tabs live/recent/upcoming, search, format filters, provider badges) ·
+`/match/[provider]/[id]` Match Center (persistent scoreboard; tap a score to replay the latest ball; Overview/Scorecard/Commentary/Squads/Table tabs) ·
 `/series` + `/series/[leagueId]` dated scoreboard (single-day, explicitly **not** an archive) ·
 `/teams` + `/teams/[provider]/[id]` (feed-derived only) · `/players/[provider]/[id]` (match-observed stats only) ·
 `/standings` (published ranks, verbatim NRR; no invented values) · `/search` (≥350ms debounce, match-derived index) ·

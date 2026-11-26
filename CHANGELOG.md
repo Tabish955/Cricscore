@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-11-26 — Premium pass: generous layout, score-tap replay, logo triage
+
+### Added
+- "The moment" in Match Center: the polled score itself (e.g. `138/4`) is now a tappable
+  button in the sticky scoreboard. A fresh ball seen between polls fires a burst chip
+  (`FOUR` / `SIX` / `WICKET` / `+2` …) and a ping ring on the figure; tapping the figure
+  opens a broadcast-style replay overlay that re-enacts the recorded latest ball
+  (bowler run-in, ball flight, boundary / six / tumbling bails, or runner steps for 1-3).
+  The recorded ball is fetched on demand while the overlay is open — the resting page
+  never polls commentary for it. The overlay replays on demand (Replay button), closes on
+  Esc / backdrop / button, and renders the final frame statically under reduced motion.
+  Honesty contract unchanged: it replays the recorded event class, never the real
+  trajectory, and falls back to a between-polls delta when commentary is unavailable.
+- Score moment detection is derived from existing polled score data — zero additional
+  network traffic while idle.
+
+### Changed
+- UI density relaxed across the product: bigger display type and figures, roomier padding
+  and rhythm (Match Center scoreboard, home grid and hero, cards, commentary items),
+  generous tap targets — same tokens, same pavilion identity, restraint kept.
+- Match Center scoreboard is the visual anchor: larger tabular figures, calmer meta row,
+  sticky on sm+ screens only (mobile header wraps to two rows).
+- Team logo candidate chain restored to same-origin proxy → feed imageUrl → direct CDN →
+  verified registry → labeled monogram. Production probes proved the proxy path works
+  (200s for existing assets); the feed's own image URLs 404 on the CDN for several teams
+  (e.g. Abu Dhabi Knight Riders 1346027 → 404), which is an upstream data issue, not a
+  proxy defect. Monograms remain the honest fallback for teams whose crests 404.
+- Commentary panel de-animated completely; calmer reading rhythm (13px / 1.6 line-height).
+- Match section tabs are a static calm strip (no longer sticky under the scoreboard).
+
+### Removed
+- Global live ticker (marquee under the header).
+- Ball re-enactment from the commentary section; the SVG scene now lives in the score-tap
+  overlay only. `BallPlayer.tsx` deleted (superseded by `BallOverlay.tsx`).
+- Temporary `/api/logo-probe/<id>` diagnostic route (added to `main` to triage the
+  logo report; removed once the verdict was recorded — see above).
+
 ## 2026-11-26 — Density pass: live hero, ticker, ball re-enactment, motion pack
 
 ### Added

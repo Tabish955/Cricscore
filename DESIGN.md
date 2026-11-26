@@ -39,22 +39,29 @@ Card grids are not bento mosaics; every card shares one deliberate anatomy
 (series line, marks, score rows, verdict line, meta line) because scanning
 scores demands a fixed grammar.
 
-## Motion (R-19, MOTION 2 for the delivery re-enactment only; MOTION 1 elsewhere)
+## Motion (R-19, MOTION 2 for the score moment only; MOTION 1 elsewhere)
 Interactive feedback everywhere (hover lift, focus rings, favorite star pop,
 score-flash on polled updates, one live-pulse dot, skeleton shimmer for
-loading). The Match Center commentary tab carries the one expressive moment:
-a ball-event re-enactment (bowler runs in, ball travels the lane, outcome
-lands: dots, ones-to-threes with a convergent fielder and running hints,
-FOUR/SIX boundary flight, wicket with tumbling bails, extra tag). It is
-driven purely by the recorded ball's event class, replays on demand, and
-auto-replays when a new ball lands. No scroll reveals, no parallax, no
-autoplay chaos. Everything stops under `prefers-reduced-motion`. Motion is
-feedback and legibility, never page dressing; anything beyond that would
-slip into spectacle, which the Pavilion brief forbids.
+loading). The Match Center scoreboard carries the one expressive moment: the
+score itself (e.g. `138/4`) is a tappable button. When a fresh ball lands
+between polls, a burst chip (`FOUR` / `SIX` / `WICKET` / `+2`…) rises beside
+the figure and the figure pings once; tapping the score opens a replay
+overlay that re-enacts the recorded ball (bowler runs in, ball travels the
+lane, outcome lands: dots, ones-to-threes, FOUR/SIX flight, wicket with
+tumbling bails, extra tag). The scene is driven purely by the recorded
+ball's event class, replays on demand via the Replay button, fetches the
+newest recorded ball on demand (never polled at rest), and carries the
+re-enactment honesty line. The commentary list is deliberately still: no
+bails, no ball flight, no chips animating in the reading flow. No scroll
+reveals, no parallax, no autoplay chaos. Everything collapses to a static
+final frame under `prefers-reduced-motion`. Motion is feedback and
+legibility, never page dressing; anything beyond that would slip into
+spectacle, which the Pavilion brief forbids.
 
 ## Marks and imagery (R-22, R-23)
 Only real marks from the data feed or their same-origin fallback chain
-(proxy, feed URL, registry, CDN) are shown. A mark that fails every stage is
+(proxy first — the one path verified in production, then feed URL, registry,
+CDN) are shown. A mark that fails every stage is
 replaced by a deterministic monogram in pine tones, labeled as a fallback
 badge, never passed off as an official crest. No generated imagery anywhere.
 
@@ -62,15 +69,19 @@ badge, never passed off as an official crest. No generated imagery anywhere.
 - Dark live hero: cricket's night-match broadcast frame in one card; scores
   read instantly at distance (classroom projector), the one place the
   serif display face is allowed full size.
-- Brass-on-pine live ticker: the pavilion scoreboard band; information
-  density is the giant-products lesson, not the costume.
 - Skeleton shimmer on load: the screen shows the shape of what is coming,
   never a stalled spinner pretending nothing happened.
 - Score-flash on refresh: a polled score change must be noticed without
   being shouted; one brass bloom, then settle.
-- Ball re-enactment: the commentary is the nerdiest surface in the app; the
-  re-enactment turns it into the most watchable one, using only what the
-  feed records (event class, runs, wicket flag). It invents nothing.
+- Score-tap replay ("The moment"): the scoreboard is where eyes already
+  are when a ball lands; the delight belongs there, not in the reading
+  flow. Tapping the score opens the one expressive scene, driven only by
+  what the feed records (event class, runs, wicket flag) or by the
+  between-polls score delta when commentary has no page. It invents nothing.
+- Generous restraint pass: giant-product polish comes from whitespace,
+  hierarchy and calm surfaces — bigger figures, roomier rhythm — not from
+  added chrome; Cricline keeps one accent (brass) and one identity color
+  (pine) and spends neither on decoration.
 - Paper ground: cricket is played in daylight; cream is the sport's native
   light, and it separates Cricline from the blue-black scoreboard clones.
 - Pine ink: deep green is cricket whites' counterpart in club color; it sets

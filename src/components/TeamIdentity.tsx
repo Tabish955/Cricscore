@@ -60,13 +60,15 @@ export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', cla
     const espnId = espnIdFromKey(assetKey)
     const feedUrl = imageUrl && /^https:\/\//i.test(imageUrl) ? imageUrl : null
     const registryUrl = assetCache.map?.get(assetKey) ?? null
-    // Browser-direct first: the CDN serves what it serves to the browser
-    // (proven to load); the same-origin proxy costs a round trip only for
-    // files the CDN hotlink-blocks, then the registry, then the proxy.
+    // Same-origin proxy first: it is the one path proven to work regardless
+    // of the visitor's network (production server fetches succeed; most of
+    // the feed's image URLs 404 with a 1-byte body, which the CDN answers
+    // the same for any client). Feed-direct and registry follow; browser
+    // network quirks decide whether they help.
+    if (espnId) list.push(proxyLogo(espnId))
     if (feedUrl) list.push(feedUrl)
     if (espnId) list.push(`${ESPN_LOGO_BASE}${espnId}.png`)
     if (registryUrl && registryUrl !== feedUrl) list.push(registryUrl)
-    if (espnId) list.push(proxyLogo(espnId))
     return list
   }, [imageUrl, assetKey])
 

@@ -19,6 +19,7 @@ import type { MatchView } from '@/lib/api/normalize'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
 import { TeamIdentity } from '@/components/TeamIdentity'
 import { StatusBadge } from '@/components/StatusBadge'
+import { BallOverlay, type ScoreMoment } from './BallOverlay'
 import { FetchStatus } from '@/components/FetchStatus'
 import { CoverageNote, ErrorState, LoadingCard, Spinner } from '@/components/States'
 import { FavoriteMatchButton } from '@/components/FavoriteToggle'
@@ -173,6 +174,43 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
     tabRefs.current[next]?.focus()
   }
 
+  const [momentOpen, setMomentOpen] = useState(false)
+  const [moment, setMoment] = useState<ScoreMoment | null>(null)
+  const prevScoresRef = useRef<Map<string, { runs: number; wickets: number }> | null>(null)
+  const momentTimerRef = useRef<number | null>(null)
+
+  // Watch the polled scores; when a side moves, fire the score-moment burst.
+  useEffect(() => {
+    const next = new Map<string, { runs: number; wickets: number }>()
+    for (const s of match.scores) {
+      const parsed = parseScoreText(s.score)
+      if (parsed) next.set(`${s.team}`.toLowerCase(), parsed)
+    }
+    const prev = prevScoresRef.current
+    if (prev) {
+      for (const s of match.scores) {
+        const parsed = next.get(s.team.toLowerCase())
+        const before = prev.get(s.team.toLowerCase())
+        if (!parsed || !before) continue
+        const runsDelta = parsed.runs - before.runs
+        const wicketDelta = parsed.wickets - before.wickets
+        if (runsDelta > 0 || wicketDelta > 0) {
+          const side = headerSideForScore(match, s)
+          if (!side) continue
+          setMoment({ id: Date.now(), side, runsDelta, wicketDelta, scoreText: s.score, label: momentLabel(runsDelta, wicketDelta) })
+          if (momentTimerRef.current) window.clearTimeout(momentTimerRef.current)
+          momentTimerRef.current = window.setTimeout(() => setMoment(null), 2600)
+          break
+        }
+      }
+    }
+    prevScoresRef.current = next
+  }, [match])
+
+  useEffect(() => () => {
+    if (momentTimerRef.current) window.clearTimeout(momentTimerRef.current)
+  }, [])
+
   const venue = venueLine(match.venueGround, match.venueCity, match.venueCountry)
   const time = formatMatchTime(match.startDateMs)
   const dateText = match.startDateMs ? `${formatMatchDate(match.startDateMs, { withYear: true })}${time ? ` · ${time}` : ''}` : match.startTimeText ?? null
@@ -183,28 +221,28 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
   const headerMatch: MatchView = match
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-5">
       {!online ? (
         <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
           You appear to be offline; polling paused. Showing last good data.
         </p>
       ) : null}
 
-      {/* Sticky score header */}
-      <section aria-label="Match score" className="sticky top-[56px] z-30 rounded-xl border border-pine-800 bg-pine-950 p-3 text-[#f5f0e4] shadow-card">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <div className="min-w-0 flex-1 basis-56">
-            {headerMatch.seriesName ? <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{headerMatch.seriesName}{headerMatch.format ? ` · ${headerMatch.format}` : ''}</p> : <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{headerMatch.format || 'Series not supplied'}</p>}
-            <div className="mt-1 flex items-center gap-3">
+      {/* Scoreboard – sticky on larger screens; the score itself is the tappable moment */}
+      <section aria-label="Match score" className="z-30 rounded-2xl border border-pine-800 bg-pine-950 p-4 text-[#f5f0e4] shadow-card sm:sticky sm:top-[64px] sm:p-5">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="min-w-0 flex-1 basis-60">
+            {headerMatch.seriesName ? <p className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-brass-light">{headerMatch.seriesName}{headerMatch.format ? ` · ${headerMatch.format}` : ''}</p> : <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brass-light">{headerMatch.format || 'Series not supplied'}</p>}
+            <div className="mt-2 flex items-center gap-4">
               <TeamIdentity assetKey={headerMatch.team1?.id ? `${headerMatch.provider}:${headerMatch.team1.id}` : `${headerMatch.provider}:${headerMatch.team1?.name ?? 't1'}`} name={headerMatch.team1?.name ?? 'Team 1'} short={headerMatch.team1?.short} imageUrl={headerMatch.team1?.imageUrl} size="lg" />
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                  <span className="truncate text-sm font-bold sm:text-base">{headerMatch.team1?.name ?? splitTeams(headerMatch)?.[0] ?? 'Team not supplied'}</span>
-                  <ScoreText match={headerMatch} side={1} />
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team1?.name ?? splitTeams(headerMatch)?.[0] ?? 'Team not supplied'}</span>
+                  <ScoreMomentButton match={headerMatch} side={1} moment={moment} onOpen={() => setMomentOpen(true)} />
                 </div>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                  <span className="truncate text-sm font-bold sm:text-base">{headerMatch.team2?.name ?? splitTeams(headerMatch)?.[1] ?? 'Team not supplied'}</span>
-                  <ScoreText match={headerMatch} side={2} />
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team2?.name ?? splitTeams(headerMatch)?.[1] ?? 'Team not supplied'}</span>
+                  <ScoreMomentButton match={headerMatch} side={2} moment={moment} onOpen={() => setMomentOpen(true)} />
                 </div>
               </div>
               <TeamIdentity assetKey={headerMatch.team2?.id ? `${headerMatch.provider}:${headerMatch.team2.id}` : `${headerMatch.provider}:${headerMatch.team2?.name ?? 't2'}`} name={headerMatch.team2?.name ?? 'Team 2'} short={headerMatch.team2?.short} imageUrl={headerMatch.team2?.imageUrl} size="lg" />
@@ -224,10 +262,11 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
             />
           </div>
         </div>
-        {match.status ? <p className="mt-1.5 border-t border-white/10 pt-1.5 text-[11px] font-semibold text-emerald-200/90">{match.status}</p> : null}
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[9px] text-[#a9bfb0]">
+        {match.status ? <p className="mt-2.5 border-t border-white/10 pt-2.5 font-display text-[13px] font-semibold italic leading-snug text-emerald-200/90">{match.status}</p> : null}
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10.5px] text-[#a9bfb0]">
           {venue ? <span className="max-w-[60%] truncate" title={venue}>{venue}</span> : null}
           {dateText ? <span className="tabular">{dateText}</span> : null}
+          <span className="ml-auto hidden text-[10px] text-[#718f7d] sm:inline">Tap a score to replay the latest ball</span>
         </div>
         <FetchStatus
           lastOkMs={lastOk}
@@ -239,7 +278,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
       </section>
 
       {/* Tabs */}
-      <div role="tablist" aria-label="Match sections" className="sticky top-[calc(52px+72px)] z-20 -mx-1 flex gap-1 overflow-x-auto bg-paper/95 px-1 py-1 backdrop-blur">
+      <div role="tablist" aria-label="Match sections" className="flex gap-1 overflow-x-auto border-b border-edge pb-2 pt-1">
         {visibleTabs.map((t, i) => (
           <button
             key={t.id}
@@ -249,7 +288,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
             tabIndex={activeTab === t.id ? 0 : -1}
             onClick={() => setTab(t.id)}
             onKeyDown={(e) => onTabKeyDown(e, i)}
-            className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
               activeTab === t.id ? 'bg-pine-900 text-[#f5f0e4] shadow-sm' : 'text-slate-500 hover:bg-pine-100 hover:text-pine-900'
             }`}
           >
@@ -302,8 +341,27 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
       {activeTab === 'table' && canDeepDive ? (
         <TablePanel match={match} league={league!} date={date ?? dateFromMs(match.startDateMs)} />
       ) : null}
+
+      {momentOpen ? <BallOverlay match={headerMatch} fallback={moment} onClose={() => setMomentOpen(false)} /> : null}
     </div>
   )
+}
+
+/** Parse a cricket score string like "134/2" or "250". Returns null when unparseable. */
+function parseScoreText(score: string): { runs: number; wickets: number } | null {
+  const m = /^(\d+)(?:\s*\/\s*(\d+))?$/.exec(score.trim())
+  if (!m) return null
+  const runs = Number(m[1])
+  const wickets = m[2] !== undefined ? Number(m[2]) : 0
+  return Number.isFinite(runs) && Number.isFinite(wickets) ? { runs, wickets } : null
+}
+
+function momentLabel(runsDelta: number, wicketDelta: number): string {
+  if (wicketDelta > 0 && runsDelta === 0) return 'WICKET'
+  if (wicketDelta > 0) return `WICKET +${runsDelta}`
+  if (runsDelta === 6) return 'SIX'
+  if (runsDelta === 4) return 'FOUR'
+  return `+${runsDelta}`
 }
 
 function dateFromMs(ms: number | null): string {
@@ -313,12 +371,30 @@ function dateFromMs(ms: number | null): string {
   return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`
 }
 
+/** Which side (1 or 2) a score entry belongs to; mirrors the score button's matching. */
+function headerSideForScore(m: MatchView, score: MatchView['scores'][number]): 1 | 2 | null {
+  const t = score.team.toLowerCase()
+  const lower1 = (m.team1?.name ?? '').toLowerCase()
+  const sh1 = (m.team1?.short ?? '').toLowerCase()
+  const lower2 = (m.team2?.name ?? '').toLowerCase()
+  const sh2 = (m.team2?.short ?? '').toLowerCase()
+  const hit1 = lower1 && t && (t === lower1 || t === sh1 || lower1.includes(t) || t.includes(lower1))
+  const hit2 = lower2 && t && (t === lower2 || t === sh2 || lower2.includes(t) || t.includes(lower2))
+  if (hit1) return 1
+  if (hit2) return 2
+  return null
+}
+
 function splitTeams(m: MatchView): [string, string] | null {
   const parts = (m.teams || '').split(/\s+(?:vs\.?|v\.?|versus)\s+/i)
   return parts.length === 2 ? [parts[0]!, parts[1]!] : null
 }
 
-function ScoreText({ match, side }: { match: MatchView; side: 1 | 2 }) {
+/**
+ * The score itself is the tappable moment. Fresh ball → burst chip + ping
+ * ring on the figure; tap → replay overlay of the recorded ball.
+ */
+function ScoreMomentButton({ match, side, moment, onOpen }: { match: MatchView; side: 1 | 2; moment: ScoreMoment | null; onOpen: () => void }) {
   const team = side === 1 ? match.team1 : match.team2
   const label = team?.name ?? ''
   const hit = match.scores.find((s) => {
@@ -327,13 +403,26 @@ function ScoreText({ match, side }: { match: MatchView; side: 1 | 2 }) {
     const sh = (team?.short ?? '').toLowerCase()
     return t && (t === n || t === sh || n.includes(t) || t.includes(n))
   })
-  if (!hit) return <span className="score-nums text-xs text-[#a9bfb0]">–</span>
+  if (!hit) return <span className="score-nums text-sm text-[#a9bfb0]">–</span>
+  const fresh = moment?.side === side ? moment : null
   return (
-    <span className="score-nums text-base font-black text-brass-light sm:text-lg">
-      {hit.score}
-      {hit.declared ? '*' : ''}
-      {hit.overs ? <span className="ml-1 text-[10px] font-semibold text-[#a9bfb0]">({hit.overs})</span> : null}
-    </span>
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`${label} ${hit.score}${hit.overs ? `, ${hit.overs} overs` : ''}. Replay the latest ball.`}
+      className="group relative -mx-1.5 rounded-lg px-1.5 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light"
+    >
+      <span className={`score-nums flex items-baseline whitespace-nowrap font-display text-2xl font-black leading-none text-brass-light transition-transform duration-150 group-hover:scale-[1.04] group-hover:text-[#f5d98a] sm:text-[30px] ${fresh ? 'ball-ping' : ''}`}>
+        {hit.score}
+        {hit.declared ? '*' : ''}
+        {hit.overs ? <span className="score-nums ml-1.5 font-sans text-[11px] font-semibold text-[#a9bfb0]">({hit.overs} ov)</span> : null}
+      </span>
+      {fresh ? (
+        <span key={fresh.id} aria-hidden="true" className="burst-rise pointer-events-none absolute -top-3.5 left-1 rounded-md bg-brass-light px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-[0.12em] text-pine-950 shadow">
+          {fresh.label}
+        </span>
+      ) : null}
+    </button>
   )
 }
 

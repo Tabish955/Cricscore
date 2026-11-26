@@ -168,27 +168,38 @@ body::before {
   animation: star-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
-/* Live ticker: seamless marquee; duplicate content translates -50%. */
-@keyframes ticker-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/* Score moment: the latest-ball ping ring when a fresh ball lands live. */
+@keyframes ball-ping {
+  0% { box-shadow: 0 0 0 0 rgba(226, 182, 89, 0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(226, 182, 89, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 182, 89, 0); }
 }
-.ticker-track {
-  width: max-content;
-  animation: ticker-scroll 55s linear infinite;
+.ball-ping {
+  animation: ball-ping 1.15s ease-out 2;
 }
-.ticker-viewport:hover .ticker-track,
-.ticker-viewport:focus-within .ticker-track {
-  animation-play-state: paused;
+
+/* Floating outcome burst by the score when a ball lands (+4 / W / SIX). */
+@keyframes burst-rise {
+  0% { transform: translateY(8px) scale(0.6); opacity: 0; }
+  25% { transform: translateY(0) scale(1.15); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(-22px) scale(0.95); opacity: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track {
-    animation: none;
-    width: auto;
-    flex-wrap: wrap;
-  }
-  .ticker-duplicate { display: none; }
+.burst-rise {
+  animation: burst-rise 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
+
+/* Overlay open/close. */
+@keyframes overlay-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.overlay-fade { animation: overlay-fade 0.18s ease-out 1; }
+@keyframes panel-rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.panel-rise { animation: panel-rise 0.28s cubic-bezier(0.22, 1, 0.36, 1) 1; }
 
 /* ================================================================
    Ball-event re-enactment – bowler runs in, ball travels, result lands.

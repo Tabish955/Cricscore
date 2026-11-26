@@ -23,7 +23,7 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
   const short = team?.short ?? ''
   const hit = team ? scoreForTeam(m, label, short) : null
   return (
-    <div className="flex items-center gap-2.5 py-1.5">
+    <div className="flex items-center gap-3 py-2.5">
       <TeamIdentity
         assetKey={team?.id ? `${m.provider}:${team.id}` : `${m.provider}:${label}`}
         name={label}
@@ -31,11 +31,11 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
         imageUrl={team?.imageUrl ?? null}
         size="md"
       />
-      <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-ink" title={label}>
+      <span className="min-w-0 flex-1 truncate text-base font-semibold text-ink" title={label}>
         {label}
       </span>
       {hit ? (
-        <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-[16px] font-black text-pine-950">
+        <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-xl font-black text-pine-950">
           {hit.score}
           {hit.declared ? <span title="declared">*</span> : null}
           {hit.overs ? <span className="ml-1 align-baseline font-sans text-[10px] font-medium text-slate-500">({hit.overs} ov)</span> : null}
@@ -69,12 +69,12 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
 
   return (
     <article
-      className={`group lift flex flex-col overflow-hidden rounded-xl border shadow-card transition-shadow duration-200 hover:shadow-lift ${
+      className={`group lift flex flex-col overflow-hidden rounded-2xl border shadow-card transition-shadow duration-200 hover:shadow-lift ${
         live ? 'border-pine-700/30 border-l-4 border-l-brass bg-liveSoft' : 'border-edge bg-card'
       }`}
       aria-label={match.teams || 'Match'}
     >
-      <div className="flex items-center gap-1.5 border-b border-edge/70 px-3 pb-1.5 pt-2">
+      <div className="flex items-center gap-2 border-b border-edge/70 px-4 pb-2.5 pt-3.5">
         <span className="min-w-0 truncate font-display text-[11px] font-semibold text-pine-900" title={match.seriesName}>
           {match.seriesName || 'Series not supplied'}
         </span>
@@ -100,7 +100,7 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
         </div>
       </div>
 
-      <Link href={href} className="block rounded-b-xl px-3 pb-2 pt-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass">
+      <Link href={href} className="block rounded-b-2xl px-4 pb-3 pt-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass">
         <TeamRow m={match} team={t1} />
         <div className="border-t border-edge/50" />
         <TeamRow m={match} team={t2} />
@@ -111,13 +111,13 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
           </div>
         ))}
         {match.status ? (
-          <p className="mt-1.5 font-display text-[12.5px] italic leading-snug text-pine-800" title={match.status}>
+          <p className="mt-2 font-display text-[13px] italic leading-snug text-pine-800" title={match.status}>
             {match.status}
           </p>
         ) : null}
       </Link>
 
-      <div className="mt-auto flex flex-wrap items-center gap-x-2 border-t border-edge/70 px-3 py-1.5 text-[9px] text-slate-400">
+      <div className="mt-auto flex flex-wrap items-center gap-x-2 border-t border-edge/70 px-4 py-2 text-[10px] text-slate-400">
         {venue ? <span className="max-w-[55%] truncate" title={venue}>{venue}</span> : null}
         <span className="tabular ml-auto whitespace-nowrap" title="Times shown in your local time">{mounted ? dateText : '–'}</span>
       </div>

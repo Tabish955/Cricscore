@@ -45,11 +45,11 @@ export function HeroMatch({ match }: { match: MatchView }) {
           size="lg"
         />
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-[#f5f0e4]" title={label}>{label}</p>
+          <p className="truncate text-base font-bold text-[#f5f0e4] sm:text-lg" title={label}>{label}</p>
           {score ? (
-            <p className="score-nums mt-0.5 font-display text-[30px] font-black leading-none tracking-tight text-white sm:text-[34px]">
+            <p className="score-nums mt-1 font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
               {score.score}
-              {score.overs ? <span className="ml-1.5 align-baseline font-sans text-[11px] font-semibold text-[#9db4a4]">({score.overs} ov)</span> : null}
+              {score.overs ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">({score.overs} ov)</span> : null}
             </p>
           ) : (
             <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8aa392]">To bat</p>
@@ -61,7 +61,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
 
   return (
     <section aria-label={`Featured match: ${match.teams || 'live match'}`} className="card-in overflow-hidden rounded-2xl border border-brass/40 bg-pine-950 shadow-lift">
-      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-4 py-1.5">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-5 py-2.5">
         <span className="min-w-0 max-w-full truncate font-display text-[11px] font-semibold uppercase tracking-[0.14em] text-brass-light" title={match.seriesName}>
           {match.seriesName || 'Live match'}
         </span>
@@ -72,18 +72,18 @@ export function HeroMatch({ match }: { match: MatchView }) {
         </div>
       </div>
 
-      <Link href={href} className="block px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass-light">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <Link href={href} className="block px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass-light">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <TeamBlock team={t1} score={s1} />
           <span className="hidden select-none font-display text-xl font-black text-brass/60 sm:block">v</span>
           <TeamBlock team={t2} score={s2} />
         </div>
         {match.status ? (
-          <p className="mt-3 border-t border-white/10 pt-2.5 font-display text-[15px] italic leading-snug text-brass-light" title={match.status}>
+          <p className="mt-4 border-t border-white/10 pt-3.5 font-display text-lg italic leading-snug text-brass-light" title={match.status}>
             {match.status}
           </p>
         ) : null}
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[#8aa392]">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[#8aa392]">
           {venue ? <span className="max-w-[70%] truncate" title={venue}>{venue}</span> : null}
           <span className="tabular">{mounted ? dateText : '–'}</span>
           <span className="ml-auto inline-flex items-center gap-1 font-bold uppercase tracking-[0.14em] text-brass-light">
