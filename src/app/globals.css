@@ -1,15 +1,48 @@
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
+@import '@fontsource-variable/archivo/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+  --pine-950: #0c261b;
+  --pine-900: #123324;
+  --pine-800: #173f2d;
+  --pine-700: #20503b;
+  --paper: #f5f0e4;
+  --card: #fffdf6;
+  --edge: #e3dcc9;
+  --ink: #1e2a23;
+  --brass: #a87b24;
+  --brass-deep: #7a5410;
+  --brass-light: #e2b659;
 }
 
 html,
 body {
-  background-color: theme('colors.paper');
-  color: #1f2937;
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+/* Pavilion paper grain — faint tooth so the cream never reads as flat plastic.
+   Purpose: heritage paper identity; purely decorative, no meaning carried. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+::selection {
+  background: var(--brass-light);
+  color: var(--pine-950);
 }
 
 .tabular,
@@ -24,7 +57,7 @@ body {
   left: -9999px;
   top: 0;
   z-index: 100;
-  background: theme('colors.navy.900');
+  background: var(--pine-950);
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 0 0 0.5rem 0;
@@ -50,7 +83,7 @@ body {
 
 /* Compact table scrollbars */
 .score-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
-.score-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+.score-scroll::-webkit-scrollbar-thumb { background: #d5cdb8; border-radius: 999px; }
 .score-scroll::-webkit-scrollbar-track { background: transparent; }
 
 /* Sticky first column for wide tables on small screens */
@@ -62,6 +95,11 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid theme('colors.amber.brand');
+  outline: 3px solid var(--brass);
   outline-offset: 2px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .mark-fade { transition: none !important; }
+}
+.mark-fade { transition: opacity 220ms ease; }

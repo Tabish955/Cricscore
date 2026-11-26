@@ -9,6 +9,7 @@ import { rememberTeamAssets } from '@/lib/storage'
 import { MatchCard } from '@/components/MatchCard'
 import { FetchStatus } from '@/components/FetchStatus'
 import { LoadingCard, EmptyState, ErrorState } from '@/components/States'
+import { sortByImportance } from '@/lib/importance'
 
 type Tab = 'live' | 'recent' | 'upcoming'
 const TABS: Array<{ id: Tab; label: string; hint: string }> = [
@@ -34,7 +35,7 @@ export default function HomePage() {
   })
 
   const result = query.data?.data
-  const matches = useMemo(() => result?.matches ?? [], [result])
+  const matches = useMemo(() => sortByImportance(result?.matches ?? []), [result])
 
   // Populate the verified team-asset registry from what the feed actually served.
   useEffect(() => {
@@ -76,33 +77,26 @@ export default function HomePage() {
   }, [])
 
   const fetchedAtMs = query.dataUpdatedAt || null
-  const provenance = result?.provenance
-  const provenanceText = provenance
-    ? [provenance.upstream && `upstream ${provenance.upstream}`, provenance.cached !== null ? (provenance.cached ? 'cached' : 'fresh') : null, provenance.fetchedAt && `fetched ${provenance.fetchedAt}`]
-        .filter(Boolean).join(' · ')
-    : null
 
   return (
     <div className="flex flex-col gap-3">
       {/* Page heading + freshness */}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="text-xl font-black tracking-tight text-navy-900">Match Center</h1>
-          <p className="text-[11px] text-slate-500">Scores from the primary `/cb/*` feed — it falls back Cricbuzz → ESPN → CREX on the server side.</p>
+          <h1 className="font-display text-3xl font-black tracking-tight text-pine-950">Match Center</h1>
+          <p className="mt-0.5 text-[11px] text-slate-500">Live, recent and upcoming fixtures, most important first.</p>
         </div>
         <FetchStatus
           lastOkMs={fetchedAtMs}
           isFetching={query.isFetching}
           isStale={query.isError && !!result}
-          provenanceText={provenanceText}
-          provider="cb"
           onRefresh={() => query.refetch()}
           compact
         />
       </div>
 
       {!online ? (
-        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-deep">
+        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
           You appear to be offline. Polling is paused; scores on screen are the last good data.
         </p>
       ) : null}
@@ -119,12 +113,12 @@ export default function HomePage() {
             onClick={() => setTab(t.id)}
             onKeyDown={(e) => onTabKeyDown(e, i)}
             title={t.hint}
-            className={`-mb-px rounded-t-md border-b-2 px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand ${
-              tab === t.id ? 'border-amber-brand text-navy-900' : 'border-transparent text-slate-500 hover:text-navy-900'
+            className={`-mb-px min-h-[44px] rounded-t-md border-b-2 px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
+              tab === t.id ? 'border-brass text-pine-950' : 'border-transparent text-slate-500 hover:text-pine-900'
             }`}
           >
             {t.label}
-            {tab === t.id && result ? <span className="tabular ml-1.5 text-[10px] font-semibold text-slate-400">{result.count}</span> : null}
+            {tab === t.id && result ? <span className="tabular ml-1.5 text-[10px] font-semibold text-pine-700">{result.count}</span> : null}
           </button>
         ))}
       </div>
@@ -139,19 +133,19 @@ export default function HomePage() {
             onChange={(e) => setText(e.target.value)}
             type="search"
             placeholder="Filter by team, series, venue…"
-            className="w-full rounded-lg border border-edge bg-white py-2 pl-9 pr-3 text-sm shadow-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand"
+            className="w-full rounded-lg border border-edge bg-white py-2 pl-9 pr-3 text-sm shadow-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass"
           />
         </label>
         <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
           Format
-          <select value={format} onChange={(e) => setFormat(e.target.value)} className="rounded-lg border border-edge bg-white px-2 py-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">
+          <select value={format} onChange={(e) => setFormat(e.target.value)} className="rounded-lg border border-edge bg-white px-2 py-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">
             <option value="all">All</option>
             {formats.map((f) => <option key={f} value={f}>{f}</option>)}
           </select>
         </label>
         <label className="flex min-w-0 items-center gap-1.5 text-[11px] font-semibold text-slate-500">
           Series
-          <select value={series} onChange={(e) => setSeries(e.target.value)} className="max-w-[220px] rounded-lg border border-edge bg-white px-2 py-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">
+          <select value={series} onChange={(e) => setSeries(e.target.value)} className="max-w-[220px] rounded-lg border border-edge bg-white px-2 py-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">
             <option value="all">All series</option>
             {seriesList.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
@@ -160,7 +154,7 @@ export default function HomePage() {
 
       {/* Content */}
       {query.isPending ? (
-        <LoadingCard label={`Fetching ${tab} matches from the API…`} />
+        <LoadingCard label={`Fetching ${tab} matches…`} />
       ) : query.isError && !result ? (
         <ErrorState
           title={`Could not load ${tab} matches`}
@@ -171,11 +165,11 @@ export default function HomePage() {
         <EmptyState
           title={matches.length === 0 ? `No ${tab} matches right now` : 'Nothing matches these filters'}
           hint={matches.length === 0
-            ? 'This is a valid empty state — the feed answered successfully with zero matches. It does not mean the site is broken.'
+            ? 'This is a valid empty state. The service answered with zero matches, and the site is not broken.'
             : 'Clear the search or filters to see more.'}
         >
           {matches.length > 0 ? (
-            <button type="button" onClick={() => { setText(''); setFormat('all'); setSeries('all') }} className="rounded-md border border-edge bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">
+            <button type="button" onClick={() => { setText(''); setFormat('all'); setSeries('all') }} className="rounded-md border border-edge bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">
               Clear filters
             </button>
           ) : null}
@@ -187,8 +181,8 @@ export default function HomePage() {
       )}
 
       {query.isError && result ? (
-        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-[11px] font-semibold text-amber-deep">
-          Refresh failed ({query.error instanceof Error ? query.error.message : 'network error'}). Scores above are the last good data — retrying automatically with backoff.
+        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-[11px] font-semibold text-amber-900">
+          Refresh failed ({query.error instanceof Error ? query.error.message : 'network error'}). Scores above are the last good data, retrying automatically with backoff.
         </p>
       ) : null}
     </div>

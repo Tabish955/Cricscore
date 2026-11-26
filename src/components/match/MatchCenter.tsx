@@ -15,7 +15,6 @@ import {
 import { POLL } from '@/lib/polling'
 import { useOnlineStatus } from '@/lib/hooks'
 import { venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
-import { isSafeExternalHref } from '@/lib/api/allowlist'
 import type { MatchView } from '@/lib/api/normalize'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
 import { TeamIdentity } from '@/components/TeamIdentity'
@@ -186,16 +185,16 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
   return (
     <div className="flex flex-col gap-3">
       {!online ? (
-        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-deep">
-          You appear to be offline — polling paused. Showing last good data.
+        <p role="alert" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+          You appear to be offline; polling paused. Showing last good data.
         </p>
       ) : null}
 
       {/* Sticky score header */}
-      <section aria-label="Match score" className="sticky top-[52px] z-30 rounded-xl border border-navy-800 bg-navy-900 p-3 text-white shadow-card">
+      <section aria-label="Match score" className="sticky top-[56px] z-30 rounded-xl border border-pine-800 bg-pine-950 p-3 text-[#f5f0e4] shadow-card">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="min-w-0 flex-1 basis-56">
-            {headerMatch.seriesName ? <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-amber-brand/90">{headerMatch.seriesName}{headerMatch.format ? ` · ${headerMatch.format}` : ''}</p> : <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-brand/90">{headerMatch.format || 'Series not supplied'}</p>}
+            {headerMatch.seriesName ? <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{headerMatch.seriesName}{headerMatch.format ? ` · ${headerMatch.format}` : ''}</p> : <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{headerMatch.format || 'Series not supplied'}</p>}
             <div className="mt-1 flex items-center gap-3">
               <TeamIdentity assetKey={headerMatch.team1?.id ? `${headerMatch.provider}:${headerMatch.team1.id}` : `${headerMatch.provider}:${headerMatch.team1?.name ?? 't1'}`} name={headerMatch.team1?.name ?? 'Team 1'} short={headerMatch.team1?.short} imageUrl={headerMatch.team1?.imageUrl} size="lg" />
               <div className="min-w-0 flex-1">
@@ -226,18 +225,14 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
           </div>
         </div>
         {match.status ? <p className="mt-1.5 border-t border-white/10 pt-1.5 text-[11px] font-semibold text-emerald-200/90">{match.status}</p> : null}
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[9px] text-navy-100/70">
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[9px] text-[#a9bfb0]">
           {venue ? <span className="max-w-[60%] truncate" title={venue}>{venue}</span> : null}
           {dateText ? <span className="tabular">{dateText}</span> : null}
-          <span className="ml-auto">
-            via <span className="font-bold uppercase">{match.provider}</span>
-          </span>
         </div>
         <FetchStatus
           lastOkMs={lastOk}
           isFetching={detailQ.isFetching || scorecardQ.isFetching}
           isStale={stale}
-          provider={null}
           onRefresh={refreshAll}
           compact
         />
@@ -254,8 +249,8 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
             tabIndex={activeTab === t.id ? 0 : -1}
             onClick={() => setTab(t.id)}
             onKeyDown={(e) => onTabKeyDown(e, i)}
-            className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand ${
-              activeTab === t.id ? 'bg-navy-900 text-white shadow-sm' : 'text-slate-500 hover:bg-navy-100 hover:text-navy-900'
+            className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
+              activeTab === t.id ? 'bg-pine-900 text-[#f5f0e4] shadow-sm' : 'text-slate-500 hover:bg-pine-100 hover:text-pine-900'
             }`}
           >
             {t.label}
@@ -263,11 +258,11 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
         ))}
       </div>
 
-      {/* Not found in feeds + no ESPN deep-dive */}
+      {/* No match in current data and no deep-dive possible */}
       {!isEspn && !listMatch && !listsPending ? (
         <CoverageNote>
-          This {provider.toUpperCase()} match is not in the current live/recent/upcoming feeds, and this provider exposes no
-          detail endpoint we can call. Showing what the route knows only. <a className="underline" href="/">Back to the Live Center</a>
+          This match is not in the current live, recent or upcoming lists, and no deeper detail is published for it.
+          Showing only what this page knows. <a className="underline" href="/">Back to the Live Center</a>
         </CoverageNote>
       ) : null}
 
@@ -283,14 +278,14 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
             <ScorecardView view={scorecardQ.data.data} stale={scorecardQ.isError} refreshedAt={scorecardQ.dataUpdatedAt} onRefresh={() => scorecardQ.refetch()} isFetching={scorecardQ.isFetching} matchContext={{ matchId, league, date }} />
           ) : null
         ) : (
-          <LimitedCoverage provider={provider} links={match.links} what="a full batting/bowling scorecard" />
+          <LimitedCoverage what="a full batting/bowling scorecard" />
         )
       ) : null}
       {activeTab === 'commentary' ? (
         canDeepDive ? (
           <CommentaryPanel match={match} league={league} date={date} isLive={effLive} />
         ) : (
-          <LimitedCoverage provider={provider} links={match.links} what="ball-by-ball commentary" />
+          <LimitedCoverage what="ball-by-ball commentary" />
         )
       ) : null}
       {activeTab === 'squads' ? (
@@ -301,7 +296,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
             <SquadsPanel view={squadsQ.data.data} />
           ) : null
         ) : (
-          <LimitedCoverage provider={provider} links={match.links} what="squad lists" />
+          <LimitedCoverage what="squad lists" />
         )
       ) : null}
       {activeTab === 'table' && canDeepDive ? (
@@ -332,12 +327,12 @@ function ScoreText({ match, side }: { match: MatchView; side: 1 | 2 }) {
     const sh = (team?.short ?? '').toLowerCase()
     return t && (t === n || t === sh || n.includes(t) || t.includes(n))
   })
-  if (!hit) return <span className="score-nums text-xs text-navy-100/60">—</span>
+  if (!hit) return <span className="score-nums text-xs text-[#a9bfb0]">–</span>
   return (
-    <span className="score-nums text-base font-black text-amber-brand sm:text-lg">
+    <span className="score-nums text-base font-black text-brass-light sm:text-lg">
       {hit.score}
       {hit.declared ? '*' : ''}
-      {hit.overs ? <span className="ml-1 text-[10px] font-semibold text-navy-100/60">({hit.overs})</span> : null}
+      {hit.overs ? <span className="ml-1 text-[10px] font-semibold text-[#a9bfb0]">({hit.overs})</span> : null}
     </span>
   )
 }
@@ -350,51 +345,37 @@ function OverviewNotices({ match, canDeepDive }: { match: MatchView; canDeepDive
         <section className="rounded-xl border border-edge bg-card p-4">
           <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Match details</h2>
           <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
-            <dt className="text-slate-400">Status</dt><dd className="font-semibold text-slate-800">{match.status || 'Not supplied by the provider'}</dd>
+            <dt className="text-slate-400">Status</dt><dd className="font-semibold text-slate-800">{match.status || 'Not supplied'}</dd>
             <dt className="text-slate-400">Venue</dt><dd className="font-semibold text-slate-800">{venue || 'Venue not supplied'}</dd>
-            <dt className="text-slate-400">Start</dt><dd className="font-semibold text-slate-800 tabular">{match.startDateMs ? formatMatchDate(match.startDateMs, { withYear: true }) : match.startTimeText ?? 'Not supplied — the API does not always send dates'}</dd>
+            <dt className="text-slate-400">Start</dt><dd className="font-semibold text-slate-800 tabular">{match.startDateMs ? formatMatchDate(match.startDateMs, { withYear: true }) : match.startTimeText ?? 'Not supplied'}</dd>
             <dt className="text-slate-400">Format</dt><dd className="font-semibold text-slate-800">{match.format || 'Unknown'}</dd>
             <dt className="text-slate-400">Series</dt><dd className="font-semibold text-slate-800">{match.seriesName || 'Not supplied'}</dd>
             {match.playerOfTheMatch.length ? (<><dt className="text-slate-400">Player of the match</dt><dd className="font-semibold text-slate-800">{match.playerOfTheMatch.join(', ')}</dd></>) : null}
           </dl>
         </section>
         <section className="rounded-xl border border-edge bg-card p-4">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">What the API can see</h2>
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">What this page can show</h2>
           <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-5 text-slate-600">
-            <li>Toss, weather, umpires and pitch reports are <strong>not exposed</strong> — deliberately shown as missing, never invented.</li>
-            <li>Extras, fall of wickets and partnerships: included in the production scorecard as of 2026-11-26; they render when the endpoint sends them (very old cached responses won&rsquo;t include them).</li>
-            <li>{canDeepDive ? 'Scorecard, squads and commentary load from the ESPN detail endpoints on demand.' : 'This provider exposes no per-match detail endpoints — scores come from the list feed only.'}</li>
+            <li>Toss, weather, umpires and pitch reports are <strong>not shown</strong>. They are never invented.</li>
+            <li>Extras, fall of wickets and partnerships render when the scorecard includes them.</li>
+            <li>{canDeepDive ? 'Scorecard, squads and commentary load on demand for this match.' : 'No per-match detail is published for this fixture; scores come from the list view only.'}</li>
           </ul>
         </section>
       </div>
       {match.status ? null : (
-        <CoverageNote>Status text is missing from the provider for this match. Showing structural data only.</CoverageNote>
+        <CoverageNote>Status text is not published for this match. Showing structural data only.</CoverageNote>
       )}
     </div>
   )
 }
 
-function LimitedCoverage({ provider, links, what }: { provider: string; links: MatchView['links']; what: string }) {
-  const externalCandidate = links.upstream || links.detail
-  const external = isSafeExternalHref(externalCandidate) ? externalCandidate : null
+function LimitedCoverage({ what }: { what: string }) {
   return (
     <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/60 p-5 text-center">
-      <p className="text-sm font-bold text-amber-deep">Limited coverage: {what}</p>
+      <p className="text-sm font-bold text-amber-900">Limited coverage: {what}</p>
       <p className="mt-1 text-xs text-slate-600">
-        The {provider.toUpperCase()} feed does not expose {what} on this API. We will not invent it, and we will not fetch
-        the source&apos;s web pages as if they were data.
+        {what[0]!.toUpperCase() + what.slice(1)} is not published for this fixture. It will not be invented or scraped to fill the gap.
       </p>
-      {external ? (
-        <a
-          href={external}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-deep shadow-sm hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand"
-        >
-          View on source (external)
-          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
-        </a>
-      ) : null}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-# CricScore — 5-minute classroom demo walkthrough
+# Cricline — 5-minute classroom demo walkthrough
 
 **Timing:** ~5 minutes. **Audience:** school presentation. **Projector:** 360 px→1080p scales fine.
 
@@ -13,7 +13,7 @@
 3. Narrow the browser to ~1000 px (or project as-is) — layout holds; tables scroll horizontally.
 
 > Never present sample-mode data as real. Never remove or cover the amber banner. If asked
-> whether CricScore is a real broadcast product: "It's an original educational app; data comes
+> whether Cricline is a real broadcast product: "It's an original educational app; data comes
 > from a public community API; scores refresh by polling, not by magic."
 
 ## Script
@@ -44,7 +44,7 @@ One sentence: "Everything you'll see carries this, and it never turns off."
 - **Squads tab**: captain/starter chips; no bios — "the API doesn't publish them, so we don't
   invent them."
 - **Table tab**: the series points table for this match's league (if any). NRR shows "—" when
-  the provider omits it; CricScore never computes a fake NRR.
+  the provider omits it; Cricline never computes a fake NRR.
 - Ask the audience to stare at the **stale badge** behavior: throttle/offline (DevTools →
   Network → Offline), watch it flip to "last updated HH:MM — may be stale" instead of blanking.
 
@@ -67,7 +67,7 @@ One sentence: "Everything you'll see carries this, and it never turns off."
 ### 7. About, trust & close (30 s) — `/about`
 - Scroll the **coverage matrix**: green/amber/grey tiers, one line each.
 - Show **Source diagnostics** again (button-triggered, not polled).
-- Final line: "CricScore shows only what the data supports. Where the API is silent, we say so
+- Final line: "Cricline shows only what the data supports. Where the API is silent, we say so
   instead of inventing it. Questions?"
 
 ## If something breaks mid-demo

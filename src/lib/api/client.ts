@@ -1,7 +1,7 @@
 /**
  * Browser-side data access. Everything goes through the same-origin proxy at
  * `/api/cricket/...`; the browser never calls the upstream host and never needs
- * a key. Fetch links supplied by the API itself via `toProxyUrl()` — they are
+ * a key. Fetch links supplied by the API itself via `toProxyUrl()` – they are
  * validated against the allowlist before they become requests.
  */
 import {
@@ -179,7 +179,7 @@ export async function fetchSeriesMatches(leagueId: string, date: string, signal?
 /**
  * Experimental Sportskeeda secondary standings source.
  * Only call with a slug from VERIFIED_SPORTSKEEDA_MAPPINGS after the backend
- * route ships. Throws otherwise — callers must degrade this source only.
+ * route ships. Throws otherwise – callers must degrade this source only.
  */
 export async function fetchSportskeedaStandings(slug: string, signal?: AbortSignal): Promise<Fetched<SportskeedaStandingsView>> {
   if (!SPORTSKEEDA_SLUG_RE.test(slug)) {
@@ -222,7 +222,7 @@ export interface DiagnosticsOutcome {
 
 export async function fetchDiagnostics(kind: 'health' | 'sources/status'): Promise<DiagnosticsOutcome> {
   if (isSampleMode()) {
-    // Honest: this is NOT a real API response — it says so inside the body too.
+    // Honest: this is NOT a real API response – it says so inside the body too.
     const body =
       kind === 'health'
         ? { success: true, status: 'sample-mode', note: 'Sample mode is on. This is not a live API health check.' }

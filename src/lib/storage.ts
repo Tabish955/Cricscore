@@ -1,6 +1,6 @@
 /**
  * Safe localStorage helpers. Provider-scoped keys everywhere: `espn:1546783`
- * and `cb:1546783` never collide. Every read is guarded — corrupt JSON or a
+ * and `cb:1546783` never collide. Every read is guarded – corrupt JSON or a
  * blocked storage (private mode) degrades to empty instead of crashing.
  */
 
@@ -31,7 +31,7 @@ export interface FavoritesStore {
   teams: FavoriteTeam[]
 }
 
-/** Fresh object every call — a shared module-level array leaks mutations between readers. */
+/** Fresh object every call – a shared module-level array leaks mutations between readers. */
 function emptyStore(): FavoritesStore {
   return { matches: [], teams: [] }
 }

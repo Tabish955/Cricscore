@@ -1,4 +1,4 @@
-# Deploying CricScore on Vercel
+# Deploying Cricline on Vercel
 
 Everything in the repo is ready: Next.js auto-detect (`vercel.json`), Node 20
 (`.nvmrc` + `engines`), no secrets required, proxy route requests `maxDuration = 60`,

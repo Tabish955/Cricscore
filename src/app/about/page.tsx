@@ -1,35 +1,34 @@
 import type { Metadata } from 'next'
-import { Diagnostics } from '@/components/Diagnostics'
+import { ServiceStatus } from '@/components/ServiceStatus'
 import { SampleModeToggle } from '@/components/SampleModeToggle'
 
 export const metadata: Metadata = {
-  title: 'About & data sources',
-  description: 'What CricScore is, where the data comes from, how fresh it is, and exactly which features the API cannot support.',
+  title: 'About Cricline',
+  description: 'What Cricline is, how fresh the data is, and exactly which features exist.',
 }
 
 const MATRIX: Array<{ feature: string; status: 'verified' | 'conditional' | 'unsupported'; note: string }> = [
-  { feature: 'Live / recent / upcoming match lists', status: 'verified', note: 'Primary /cb/* feed (Cricbuzz → ESPN fallback chain); polled 15/60/120s' },
-  { feature: 'Match detail (ESPN matches)', status: 'conditional', note: 'Works for ESPN-ID matches with league+date; polls at 10s while live' },
-  { feature: 'Batting & bowling scorecards', status: 'conditional', note: 'Full or totals-only per match; four innings supported; 0 is real data; extras / FOW / partnerships render only when supplied (backend release pending)' },
-  { feature: 'Ball-by-ball commentary', status: 'conditional', note: 'Paginated pages of 25; page 1 is not necessarily latest; per-match availability' },
-  { feature: 'Squads & roles', status: 'conditional', note: 'Provider roles/styles/starter flags; no bios, caps or portraits' },
-  { feature: 'Dated series scoreboard', status: 'conditional', note: '/espn/series/:league/matches?date=YYYYMMDD — single day only' },
-  { feature: 'Standings / points table', status: 'conditional', note: '/espn/standings/:leagueId — season year label + validated dates; displayStats verbatim (137/20.0); group season preserved; empty for bilateral series by design' },
-  { feature: 'Additional standings source (Sportskeeda)', status: 'unsupported', note: 'Experimental route not released upstream; registry ships empty — shown as “not configured”, never merged or labelled current-season' },
-  { feature: 'Match / team / series search (current data)', status: 'verified', note: 'Local across loaded feeds; server /cb/search is optional enrichment (reduced shape)' },
-  { feature: 'Favorites (browser-local)', status: 'verified', note: 'localStorage, provider-scoped keys, no account' },
-  { feature: 'ICC rankings', status: 'unsupported', note: 'Not exposed by the API — intentionally absent' },
+  { feature: 'Live / recent / upcoming match lists', status: 'verified', note: 'Polled every 15/60/120 seconds' },
+  { feature: 'Match detail (matches with detail access)', status: 'conditional', note: 'League and date are required; polls at 10 seconds while live' },
+  { feature: 'Batting & bowling scorecards', status: 'conditional', note: 'Full or totals-only per match; four innings supported; 0 is real data; extras, fall of wickets and partnerships render only when published' },
+  { feature: 'Ball-by-ball commentary', status: 'conditional', note: 'Pages of 25 balls; page 1 is not necessarily the latest; availability varies by match' },
+  { feature: 'Squads & roles', status: 'conditional', note: 'Roles, styles and starter flags as published; no bios, caps or portraits' },
+  { feature: 'Dated series scoreboard', status: 'conditional', note: 'Single day only; one date per query' },
+  { feature: 'Standings / points table', status: 'conditional', note: 'Season label and validated dates; published stats shown verbatim; empty for bilateral series by design' },
+  { feature: 'Match / team / series search (current data)', status: 'verified', note: 'Local across loaded data; server search is optional enrichment with a reduced shape' },
+  { feature: 'Favorites (browser-local)', status: 'verified', note: 'localStorage, namespaced keys, no account' },
+  { feature: 'ICC rankings', status: 'unsupported', note: 'Not available in this product, intentionally absent' },
   { feature: 'Career records / profiles / bios', status: 'unsupported', note: 'No endpoint; player pages show match-observed stats only' },
-  { feature: 'Full season calendars / archives', status: 'unsupported', note: 'Dated scoreboard ≠ archive; exhaustive history impossible' },
-  { feature: 'Head-to-head histories / venue stats', status: 'unsupported', note: 'No such endpoints' },
-  { feature: 'Ball tracking / wagon wheels / win predictors', status: 'unsupported', note: 'Not exposed; no proprietary models reproduced' },
-  { feature: 'Streaming, video, fantasy, betting', status: 'unsupported', note: 'Out of scope and prohibited for this school project' },
-  { feature: 'News, articles, headlines', status: 'unsupported', note: 'No news anywhere in this product — by requirement' },
+  { feature: 'Full season calendars / archives', status: 'unsupported', note: 'Dated scoreboard is not an archive; exhaustive history is impossible here' },
+  { feature: 'Head-to-head histories / venue stats', status: 'unsupported', note: 'Not available in this product' },
+  { feature: 'Ball tracking / wagon wheels / win predictors', status: 'unsupported', note: 'Not available; no proprietary models reproduced' },
+  { feature: 'Streaming, video, fantasy, betting', status: 'unsupported', note: 'Out of scope' },
+  { feature: 'News, articles, headlines', status: 'unsupported', note: 'There is no news anywhere in this product, by requirement' },
 ]
 
 const PILL = {
   verified: 'bg-emerald-100 text-emerald-800 ring-emerald-300',
-  conditional: 'bg-amber-100 text-amber-deep ring-amber-300',
+  conditional: 'bg-amber-100 text-amber-900 ring-amber-300',
   unsupported: 'bg-slate-200 text-slate-600 ring-slate-300',
 } as const
 
@@ -37,55 +36,36 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-xl font-black tracking-tight text-navy-900">About CricScore &amp; its data</h1>
+        <h1 className="font-display text-3xl font-black tracking-tight text-pine-950">About Cricline</h1>
         <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-600">
-          CricScore is an <strong>original, educational</strong> cricket-scores web app built for a school presentation. It is inspired by the
-          functionality of major cricket products and copies none of their branding, copy or artwork. There is no advertising, no betting,
-          no payments, no tracking and no news — ever.
+          Cricline is an <strong>original, educational</strong> cricket-scores web app built for a school presentation. It is inspired by
+          the function of major cricket products and copies none of their branding, copy or artwork. There is no advertising, no betting,
+          no payments, no tracking and no news, ever.
+        </p>
+        <p className="mt-2 max-w-3xl text-[11px] leading-5 text-slate-500">
+          A school presentation project. Team and league marks belong to their respective owners; no rights are claimed by this project.
         </p>
       </div>
 
-      <section aria-labelledby="disclaimer" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-[11px] leading-5 text-amber-deep">
-        <h2 id="disclaimer" className="text-xs font-black uppercase tracking-[0.16em]">Required disclaimer</h2>
-        <p className="mt-1 font-semibold">
-          School project · Educational presentation only · Commercial use prohibited. Cricket data and team marks belong to their respective
-          owners. Not affiliated with Cricbuzz, ESPNcricinfo or CREX.
+      <section aria-labelledby="freshness" className="rounded-xl border border-edge bg-card p-4 shadow-card">
+        <h2 id="freshness" className="text-xs font-black uppercase tracking-[0.16em] text-pine-900">How fresh the data is</h2>
+        <p className="mt-1 max-w-3xl text-[11px] leading-5 text-slate-600">
+          Cricline is <strong>polling, not push</strong>. The site re-fetches on a schedule; there is no WebSocket or SSE stream anywhere in it.
+          Scores can only be as fresh as the latest published update. The site tracks <em>its</em> last successful fetch and in-flight refreshes,
+          and it never shows a live badge on stale data.
         </p>
-        <p className="mt-1">
-          An educational purpose does not override copyright, provider terms or access controls. CricScore uses one public, key-less
-          community API and never scrapes, bypasses or impersonates anything. Fallback badges are not official crests; we say so wherever they appear.
-        </p>
-      </section>
-
-      <section aria-labelledby="attribution" className="rounded-xl border border-edge bg-card p-4">
-        <h2 id="attribution" className="text-xs font-black uppercase tracking-[0.16em] text-navy-900">Attribution &amp; sources</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-4 text-[11px] leading-5 text-slate-600">
-          <li>Match data: <strong>cricketapi-beryl.vercel.app</strong> — a community API whose list chain is Cricbuzz → Cricinfo → ESPN public scoreboards → independent CREX. Used as-is; no keys, no scraping of sources.</li>
-          <li>Team marks: feed-supplied images when provided; otherwise served from our own <code>/api/team-logo/espn/&lt;id&gt;</code> — a same-origin cache of ESPN&apos;s public team-logo CDN, keyed to the provider&apos;s numeric team id; a missing logo falls back to the direct CDN URL, then a generic monogram badge labelled as a fallback. Nothing here is an official club, board or broadcaster logo unless it comes from the feed or ESPN&apos;s CDN for that exact team.</li>
-          <li>This site is not affiliated with Cricbuzz, ESPNcricinfo, CREX, the ICC, any board, franchise or broadcaster.</li>
-        </ul>
-      </section>
-
-      <section aria-labelledby="refresh" className="rounded-xl border border-edge bg-card p-4">
-        <h2 id="refresh" className="text-xs font-black uppercase tracking-[0.16em] text-navy-900">How fresh the data is</h2>
-        <p className="mt-1 text-[11px] text-slate-600">
-          This API is <strong>polling, not push</strong>. &quot;Updates when our provider updates&quot; means the site re-fetches on a schedule —
-          you will never see a WebSocket/SSE stream here. The API itself caches (live lists ~15s, recent ~60s, upcoming ~120s, squads/standings ~300s,
-          commentary ~20s), so even perfect polling cannot beat the provider&apos;s own freshness. We track <em>provider</em> fetch time,
-          <em> our</em> last successful fetch, and in-flight refreshes separately, and we never show a green &quot;live&quot; badge on stale data.
-        </p>
-        <table className="mt-2 w-full border-collapse text-left text-[10px]">
+        <table className="mt-2 w-full max-w-2xl border-collapse text-left text-[10px]">
           <thead><tr className="border-b border-edge text-slate-400"><th className="py-1 pr-3">Surface</th><th className="py-1">Poll interval (visible tab)</th></tr></thead>
           <tbody className="text-slate-600">
-            {[['Live match lists','15s'],['Recent lists','60s'],['Upcoming lists','120s'],['Live match detail & scorecard','10s'],['Live commentary + pagination metadata','20s'],['Squads & standings','5 min, on entry'],['Completed matches','no polling — manual refresh'],['Hidden/offline tab','polling paused; refresh on return']].map(([a,b]) => (
+            {[['Live match lists','15s'],['Recent lists','60s'],['Upcoming lists','120s'],['Live match detail & scorecard','10s'],['Live commentary + pagination metadata','20s'],['Squads & standings','5 min, on entry'],['Completed matches','no polling, manual refresh'],['Hidden / offline tab','polling paused; refresh on return']].map(([a,b]) => (
               <tr key={a} className="border-b border-edge/60 last:border-0"><td className="py-1 pr-3">{a}</td><td className="tabular py-1 font-semibold">{b}</td></tr>
             ))}
           </tbody>
         </table>
       </section>
 
-      <section aria-labelledby="matrix" className="overflow-hidden rounded-xl border border-edge bg-card">
-        <h2 id="matrix" className="border-b border-edge bg-navy-100/40 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-navy-900">Feature &amp; data coverage matrix</h2>
+      <section aria-labelledby="matrix" className="overflow-hidden rounded-xl border border-edge bg-card shadow-card">
+        <h2 id="matrix" className="border-b border-edge bg-pine-100/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-pine-900">Feature &amp; data coverage matrix</h2>
         <div className="score-scroll overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <thead>
@@ -102,25 +82,24 @@ export default function AboutPage() {
             </tbody>
           </table>
         </div>
-        <p className="border-t border-edge/70 px-4 py-2 text-[10px] text-slate-400">The full matrix with verified/conditional/unsupported tiers lives in <code>docs/COVERAGE-MATRIX.md</code> in the repository.</p>
       </section>
 
-      <section aria-labelledby="sample-mode" className="rounded-xl border border-edge bg-card p-4">
-        <h2 id="sample-mode" className="text-xs font-black uppercase tracking-[0.16em] text-navy-900">Offline sample mode</h2>
+      <section aria-labelledby="sample-mode" className="rounded-xl border border-edge bg-card p-4 shadow-card">
+        <h2 id="sample-mode" className="text-xs font-black uppercase tracking-[0.16em] text-pine-900">Offline sample mode</h2>
         <p className="mt-1 text-[11px] text-slate-600">
-          If the API host is unreachable from the presentation network, this switch makes every page run from a recorded,
-          <strong> fictional</strong> dataset (invented teams, players and scores — league <code>9001</code>). It is never on by default,
-          shows a persistent amber banner while active, and never fabricates a &quot;live&quot; badge.
+          If the network is unreachable from the presentation venue, this switch makes every page run from a recorded,
+          <strong> fictional</strong> dataset (invented teams, players and scores, league <code>9001</code>). It is never on by default,
+          shows a persistent amber banner while active, and never fabricates a live badge.
         </p>
         <div className="mt-2">
           <SampleModeToggle />
         </div>
       </section>
 
-      <section aria-labelledby="diagnostics" className="rounded-xl border border-edge bg-card p-4">
-        <h2 id="diagnostics" className="text-xs font-black uppercase tracking-[0.16em] text-navy-900">Source diagnostics (you trigger these)</h2>
-        <p className="mt-1 text-[11px] text-slate-600">No polling happens here. Press a button to ask the API how it is doing right now.</p>
-        <Diagnostics />
+      <section aria-labelledby="service-status" className="rounded-xl border border-edge bg-card p-4 shadow-card">
+        <h2 id="service-status" className="text-xs font-black uppercase tracking-[0.16em] text-pine-900">Service status</h2>
+        <p className="mt-1 text-[11px] text-slate-600">A quick check of whether the service is answering right now.</p>
+        <ServiceStatus />
       </section>
     </div>
   )

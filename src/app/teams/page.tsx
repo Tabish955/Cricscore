@@ -58,17 +58,17 @@ export default function TeamsDirectoryPage() {
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h1 className="text-xl font-black tracking-tight text-navy-900">Teams</h1>
-        <p className="text-[11px] text-slate-500">Every team in the current feeds — scoped to available data, not a global registry. Marks may be fallback badges where the provider sends no logo.</p>
+        <h1 className="text-xl font-black tracking-tight text-pine-900">Teams</h1>
+        <p className="text-[11px] text-slate-500">Every team in the current data; scoped to available data, not a global registry. Marks may be fallback badges where no logo is supplied.</p>
       </div>
       <label className="relative max-w-md">
         <span className="sr-only">Filter teams</span>
-        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="search" placeholder="Search teams…" className="w-full rounded-lg border border-edge bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand" />
+        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="search" placeholder="Search teams…" className="w-full rounded-lg border border-edge bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass" />
       </label>
       {pending ? (
-        <LoadingCard label="Reading feeds for teams…" />
+        <LoadingCard label="Reading team data…" />
       ) : teams.length === 0 ? (
-        <EmptyState title="No teams visible" hint="Team cards appear when the current feeds reference them. Try clearing the filter or check the Live Center." />
+        <EmptyState title="No teams visible" hint="Team cards appear when the current scores reference them. Try clearing the filter or check the Live Center." />
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {teams.map((t) => {
@@ -80,14 +80,14 @@ export default function TeamsDirectoryPage() {
                 <TeamIdentity assetKey={t.key} name={t.name} short={t.short} imageUrl={t.imageUrl} size="lg" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-800" title={t.name}>{t.name}</p>
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{t.provider}{t.id ? ` · ${t.id}` : ''}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{t.id ? `Ref ${t.id}` : 'Team'}</p>
                   <p className="mt-0.5 text-[10px] text-slate-500">Seen in {t.total} match{t.total === 1 ? '' : 'es'} · {t.short || 'no abbreviation'}</p>
                 </div>
               </div>
             )
             return (
               <li key={t.key}>
-                {href ? <Link href={href} className="block h-full rounded-xl transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">{body}</Link> : body}
+                {href ? <Link href={href} className="block h-full rounded-xl transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">{body}</Link> : body}
               </li>
             )
           })}

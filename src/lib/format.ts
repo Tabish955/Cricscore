@@ -31,17 +31,17 @@ export function formatFetchedAt(ms: number | null): string {
 
 /** Overs are cricket notation: 19.5 = 19 overs and 5 balls. We display, never re-parse. */
 export function formatOvers(overs: string | number | null | undefined): string {
-  if (overs === null || overs === undefined || overs === '') return '—'
+  if (overs === null || overs === undefined || overs === '') return '–'
   return String(overs)
 }
 
 export function formatRate(v: number | null | undefined, digits = 2): string {
-  if (v === null || v === undefined || !Number.isFinite(v)) return '—'
+  if (v === null || v === undefined || !Number.isFinite(v)) return '–'
   return v.toFixed(digits)
 }
 
 export function formatInt(v: number | null | undefined): string {
-  if (v === null || v === undefined || !Number.isFinite(v)) return '—'
+  if (v === null || v === undefined || !Number.isFinite(v)) return '–'
   return String(Math.round(v))
 }
 

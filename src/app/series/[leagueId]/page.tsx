@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ leagueId: string }> }): Promise<Metadata> {
   const { leagueId } = await params
-  return { title: `League ${leagueId} — Series` }
+  return { title: `League ${leagueId} · Series` }
 }
 
 export default async function SeriesDetailPage({ params, searchParams }: { params: Promise<{ leagueId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {

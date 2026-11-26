@@ -1,4 +1,4 @@
-# CricScore — architecture notes
+# Cricline — architecture notes
 
 ## Principles
 

@@ -1,10 +1,9 @@
-# CricScore — an original, educational cricket-scores web app
+# Cricline — cricket scores, clearly
 
 > **School project · Educational presentation only · Commercial use prohibited.**
-> Cricket data and team marks belong to their respective owners. Not affiliated with
-> Cricbuzz, ESPNcricinfo or CREX. Every page carries this disclaimer.
+> Cricket data and team marks belong to their respective owners.
 
-CricScore is a complete, working cricket-scores website built for a **school presentation**.
+Cricline is a complete, working cricket-scores website built for a **school presentation**.
 It delivers the core experience fans expect — live centre, match centre with ball-by-ball
 commentary, scorecards, squads, series scoreboards, standings, search and favorites — while
 being honest about where the data comes from, how fresh it is, and what it can never do
@@ -33,7 +32,7 @@ Quality gates (all must be green before class):
 
 ```bash
 npm run typecheck  # tsc --noEmit — strict, zero errors
-npm run test       # vitest run — 113 tests across 12 files
+npm run test       # vitest run
 npm run build      # next build — lints types, compiles, prerenders
 ```
 
@@ -89,9 +88,8 @@ amber banner on every page while active, and is contract-tested against the real
 `/match/[provider]/[id]` Match Center (persistent score header, Overview/Scorecard/Commentary/Squads/Table tabs) ·
 `/series` + `/series/[leagueId]` dated scoreboard (single-day, explicitly **not** an archive) ·
 `/teams` + `/teams/[provider]/[id]` (feed-derived only) · `/players/[provider]/[id]` (match-observed stats only) ·
-`/standings` (provider ranks, verbatim NRR, optional league name/season year; no invented values; optional
-Sportskeeda secondary source once verified+released) · `/search` (≥350ms debounce, match-derived index) ·
-`/favorites` (localStorage, provider-scoped) · `/about` (disclaimer, attribution, coverage matrix, diagnostics) ·
+`/standings` (published ranks, verbatim NRR; no invented values) · `/search` (≥350ms debounce, match-derived index) ·
+`/favorites` (localStorage, provider-scoped) · `/about` (freshness, coverage matrix, service status) ·
 `/demo` (sample-mode toggle + recorded showcase) · custom `404` and error boundary.
 
 ## Honest scope
@@ -104,13 +102,8 @@ Sportskeeda secondary source once verified+released) · `/search` (≥350ms debo
   never parsed as JSON.
 - Spec example IDs (match `1546783`, league `8661`, date `20261126`) are historical references,
   never seeded as fixtures.
-- **Backend release shipped (verified live 2026-11-26, ~14:26Z):** the upstream API now sends the
-  innings-level `extras`, `fallOfWickets` and `partnerships` fields — verified against
-  `/espn/match/1546783/scorecard?league=8661&date=20261126` (Mumbai extras total **7**; populated
-  FOW/partnership arrays). The experimental `/sportskeeda/series/:slug/points-table` route is not
-  advertised or reachable, so the Sportskeeda panel still ships as "not configured" by design.
-  Extended sections render with the live data; older cached responses may lack it and then show
-  one consolidated "not supplied" note instead. See `docs/GAPS.md`.
+- **Backend release shipped (verified live 2026-11-26, ~14:26Z):** innings-level `extras`,
+  `fallOfWickets` and `partnerships` are present in production scorecards; see `docs/GAPS.md`.
 
 ## Documentation
 
@@ -127,7 +120,7 @@ Sportskeeda secondary source once verified+released) · `/search` (≥350ms debo
 Pushed branches get **preview deployments** on Vercel; merges to `main` promote to production.
 Full guide: [`docs/DEPLOY.md`](docs/DEPLOY.md). Short version:
 
-1. Push this branch to GitHub (`git push origin arena/74df8e59-cricscore`).
+1. Production lives at **https://cricline.vercel.app** (renamed from `cricline.vercel.app` on 2026-11-26).
 2. vercel.com → **Import** `Tabish955/Cricscore` → framework auto-detects Next.js → Deploy.
    No secrets required; optional env `CRICKET_API_BASE` only if self-hosting a compatible backend.
 3. Open a PR into `main` — Vercel posts a preview URL on the PR for every commit; that is the

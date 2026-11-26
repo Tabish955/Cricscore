@@ -38,13 +38,13 @@ export function TeamDetail({ provider, id, name, short }: { provider: 'espn' | '
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-navy-800 bg-navy-900 p-4 text-white">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-pine-800 bg-pine-950 p-4 text-[#f5f0e4]">
         <div className="flex items-center gap-4">
           <TeamIdentity assetKey={assetKey} name={displayName} short={displayShort} imageUrl={team?.imageUrl ?? null} size="xl" />
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-brand/90">{provider} team {team?.id ? `· ${team.id}` : ''}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{team?.id ? `Ref ${team.id}` : 'Team'}</p>
             <h1 className="text-lg font-black tracking-tight sm:text-2xl">{displayName}</h1>
-            <p className="text-[10px] text-navy-100/70">{matches.length} match{matches.length === 1 ? '' : 'es'} observed in current feeds</p>
+            <p className="text-[10px] text-[#a9bfb0]">{matches.length} match{matches.length === 1 ? '' : 'es'} observed in current data</p>
           </div>
         </div>
         <FavoriteTeamButton
@@ -53,20 +53,20 @@ export function TeamDetail({ provider, id, name, short }: { provider: 'espn' | '
       </div>
 
       <CoverageNote>
-        Team pages are scoped to what the API&apos;s feeds expose. Profiles, histories, rankings and records are not part of this API —
+        Team pages are scoped to what the scores expose. Profiles, histories, rankings and records are not part of this site;
         nothing on this page is a career stat. Match-observed player performance lives behind each scorecard.
       </CoverageNote>
 
       <section aria-labelledby="team-matches">
-        <h2 id="team-matches" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Observed fixtures &amp; results</h2>
+        <h2 id="team-matches" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Observed fixtures &amp; results</h2>
         {pending ? (
-          <LoadingCard label="Scanning feeds…" />
+          <LoadingCard label="Scanning matches…" />
         ) : matches.length === 0 ? (
           <EmptyState
-            title="Not in the current feeds"
-            hint="This team has no live, recent or upcoming matches right now. Check the Live Center later — absence here means the feed has nothing to show, not that the club doesn't exist."
+            title="Not in the current data"
+            hint="This team has no live, recent or upcoming matches right now. Check the Live Center later; absence here means there is nothing to show, not that the club does not exist."
           >
-            <Link href="/" className="rounded-md border border-edge bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">Live Center →</Link>
+            <Link href="/" className="rounded-md border border-edge bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">Live Center</Link>
           </EmptyState>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

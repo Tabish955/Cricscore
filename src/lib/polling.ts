@@ -38,7 +38,7 @@ export const MAX_QUERY_RETRIES = 3
 /**
  * Decide whether to retry a failed query. 4xx (other than 429) is usually not
  * transient for the caller's purposes, but the API's cold start and upstream
- * hiccups surface as 500/502 — retry those with backoff, bounded.
+ * hiccups surface as 500/502 – retry those with backoff, bounded.
  */
 export function shouldRetry(failureCount: number, error: unknown): boolean {
   if (failureCount >= MAX_QUERY_RETRIES) return false

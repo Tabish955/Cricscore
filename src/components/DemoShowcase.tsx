@@ -6,7 +6,7 @@ import { StandingsTable } from '@/components/StandingsTable'
 import type { ScorecardView as Scorecard, SquadsView, StandingsView } from '@/lib/api/normalize'
 
 /**
- * ⚠️ FICTIONAL SAMPLE DATA — not a real match, not real players, not captured
+ * ⚠️ FICTIONAL SAMPLE DATA – not a real match, not real players, not captured
  * from the API. This page exists so a demo works with the network unavailable
  * or no live match scheduled. It is never linked as "Live" and is always bannered.
  * To use REAL recorded data before class: capture genuine responses with curl
@@ -33,7 +33,7 @@ const FICTIONAL_SCORECARD: Scorecard = {
         { position: 4, id: 'demo-p4', name: 'J. Castillo', runs: 9, balls: 9, fours: 1, sixes: 0, strikeRate: 100.0, dismissal: 'run out (D. Menon)', isBatting: false },
         { position: 5, id: 'demo-p5', name: 'D. Whitcombe', runs: 3, balls: 5, fours: 0, sixes: 0, strikeRate: 60.0, dismissal: 'c L. Brandt b S. Whitmore', isBatting: false },
         { position: 6, id: 'demo-p6', name: 'S. Iwu', runs: 11, balls: 7, fours: 1, sixes: 0, strikeRate: 157.14, dismissal: 'b R. Saldanha', isBatting: false },
-        { position: 7, id: 'demo-p7', name: 'R. Saldanha (wk)', runs: 4, balls: 6, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'not out — sample', isBatting: true },
+        { position: 7, id: 'demo-p7', name: 'R. Saldanha (wk)', runs: 4, balls: 6, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'not out (sample)', isBatting: true },
       ],
       extras: { total: 8, byes: 1, legByes: 2, noBalls: 1, wides: 4, penalties: 0 },
       fallOfWickets: [
@@ -154,7 +154,7 @@ const FICTIONAL_STANDINGS: StandingsView = {
   groups: [
     {
       id: 'sample-a',
-      name: 'Harbour Premier — Group A (sample)',
+      name: 'Harbour Premier, Group A (sample)',
       season: 2026,
       entries: [
         { team: { id: 'demo-har', name: 'Harbour City CC', short: 'HAR', imageUrl: null }, known: { rank: 1, matchesPlayed: 6, matchesWon: 5, matchesLost: 1, matchesTied: 0, matchesDraw: 0, noresult: 0, matchPoints: 10, netrr: '+1.24' }, display: {}, extra: {} },
@@ -170,35 +170,34 @@ export function DemoShowcase() {
   return (
     <div className="flex flex-col gap-4">
       <p role="alert" className="rounded-xl border-2 border-red-400 bg-red-50 px-4 py-3 text-center text-xs font-black uppercase tracking-[0.2em] text-red-800">
-        Recorded demo — fictional sample data · not live · not a real match
+        Recorded demo: fictional sample data · not live · not a real match
       </p>
-      <div className="rounded-xl border border-edge bg-navy-900 p-4 text-white">
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-brand/90">Harbour Premier T20 · Fictional · 14 Nov 2026</p>
-        <h1 className="mt-1 text-lg font-black tracking-tight sm:text-2xl">Harbour City CC 132/6 <span className="text-navy-100/60">(16.2 ov)</span> beat Valley Riders 129/9 <span className="text-navy-100/60">(20 ov)</span></h1>
+      <div className="rounded-xl border border-edge bg-pine-900 p-4 text-white">
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass/90">Harbour Premier T20 · Fictional · 14 Nov 2026</p>
+        <h1 className="mt-1 text-lg font-black tracking-tight sm:text-2xl">Harbour City CC 132/6 <span className="text-pine-100/60">(16.2 ov)</span> beat Valley Riders 129/9 <span className="text-pine-100/60">(20 ov)</span></h1>
         <p className="mt-1 text-[11px] text-emerald-200/90">Harbour City CC won by 4 wickets (sample prose, clearly labelled)</p>
-        <p className="mt-1 text-[9px] text-navy-100/60">Everything on this page exists so the demo works offline or without a live fixture. Refresh with genuine captures before presenting — see docs/DEMO-WALKTHROUGH.md.</p>
+        <p className="mt-1 text-[9px] text-pine-100/60">Everything on this page exists so the demo works offline or without a live fixture. Refresh with genuine captures before presenting; see docs/DEMO-WALKTHROUGH.md.</p>
       </div>
 
       <section aria-labelledby="demo-scorecard">
-        <h2 id="demo-scorecard" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Scorecard (sample)</h2>
+        <h2 id="demo-scorecard" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Scorecard (sample)</h2>
         <ScorecardView view={FICTIONAL_SCORECARD} stale={false} refreshedAt={null} onRefresh={() => {}} isFetching={false} />
       </section>
 
       <section aria-labelledby="demo-squads">
-        <h2 id="demo-squads" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Squads (sample)</h2>
+        <h2 id="demo-squads" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Squads (sample)</h2>
         <SquadsPanel view={FICTIONAL_SQUADS} />
       </section>
 
       <section aria-labelledby="demo-table">
-        <h2 id="demo-table" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Standings (sample)</h2>
+        <h2 id="demo-table" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Standings (sample)</h2>
         <div className="rounded-xl border border-edge bg-card p-3"><StandingsTable view={FICTIONAL_STANDINGS} /></div>
       </section>
 
       <p className="text-[9px] leading-4 text-slate-400">
         FICTIONAL SAMPLE: Harbour City CC, Valley Riders, Pier Point CCO, Dune Wanderers and every player above are invented for interface
-        demonstration. The build environment for this project could not reach the live API (sandbox egress restriction), so this page never
-        pretends to be a recording of a real match. To present with genuine data: run the app where the API is reachable, or capture real
-        responses ahead of time (docs/DEMO-WALKTHROUGH.md) and paste them in place of the constants above.
+        demonstration, so this page never pretends to be a recording of a real match. To present with live data, run the app somewhere
+        with network access.
       </p>
     </div>
   )

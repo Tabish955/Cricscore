@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 export function Spinner({ label }: { label?: string }) {
   return (
     <span role="status" className="inline-flex items-center gap-2 text-slate-500">
-      <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-navy-800 motion-reduce:animate-none" />
+      <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-pine-800 motion-reduce:animate-none" />
       {label ? <span className="text-xs">{label}</span> : <span className="sr-only">Loading</span>}
     </span>
   )
@@ -13,7 +13,7 @@ export function LoadingCard({ label = 'Loading…' }: { label?: string }) {
   return (
     <div className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-xl border border-edge bg-card p-6 text-center">
       <Spinner label={label} />
-      <p className="text-[11px] text-slate-400">The API cold-starts slowly sometimes — up to tens of seconds.</p>
+      <p className="text-[11px] text-slate-400">Scores can take a few seconds to arrive. The screen never fakes them.</p>
     </div>
   )
 }
@@ -48,7 +48,7 @@ export function ErrorState({ title, detail, onRetry }: { title: string; detail?:
 
 export function CoverageNote({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-4 text-amber-deep">
+    <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-4 text-amber-900">
       {children}
     </p>
   )

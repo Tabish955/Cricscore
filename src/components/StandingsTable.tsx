@@ -13,19 +13,19 @@ const KNOWN_COLUMNS: Array<{ key: keyof StandingEntryView['known']; label: strin
   { key: 'matchesDraw', label: 'D' },
   { key: 'noresult', label: 'NR' },
   { key: 'matchPoints', label: 'Pts' },
-  { key: 'netrr', label: 'NRR', title: 'Net run rate exactly as the provider sent it' },
+  { key: 'netrr', label: 'NRR', title: 'Net run rate exactly as published' },
 ]
 
-/** Display string wins; numeric fallbacks render via String(); null stays —. */
+/** Display string wins; numeric fallbacks render via String(); null stays –. */
 function cell(entry: StandingEntryView, key: keyof StandingEntryView['known']): string {
   const display = entry.display[key as keyof StandingEntryView['display']]
   if (display !== undefined) return display
   const known = entry.known[key]
-  if (known === null) return '—'
+  if (known === null) return '–'
   return String(known)
 }
 
-/** Renders provider standings verbatim: group names preserved, missing stats as —. */
+/** Renders provider standings verbatim: group names preserved, missing stats as –. */
 export function StandingsTable({ view }: { view: StandingsView }) {
   const seasonBits = [
     view.season ? `Season ${view.season}` : null,
@@ -36,14 +36,14 @@ export function StandingsTable({ view }: { view: StandingsView }) {
     return (
       <EmptyState
         title="No table published for this league"
-        hint="Bilateral series and some cups have no standings — an empty table is a valid provider answer, not an error."
+        hint="Bilateral series and some cups have no standings; an empty table is a valid answer, not an error."
       />
     )
   }
 
   const allEntries = view.groups.flatMap((g) => g.entries)
   const showForAgainst = allEntries.some((e) => e.display.for !== undefined) || allEntries.some((e) => e.display.against !== undefined)
-  const forTitle = 'Provider supply: displayStats strings carry runs/overs (e.g. 137/20.0); a bare number is a run-rate-scale figure as supplied to us — never recomputed.'
+  const forTitle = 'displayStats strings carry runs/overs (e.g. 137/20.0); a bare number is a run-rate-scale figure as supplied; never recomputed.'
 
   return (
     <div className="flex flex-col gap-3">
@@ -55,12 +55,12 @@ export function StandingsTable({ view }: { view: StandingsView }) {
 
       {view.groups.map((group, gi) => {
         const extraKeys = [...new Set(group.entries.flatMap((e) => Object.keys(e.extra)))].slice(0, 6)
-        const present = KNOWN_COLUMNS.filter(({ key }) => group.entries.some((e) => e.known[key] !== null || cell(e, key) !== '—'))
+        const present = KNOWN_COLUMNS.filter(({ key }) => group.entries.some((e) => e.known[key] !== null || cell(e, key) !== '–'))
         return (
           <div key={group.id ?? `${group.name}-${gi}`}>
             <h3 className="mb-1 flex flex-wrap items-baseline gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
               <span>{group.name || 'Table'}</span>
-              {group.season !== null ? <span className="rounded bg-slate-100 px-1 py-0.5 text-[8px] font-bold uppercase text-slate-500 ring-1 ring-edge" title="Group-scoped season reported by the provider">Season {group.season}</span> : null}
+              {group.season !== null ? <span className="rounded bg-slate-100 px-1 py-0.5 text-[8px] font-bold uppercase text-slate-500 ring-1 ring-edge" title="Season label as published for this group">Season {group.season}</span> : null}
             </h3>
             <div className="score-scroll overflow-x-auto">
               <table className="w-full border-collapse">
@@ -85,10 +85,10 @@ export function StandingsTable({ view }: { view: StandingsView }) {
                       {present.map(({ key }) => (
                         <td key={key} className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700">{cell(entry, key)}</td>
                       ))}
-                      {showForAgainst ? <td className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700" title={forTitle}>{entry.display.for ?? '—'}</td> : null}
-                      {showForAgainst ? <td className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700" title={forTitle}>{entry.display.against ?? '—'}</td> : null}
+                      {showForAgainst ? <td className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700" title={forTitle}>{entry.display.for ?? '–'}</td> : null}
+                      {showForAgainst ? <td className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700" title={forTitle}>{entry.display.against ?? '–'}</td> : null}
                       {extraKeys.map((k) => (
-                        <td key={k} className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700">{entry.extra[k] ?? '—'}</td>
+                        <td key={k} className="px-2 py-1.5 text-right text-[11px] tabular text-slate-700">{entry.extra[k] ?? '–'}</td>
                       ))}
                     </tr>
                   ))}
@@ -98,7 +98,7 @@ export function StandingsTable({ view }: { view: StandingsView }) {
           </div>
         )
       })}
-      <p className="text-[9px] leading-3 text-slate-400">Provider-reported figures only; unranked groups keep provider order. NRR shown verbatim. Team marks may be fallback badges.</p>
+      <p className="text-[9px] leading-3 text-slate-400">Figures exactly as published; unranked groups keep their published order. Net run rate is shown verbatim. Marks may be fallback badges.</p>
     </div>
   )
 }

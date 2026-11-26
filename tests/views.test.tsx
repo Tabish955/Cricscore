@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ScorecardView } from '@/components/match/ScorecardView'
 import { StandingsTable } from '@/components/StandingsTable'
 import { TeamIdentity } from '@/components/TeamIdentity'
-import { SportskeedaAdditionalSource } from '@/components/SportskeedaAdditionalSource'
 import { normalizeScorecard, normalizeStandings } from '@/lib/api/normalize'
 import { createElement, type ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
@@ -80,14 +79,14 @@ describe('ScorecardView — extended sections', () => {
     expect(screen.getByText(/No wickets have fallen/i)).toBeTruthy()
     expect(screen.getByText(/No partnerships recorded/i)).toBeTruthy()
     // Innings 3 (same team again): unavailable states, not zeros
-    expect(screen.getAllByText(/not supplied for this match/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/not included in this match's data/i).length).toBeGreaterThan(0)
   })
 
   it('old scorecard without new fields shows one consolidated not-supplied note, never zeros', () => {
     const view = normalizeScorecard(scorecardPayload(false))
     renderCard(view)
-    expect(screen.queryAllByText(/not supplied for this match/i).length).toBe(0) // consolidated, not 3 placeholders per innings
-    expect(screen.getByText(/not supplied by the provider for this match/i)).toBeTruthy()
+    expect(screen.queryAllByText(/not included in this match's data/i).length).toBe(0) // consolidated, not 3 placeholders per innings
+    expect(screen.getByText(/not included for this match\./i)).toBeTruthy()
   })
 
   it('re-fetch preserves innings order and identities (keyed by inningsId, all innings kept)', () => {
@@ -200,23 +199,12 @@ describe('TeamIdentity — image failure falls down the candidate chain', () => 
   })
 
   it('does not proxy non-espn keys (monogram instead, feed URL if supplied)', () => {
-    const { container } = render(createElement(TeamIdentity, { assetKey: 'sportskeeda:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
+    const { container } = render(createElement(TeamIdentity, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
-    const withFeed = render(createElement(TeamIdentity, { assetKey: 'sportskeeda:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
+    const withFeed = render(createElement(TeamIdentity, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
     const img = withFeed.container.querySelector('img')!
     expect(img.getAttribute('src')).toBe('https://cdn.example.test/b.png')
-  })
-})
-
-describe('Sportskeeda additional source — not configured (backend route unreleased)', () => {
-  const client = () => new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  const wrap = (node: ReactNode) => render(createElement(QueryClientProvider, { client: client() }, node))
-
-  it('renders "not configured" and no table for any league today', () => {
-    wrap(createElement(SportskeedaAdditionalSource, { leagueId: '8661' }))
-    expect(screen.getByText(/not configured/i)).toBeTruthy()
-    expect(screen.queryByRole('table')).toBeNull()
   })
 })
 

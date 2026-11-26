@@ -1,4 +1,4 @@
-# CricScore — feature & data coverage matrix
+# Cricline — feature & data coverage matrix
 
 Honest tiers:
 

@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ provider: string; id: string }> }): Promise<Metadata> {
   const { provider, id } = await params
-  return { title: `Match · ${provider.toUpperCase()} ${id}` }
+  return { title: 'Match' }
 }
 
 export default async function MatchPage({

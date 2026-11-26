@@ -1,4 +1,4 @@
-# CricScore — known gaps & limitations
+# Cricline — known gaps & limitations
 
 Honesty-first list. Nothing here is secretly worked around; items are either upstream-limited,
 out-of-scope by requirement, or explicitly deferred.

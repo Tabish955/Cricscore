@@ -1,4 +1,4 @@
-# CricScore — honest test report (2026-11-26)
+# Cricline — honest test report (2026-11-26)
 
 **Read this before trusting anything.** This report separates what was actually executed
 from what is merely asserted.
