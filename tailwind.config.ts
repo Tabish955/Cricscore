@@ -5,28 +5,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: {
-          950: '#0b1c2c',
-          900: '#10233a',
-          800: '#16304c',
-          700: '#1f3f5f',
-          100: '#e8edf3',
+        pine: {
+          950: '#0c261b',
+          900: '#123324',
+          800: '#173f2d',
+          700: '#20503b',
+          600: '#2b6048',
+          100: '#e7ece1',
+          50: '#eef1e8',
         },
-        paper: '#faf7ef',
-        card: '#ffffff',
-        edge: '#e6e1d3',
-        live: '#047857',
-        liveSoft: '#e7f6ee',
-        amber: {
-          brand: '#f2a007',
-          deep: '#b45309',
+        paper: '#f5f0e4',
+        card: '#fffdf6',
+        edge: '#e3dcc9',
+        ink: '#1e2a23',
+        brass: {
+          DEFAULT: '#a87b24',
+          deep: '#7a5410',
+          light: '#e2b659',
         },
+        live: '#1e6b46',
+        liveSoft: '#e9efe3',
       },
       fontFamily: {
-        sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        display: ['"Fraunces Variable"', 'Georgia', '"Times New Roman"', 'serif'],
+        sans: ['"Archivo Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'Roboto', 'sans-serif'],
+      },
+      fontSize: {
+        verdict: ['0.95rem', { lineHeight: '1.35' }],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(16,35,58,0.08), 0 4px 14px rgba(16,35,58,0.06)',
+        card: '0 1px 2px rgba(12,38,27,0.10), 0 6px 18px rgba(12,38,27,0.08)',
+        lift: '0 2px 4px rgba(12,38,27,0.12), 0 12px 32px rgba(12,38,27,0.14)',
       },
     },
   },

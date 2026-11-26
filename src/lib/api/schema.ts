@@ -2,7 +2,7 @@
  * Zod schemas for the production API's response envelopes.
  *
  * Strategy: validate the STRUCTURE strictly enough to reject HTML error pages and
- * garbage, but treat individual scalar fields (numbers-as-strings etc.) leniently —
+ * garbage, but treat individual scalar fields (numbers-as-strings etc.) leniently –
  * real upstream payloads are dirtier than the docs contract. Coercion happens in
  * normalize.ts, never here: a schema that throws on `strikeRate: "31.25"` would take
  * down a working scorecard over one field.
@@ -159,7 +159,7 @@ const ExtrasSchema = z
   })
   .passthrough()
 
-/** Cricket overs stay strings — 4.4 overs is NOT 4.4 in decimal arithmetic. */
+/** Cricket overs stay strings – 4.4 overs is NOT 4.4 in decimal arithmetic. */
 const oversLike = z.union([z.string(), z.number()]).optional().nullable()
 
 const InningsEndpointSchema = z
@@ -174,7 +174,7 @@ const FallOfWicketSchema = z
   .object({
     wicketNumber: numLike,
     overs: oversLike,
-    /** TEAM total at the dismissal — not the batter's score. */
+    /** TEAM total at the dismissal – not the batter's score. */
     runs: numLike,
     type: z.string().optional().nullable(),
     batsman: z
@@ -193,7 +193,7 @@ const FallOfWicketSchema = z
 const PartnershipSchema = z
   .object({
     wicketNumber: numLike,
-    /** Provider fowType string — no undocumented enum is assumed. */
+    /** Provider fowType string – no undocumented enum is assumed. */
     type: z.string().optional().nullable(),
     runs: numLike,
     overs: oversLike,
@@ -354,7 +354,7 @@ export const StandingsResponseSchema = z.object({
   meta: z.unknown().optional(),
 })
 
-/** Experimental Sportskeeda adapter — independent source, never merged with ESPN. */
+/** Experimental Sportskeeda adapter – independent source, never merged with ESPN. */
 export const SportskeedaStandingsResponseSchema = z.object({
   success: z.boolean(),
   result: z.object({

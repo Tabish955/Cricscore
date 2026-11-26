@@ -61,27 +61,27 @@ export default function SeriesDirectoryPage() {
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h1 className="text-xl font-black tracking-tight text-navy-900">Series</h1>
+        <h1 className="text-xl font-black tracking-tight text-pine-950">Series</h1>
         <p className="text-[11px] text-slate-500">
-          Discovered from the current live/recent/upcoming feeds — not a complete global directory. ESPN leagues get a dated
-          scoreboard and standings; other providers show what the feed sees only.
+          Discovered from the current live, recent and upcoming lists. Not a complete global directory; some series deep-dive into
+          dated fixtures and standings, others show what the current scores see only.
         </p>
       </div>
       <label className="relative max-w-md">
         <span className="sr-only">Filter series</span>
-        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="search" placeholder="Filter series…" className="w-full rounded-lg border border-edge bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand" />
+        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="search" placeholder="Filter series…" className="w-full rounded-lg border border-edge bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass" />
       </label>
       {pending ? (
-        <LoadingCard label="Reading feeds for series…" />
+        <LoadingCard label="Reading series data…" />
       ) : series.length === 0 ? (
-        <EmptyState title="No series visible right now" hint="Series cards appear when the current feeds reference them. Try again later or check the Live Center." />
+        <EmptyState title="No series visible right now" hint="Series cards appear when the current scores reference them. Try again later or check the Live Center." />
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {series.map((s) => {
             const deepDive = s.provider === 'espn'
             const inner = (
               <>
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">{s.provider} · League {s.leagueId}</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">League {s.leagueId}</p>
                 <h2 className="mt-0.5 line-clamp-2 text-sm font-bold leading-5 text-slate-800">{s.name}</h2>
                 <p className="mt-1 text-[10px] font-semibold text-slate-500">
                   {s.formats.length ? s.formats.join(' · ') : 'Format unknown'} · {s.total} match{s.total === 1 ? '' : 'es'} observed
@@ -89,17 +89,17 @@ export default function SeriesDirectoryPage() {
                 <div className="mt-1.5 flex flex-wrap gap-1 text-[9px] font-bold">
                   {s.live > 0 ? <span className="rounded bg-liveSoft px-1.5 py-0.5 uppercase text-live">{s.live} live</span> : null}
                   {s.recent > 0 ? <span className="rounded bg-slate-100 px-1.5 py-0.5 uppercase text-slate-600">{s.recent} recent</span> : null}
-                  {s.upcoming > 0 ? <span className="rounded bg-amber-50 px-1.5 py-0.5 uppercase text-amber-deep">{s.upcoming} upcoming</span> : null}
+                  {s.upcoming > 0 ? <span className="rounded bg-amber-50 px-1.5 py-0.5 uppercase text-amber-900">{s.upcoming} upcoming</span> : null}
                 </div>
                 <p className="mt-2 text-[9px] font-semibold uppercase tracking-wide text-slate-400">
-                  {deepDive ? 'Open dated matches & standings →' : 'No fixtures/standings endpoint for this provider'}
+                  {deepDive ? 'Open dated matches & standings' : 'No deeper fixtures or table published'}
                 </p>
               </>
             )
             return (
               <li key={s.key}>
                 {deepDive ? (
-                  <Link href={`/series/${encodeURIComponent(s.leagueId)}`} className="block h-full rounded-xl border border-edge bg-card p-3 shadow-card transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">{inner}</Link>
+                  <Link href={`/series/${encodeURIComponent(s.leagueId)}`} className="block h-full rounded-xl border border-edge bg-card p-3 shadow-card transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">{inner}</Link>
                 ) : (
                   <div className="h-full rounded-xl border border-dashed border-edge bg-card p-3">{inner}</div>
                 )}

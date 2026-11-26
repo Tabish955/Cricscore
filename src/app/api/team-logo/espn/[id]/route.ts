@@ -12,7 +12,7 @@ export const runtime = 'nodejs'
  * route fetches the very same public asset server-side and serves it from our
  * own origin. It bypasses no access control (the CDN asset is public; our
  * upstream feed is where the id came from) and proxies exactly one fixed URL
- * family — `espn:<numeric id>` — with a strict id regex, so it cannot be used
+ * family – `espn:<numeric id>` – with a strict id regex, so it cannot be used
  * as an open proxy or SSRF vector.
  *
  * Responses are cached in the browser/edge for a day (logos rarely change).
@@ -31,7 +31,10 @@ function fail(status: number): NextResponse {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
-  const { id } = await params
+  // Belt and braces: this handler must never surface an unhandled 500 — any
+  // unexpected failure degrades to a controlled 502 with no-store.
+  try {
+    const { id } = await params
   if (!id || !ID_RE.test(id)) return fail(404)
 
   let upstream: Response
@@ -41,7 +44,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id?
       cache: 'no-store',
       redirect: 'error',
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-      headers: { Accept: 'image/png,image/*', 'User-Agent': 'CricScore-SchoolProject/1.0' },
+      headers: { Accept: 'image/png,image/*', 'User-Agent': 'Cricline/1.0' },
     })
   } catch {
     return fail(502)
@@ -69,4 +72,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id?
       'X-Content-Type-Options': 'nosniff',
     },
   })
+  } catch {
+    return fail(502)
+  }
 }

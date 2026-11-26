@@ -1,6 +1,57 @@
 # Changelog
 
-All notable changes to CricScore are tracked here. Commit hashes are the source of truth;
+## 2026-11-26 — Cricline rebrand, visual overhaul (antislop DURING), importance ordering, provenance scrub
+
+### Added
+- `DESIGN.md`: the product's design direction (pavilion-broadsheet language, dial
+  ENERGY 2 / RHYTHM 2 / MOTION 1) with a written reasons ledger per decision.
+- `src/lib/importance.ts` + `tests/importance.test.ts`: tiered match importance
+  (ICC showpieces > marquee leagues > senior tours > age-group internationals >
+  marquee domestic championships > unlisted T20 > first-class > List A > Other OD >
+  unknown). `sortByImportance()` is stable. Applied to the Live/Recent/Upcoming
+  lists and search results; live tab ordering included.
+- `HeaderNav` client component: active-route underline with `aria-current`; tap
+  targets >= 44px; horizontally scrollable on small screens.
+- `ServiceStatus` on About: single-button HTTP check; shows status code and time
+  only, never a body. Replaces the diagnostics panel.
+- Fraunces Variable (display serif) + Archivo Variable (grotesque, tabular scores)
+  via Fontsource; self-hosted, no third-party font CDN.
+
+### Changed
+- **Renamed to Cricline**; production domain is `cricline.vercel.app` (project renamed
+  on Vercel 2026-11-26; previously `cricscore-snowy.vercel.app`). Package name, titles,
+  wordmark, icon and docs updated. localStorage keys keep the `cricscore:` prefix on
+  purpose so existing favorites and sample-mode flags survive the rename.
+- Visual system: pine green ink on warm paper with a brass accent; warm card
+  surfaces; editorial serif for page titles, verdict lines and the wordmark; paper
+  grain texture on the body background; every interactive element keeps visible
+  focus and AA contrast.
+- Persistent "School project · Educational presentation only ..." bar above the
+  header removed.
+- All user-visible mentions of data provenance removed: no upstream hostnames, no
+  provider chips/badges, no chain descriptions, no "via <provider>" strips, no
+  diagnostics source table, no Sportskeeda panel, no "View on source" external link,
+  no `/sources/status` button. The About page now covers freshness, sample mode and
+  a service-status check only. Functionality is unchanged elsewhere; the Scorecard
+  and standings figures that remain are shown verbatim as published.
+- `TeamIdentity` renders the monogram underneath and fades the real mark in only
+  after it has actually loaded (`onLoad`), advancing the candidate chain on `onError`.
+  A broken-image icon can no longer flash or persist; marks whose files do not
+  exist on the CDN degrade deterministically to the labelled monogram.
+- Em dashes removed from all user-visible copy (antislop R-02); missing-value
+  glyph changed from em dash to en dash.
+
+### Removed
+- `DisclaimerBar` (header), `Diagnostics` (About), `SportskeedaAdditionalSource`
+  (Standings/Series/MatchCenter Table tab). The Sportskeeda code path no longer
+  surfaces in the UI.
+
+### Known honesty notes
+- ESPN CDN URLs referenced by the feed cannot be verified from the build sandbox;
+  whether a given team's file exists upstream is out of our control. The website
+  now guarantees a correct visual outcome either way.
+
+All notable changes to Cricline are tracked here. Commit hashes are the source of truth;
 this file summarises them for humans. Format: `Added` / `Changed` / `Fixed` / `Removed`.
 
 ## 2026-11-26 — Extended-scorecard release pickup + team-logo delivery

@@ -64,7 +64,7 @@ export interface MatchView {
   venueCountry: string
   startDateMs: number | null
   endDateMs: number | null
-  /** CREX `startTimeText`: display-only, no timezone known — never parsed. */
+  /** CREX `startTimeText`: display-only, no timezone known – never parsed. */
   startTimeText: string | null
   source: string
   badge: MatchBadge
@@ -178,7 +178,7 @@ function deriveBadge(category: string, live: boolean, status: string, stateTitle
   const label = str(stateTitle) || str(status)
   // Never show LIVE for a fixture that has not started, even if the upstream flagged it 'in'.
   if (STARTS_AT_RE.test(str(status))) {
-    // The fixture has not started — never surface an upstream 'Live' stateTitle next to it.
+    // The fixture has not started – never surface an upstream 'Live' stateTitle next to it.
     return { badge: 'upcoming', badgeLabel: 'Upcoming' }
   }
   if (category === 'upcoming' || (!live && RESULT_RE.test(status) === false && /^(upcoming|scheduled|not started)/i.test(status))) {
@@ -314,7 +314,7 @@ export function normalizeMatchDetail(json: unknown, listFallback?: MatchView | n
   const matchId = str(raw.matchId) || listFallback?.matchId || ''
   if (!matchId) return listFallback ?? null
 
-  // `series` is an object on detail ({id,name}) but a string on lists — handle both.
+  // `series` is an object on detail ({id,name}) but a string on lists – handle both.
   let seriesName = str(raw.seriesName)
   let seriesId = str(raw.seriesId) || null
   const series = raw.series as unknown
@@ -331,14 +331,14 @@ export function normalizeMatchDetail(json: unknown, listFallback?: MatchView | n
   const category = str(raw.category) || listFallback?.category || ''
   const status = str(raw.status) || listFallback?.status || ''
   const stateTitle = str(raw.stateTitle) || listFallback?.stateTitle || ''
-  // The ESPN detail payload carries its own live/state — never let a falsey
+  // The ESPN detail payload carries its own live/state – never let a falsey
   // list-seed mask them (a fresh SSR sees 'unknown' otherwise).
   const live = Boolean(raw.live) || (listFallback?.live ?? false) || category === 'live' || str(raw.state) === 'in'
   const badge = deriveBadge(category, live, status, stateTitle)
 
   const rawScores = normalizeScores(raw.scores)
   // Detail scores are fresher than list scores for the same inningsId when present;
-  // never let an older list overwrite a newer detail value and vice-versa — prefer
+  // never let an older list overwrite a newer detail value and vice-versa – prefer
   // whichever side carries data, detail first.
   const scores = rawScores.length ? rawScores : (listFallback?.scores ?? [])
 
@@ -418,7 +418,7 @@ export interface FallOfWicketView {
   wicketNumber: number | null
   /** Cricket notation exactly as supplied ("4.4"). Never parsed as decimal. */
   overs: string
-  /** TEAM score at dismissal — not the dismissed batter's runs. */
+  /** TEAM score at dismissal – not the dismissed batter's runs. */
   runs: number | null
   /** Provider fowType string, verbatim; may not be a conventional dismissal. */
   type: string | null
@@ -444,7 +444,7 @@ export interface PartnershipBatsmanView {
 export interface PartnershipView {
   wicketNumber: number | null
   type: string | null
-  /** Partnership total INCLUDING relevant extras — batter contributions need not add up to this. */
+  /** Partnership total INCLUDING relevant extras – batter contributions need not add up to this. */
   runs: number | null
   overs: string
   runRate: number | null
@@ -579,7 +579,7 @@ export function normalizeScorecard(json: unknown): ScorecardView {
   const hasDetails = innings.some((i) => i.batsmen.length > 0 || i.bowlers.length > 0)
   const hasTotals = innings.some((i) => i.score.length > 0)
   const cov = (coverage ?? '').toLowerCase()
-  // The provider sends descriptive strings, not enums — live ESPN currently answers
+  // The provider sends descriptive strings, not enums – live ESPN currently answers
   // "innings totals and available player statistics", which describes COMPLETE
   // batting/bowling tables. Classify by what actually arrived: every innings has
   // tables → full; some innings lack tables (or the provider says detail is
@@ -663,7 +663,7 @@ export function normalizeCommentary(json: unknown): CommentaryPageView {
         ? raw.ball !== null && raw.ball !== undefined && str(raw.ball) !== ''
           ? `${str(over)}.${str(raw.ball)}`
           : str(over)
-        : '—'
+        : '–'
     const inningsId = num(raw.inningsId)
     const id = str(raw.id)
     const key = id || `${inningsId ?? 'x'}:${overLabel}:${i}:${str(raw.text).slice(0, 24)}`
@@ -776,7 +776,7 @@ export function normalizeSeriesMatches(json: unknown, leagueId: string, date: st
 
 export interface StandingEntryView {
   team: TeamView | null
-  /** Known columns, null when absent — never fabricated. */
+  /** Known columns, null when absent – never fabricated. */
   known: {
     rank: number | null
     matchesPlayed: number | null
@@ -790,7 +790,7 @@ export interface StandingEntryView {
     netrr: string | null
   }
   /**
-   * Provider-verbatim display strings (displayStats), preferred for rendering —
+   * Provider-verbatim display strings (displayStats), preferred for rendering –
    * e.g. "137/20.0" for for/against, or a signed NRR. Never parsed into runs.
    */
   display: Partial<Record<

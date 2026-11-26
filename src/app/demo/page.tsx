@@ -4,7 +4,7 @@ import { SampleModeToggle } from '@/components/SampleModeToggle'
 
 export const metadata: Metadata = {
   title: 'Recorded demo (offline sample)',
-  description: 'A clearly-labelled offline sample dataset for demonstrations when no live match is scheduled. Fictional data — never a real match, never shown as live.',
+  description: 'A clearly-labelled offline sample dataset for demonstrations when no live match is scheduled. Fictional data; never a real match, never shown as live.',
 }
 
 export default function DemoPage() {

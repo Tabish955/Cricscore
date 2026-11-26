@@ -10,7 +10,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            // No freshness window — we always want the latest provider state on focus/remount.
+            // No freshness window – we always want the latest provider state on focus/remount.
             staleTime: 0,
             gcTime: 5 * 60_000,
             retry: (failureCount, error) => shouldRetry(failureCount, error),

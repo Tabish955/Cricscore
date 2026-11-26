@@ -12,16 +12,15 @@ export function SampleModeToggle() {
   const [on, setOn] = useState<boolean | null>(null)
   useEffect(() => setOn(isSampleMode()), [])
   if (on === null) {
-    return <div className="h-9 w-40 animate-pulse rounded-md bg-navy-100/40" aria-hidden="true" />
+    return <div className="h-9 w-40 animate-pulse rounded-md bg-pine-100/40" aria-hidden="true" />
   }
   return (
     <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm">
       <p className="font-bold text-amber-900">Sample mode (offline demo)</p>
       <p className="mt-1 text-xs leading-relaxed text-amber-900/90">
         Replaces every live fetch with a recorded FICTIONAL dataset so the app works with no
-        network. Invented teams, players and scores — never a real match. A persistent amber
-        banner stays on screen while it is on. Intended for classrooms where the API host is
-        unreachable.
+        network. Invented teams, players and scores; never a real match. A persistent amber
+        banner stays on screen while it is on. Intended for classrooms with no network.
       </p>
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {on ? (
@@ -42,13 +41,13 @@ export function SampleModeToggle() {
               enableSampleMode()
               window.location.reload()
             }}
-            className="rounded-md bg-navy-800 px-3 py-1.5 text-xs font-bold text-white hover:bg-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand"
+            className="rounded-md bg-pine-800 px-3 py-1.5 text-xs font-bold text-white hover:bg-pine-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass"
           >
             Turn sample mode ON
           </button>
         )}
         <span className="text-[11px] font-semibold uppercase tracking-wide text-amber-900">
-          Status: {on ? 'ON — fictional data' : 'off — live API'}
+          Status: {on ? 'ON · fictional data' : 'off · live data'}
         </span>
       </div>
     </div>

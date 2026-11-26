@@ -1,5 +1,5 @@
 /**
- * SAMPLE MODE — explicit, opt-in, offline dataset for classrooms without
+ * SAMPLE MODE – explicit, opt-in, offline dataset for classrooms without
  * network access to the API. Every byte here is FICTIONAL: invented teams,
  * players and scores, clearly labelled. Sample mode never turns on silently:
  * the user flips a switch on /demo or /about which writes
@@ -20,7 +20,7 @@ export function enableSampleMode(): void {
   try {
     window.localStorage.setItem('cricscore:sample-mode:v1', '1')
   } catch {
-    /* storage blocked — the toggle simply won't persist */
+    /* storage blocked – the toggle simply won't persist */
   }
 }
 

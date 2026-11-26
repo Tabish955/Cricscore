@@ -23,22 +23,22 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
   const short = team?.short ?? ''
   const hit = team ? scoreForTeam(m, label, short) : null
   return (
-    <div className="flex items-center gap-2 py-1">
+    <div className="flex items-center gap-2.5 py-1.5">
       <TeamIdentity
         assetKey={team?.id ? `${m.provider}:${team.id}` : `${m.provider}:${label}`}
         name={label}
         short={short}
         imageUrl={team?.imageUrl ?? null}
-        size="sm"
+        size="md"
       />
-      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800" title={label}>
+      <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-ink" title={label}>
         {label}
       </span>
       {hit ? (
-        <span className="score-nums whitespace-nowrap text-sm font-bold text-navy-900">
+        <span className="score-nums whitespace-nowrap font-display text-[15px] font-black text-pine-950">
           {hit.score}
           {hit.declared ? <span title="declared">*</span> : null}
-          {hit.overs ? <span className="ml-1 text-[10px] font-medium text-slate-400">({hit.overs} ov)</span> : null}
+          {hit.overs ? <span className="ml-1 align-baseline font-sans text-[10px] font-medium text-slate-500">({hit.overs} ov)</span> : null}
         </span>
       ) : null}
     </div>
@@ -46,14 +46,14 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
 }
 
 export function MatchCard({ match, index }: { match: MatchView; index?: number }) {
-  // Date/time text renders only after mount — server (UTC) and browser timezones
+  // Date/time text renders only after mount; server (UTC) and browser timezones
   // differ, so SSR and hydration would otherwise print different clocks.
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
   const href = matchHref(match)
   const t1 = match.team1
   const t2 = match.team2
-  // Innings that did not map to either team (name mismatch) — shown plainly, not misaligned.
+  // Innings that did not map to either team (name mismatch), shown plainly, never forced into alignment.
   const used = new Set<string>()
   for (const t of [t1, t2]) {
     if (t) {
@@ -65,22 +65,25 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
   const time = formatMatchTime(match.startDateMs)
   const venue = venueLine(match.venueGround, match.venueCity, match.venueCountry)
   const dateText = match.startDateMs ? `${formatMatchDate(match.startDateMs)}${time ? ` · ${time}` : ''}` : match.startTimeText ?? 'Time not supplied'
+  const live = match.badge === 'live'
 
   return (
     <article
-      className="flex flex-col overflow-hidden rounded-xl border border-edge bg-card shadow-card transition-shadow hover:shadow-md"
+      className={`group flex flex-col overflow-hidden rounded-xl border shadow-card transition-shadow duration-200 hover:shadow-lift ${
+        live ? 'border-pine-700/30 bg-liveSoft' : 'border-edge bg-card'
+      }`}
       aria-label={match.teams || 'Match'}
     >
-      <div className="flex items-center gap-1.5 border-b border-edge/70 bg-slate-50/60 px-3 py-1.5">
-        <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-wide text-slate-500" title={match.seriesName}>
+      <div className="flex items-center gap-1.5 border-b border-edge/70 px-3 pb-1.5 pt-2">
+        <span className="min-w-0 truncate font-display text-[11px] font-semibold text-pine-900" title={match.seriesName}>
           {match.seriesName || 'Series not supplied'}
         </span>
         {match.format ? (
-          <span className="rounded bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-slate-500 ring-1 ring-edge">
+          <span className="shrink-0 rounded border border-pine-800/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-pine-800">
             {match.format}
           </span>
         ) : (
-          <span className="rounded bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-slate-400 ring-1 ring-edge">Format n/a</span>
+          <span className="shrink-0 rounded border border-edge px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-400">Format n/a</span>
         )}
         <div className="ml-auto flex shrink-0 items-center gap-1">
           <StatusBadge badge={match.badge} label={match.badgeLabel} />
@@ -97,8 +100,9 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
         </div>
       </div>
 
-      <Link href={href} className="block px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-brand">
+      <Link href={href} className="block rounded-b-xl px-3 pb-2 pt-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass">
         <TeamRow m={match} team={t1} />
+        <div className="border-t border-edge/50" />
         <TeamRow m={match} team={t2} />
         {unmatched.map((s, i) => (
           <div key={i} className="flex items-center justify-between gap-2 border-t border-dashed border-edge/70 py-0.5 text-[11px] text-slate-500">
@@ -107,16 +111,15 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
           </div>
         ))}
         {match.status ? (
-          <p className="mt-1 border-t border-edge/70 pt-1 text-[11px] font-medium leading-4 text-emerald-900/80" title={match.status}>
+          <p className="mt-1.5 font-display text-[12.5px] italic leading-snug text-pine-800" title={match.status}>
             {match.status}
           </p>
         ) : null}
       </Link>
 
       <div className="mt-auto flex flex-wrap items-center gap-x-2 border-t border-edge/70 px-3 py-1.5 text-[9px] text-slate-400">
-        {venue ? <span className="max-w-[45%] truncate" title={venue}>{venue}</span> : null}
-        <span className="tabular whitespace-nowrap" title="Times shown in your local time">{mounted ? dateText : '—'}</span>
-        <span className="ml-auto font-semibold uppercase tracking-wide">{match.provider}</span>
+        {venue ? <span className="max-w-[55%] truncate" title={venue}>{venue}</span> : null}
+        <span className="tabular ml-auto whitespace-nowrap" title="Times shown in your local time">{mounted ? dateText : '–'}</span>
       </div>
     </article>
   )

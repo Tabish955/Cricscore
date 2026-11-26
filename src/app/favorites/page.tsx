@@ -40,18 +40,18 @@ export default function FavoritesPage() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="text-xl font-black tracking-tight text-navy-900">Favorites</h1>
-          <p className="text-[11px] text-slate-500">Stored only in this browser (no account, no tracking). Keys are provider-scoped — the same match from espn and cb never collide.</p>
+          <h1 className="text-xl font-black tracking-tight text-pine-950">Favorites</h1>
+          <p className="text-[11px] text-slate-500">Stored only in this browser (no account, no tracking). Keys are namespaced, so the same fixture seen through different views never collides.</p>
         </div>
         <div className="flex items-center gap-2 text-[10px] text-slate-500">
-          <span>Feeds: updated {formatFetchedAt(lastOk)}{feedsFetching ? ' · refreshing…' : ''}</span>
-          <button type="button" onClick={retryFeeds} className="rounded-md border border-edge bg-white px-2 py-1.5 text-[10px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">Refresh feeds</button>
+          <span>Updated {formatFetchedAt(lastOk)}{feedsFetching ? ' · refreshing…' : ''}</span>
+          <button type="button" onClick={retryFeeds} className="rounded-md border border-edge bg-white px-2 py-1.5 text-[10px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">Refresh</button>
         </div>
       </div>
 
       {/* Favorite matches */}
       <section aria-labelledby="fav-matches">
-        <h2 id="fav-matches" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Matches ({store.matches.length})</h2>
+        <h2 id="fav-matches" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Matches ({store.matches.length})</h2>
         {store.matches.length === 0 ? (
           <p className="rounded-xl border border-dashed border-edge bg-card px-4 py-6 text-center text-xs text-slate-500">No favorite matches yet. Tap the star on any match card.</p>
         ) : (
@@ -63,8 +63,8 @@ export default function FavoritesPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">{m.seriesName || 'Series not supplied'}</p>
-                      <Link href={m.href} className="mt-0.5 block truncate text-sm font-bold text-navy-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand rounded-sm">{m.label}</Link>
-                      <p className="mt-0.5 text-[9px] text-slate-400">Saved {new Date(m.savedAt).toLocaleDateString()} · {m.provider}:{m.matchId}</p>
+                      <Link href={m.href} className="mt-0.5 block truncate text-sm font-bold text-pine-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass rounded-sm">{m.label}</Link>
+                      <p className="mt-0.5 text-[9px] text-slate-400">Saved {new Date(m.savedAt).toLocaleDateString()} · Ref {m.matchId}</p>
                     </div>
                     <button type="button" aria-label={`Remove ${m.label} from favorites`} onClick={() => setStore(toggleFavoriteMatch(m))} className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400">
                       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -77,8 +77,8 @@ export default function FavoritesPage() {
                         <span className="truncate text-slate-500">{live.scores.map((s) => `${s.team}: ${s.score}`).join(' · ') || live.status}</span>
                       </>
                     ) : (
-                      <span className="text-slate-400">Not in the current feeds · last seen at save time.{' '}
-                        <button type="button" onClick={retryFeeds} className="font-bold text-navy-800 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">Retry feeds</button>
+                      <span className="text-slate-400">Not in the current data · last seen at save time.{' '}
+                        <button type="button" onClick={retryFeeds} className="font-bold text-pine-800 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">Retry</button>
                       </span>
                     )}
                   </div>
@@ -91,7 +91,7 @@ export default function FavoritesPage() {
 
       {/* Favorite teams */}
       <section aria-labelledby="fav-teams">
-        <h2 id="fav-teams" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-navy-900">Teams ({store.teams.length})</h2>
+        <h2 id="fav-teams" className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-pine-950">Teams ({store.teams.length})</h2>
         {store.teams.length === 0 ? (
           <p className="rounded-xl border border-dashed border-edge bg-card px-4 py-6 text-center text-xs text-slate-500">No favorite teams yet. Open a team and tap the star.</p>
         ) : (
@@ -100,8 +100,8 @@ export default function FavoritesPage() {
               <li key={t.key} className="flex items-center gap-3 rounded-xl border border-edge bg-card p-3 shadow-card">
                 <TeamIdentity assetKey={t.key} name={t.name} short={t.short} size="md" />
                 <div className="min-w-0 flex-1">
-                  <Link href={`/teams/${t.provider}/${encodeURIComponent(t.teamId)}?name=${encodeURIComponent(t.name)}&short=${encodeURIComponent(t.short)}`} className="block truncate text-sm font-bold text-navy-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand rounded-sm">{t.name}</Link>
-                  <p className="text-[9px] uppercase tracking-wide text-slate-400">{t.provider} · saved {new Date(t.savedAt).toLocaleDateString()}</p>
+                  <Link href={`/teams/${t.provider}/${encodeURIComponent(t.teamId)}?name=${encodeURIComponent(t.name)}&short=${encodeURIComponent(t.short)}`} className="block truncate text-sm font-bold text-pine-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass rounded-sm">{t.name}</Link>
+                  <p className="text-[9px] uppercase tracking-wide text-slate-400">Saved {new Date(t.savedAt).toLocaleDateString()}</p>
                 </div>
                 <button type="button" aria-label={`Remove ${t.name} from favorites`} onClick={() => setStore(toggleFavoriteTeam(t))} className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400">
                   <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -111,7 +111,7 @@ export default function FavoritesPage() {
           </ul>
         )}
       </section>
-      <p className="text-[9px] text-slate-400">Favorites never leave your browser. Clearing site data removes them. Keys are <code>provider:id</code>, so the same numeric ID from two providers never collides.</p>
+      <p className="text-[9px] text-slate-400">Favorites never leave your browser. Clearing site data removes them.</p>
     </div>
   )
 }

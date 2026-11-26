@@ -32,9 +32,9 @@ describe('date/time formatting (never 1970, never Invalid Date)', () => {
 
   it('rates and overs display verbatim', () => {
     expect(formatRate(141.9334, 2)).toBe('141.93')
-    expect(formatRate(null)).toBe('—')
+    expect(formatRate(null)).toBe('–')
     expect(formatOvers('19.5')).toBe('19.5') // 19 overs 5 balls — displayed, never re-parsed
-    expect(formatOvers(null)).toBe('—')
+    expect(formatOvers(null)).toBe('–')
   })
 
   it('matchHref keeps league/date for ESPN reloads', () => {

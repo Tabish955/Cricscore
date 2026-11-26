@@ -3,7 +3,7 @@
  *
  * Browser code never talks to the upstream host directly. It talks to
  * `/api/cricket/<path>?<query>`; the server route then forwards to the fixed
- * production base. Only the patterns below may pass — anything else is refused,
+ * production base. Only the patterns below may pass – anything else is refused,
  * so this cannot become an open proxy.
  */
 
@@ -23,7 +23,7 @@ const PATH_PATTERNS: RegExp[] = [
   /^espn\/series\/\d{1,12}\/matches$/,
   // Standings by league
   /^espn\/standings\/\d{1,12}$/,
-  // Experimental Sportskeeda adapter (backend release pending — see sportskeeda.ts).
+  // Experimental Sportskeeda adapter (backend release pending – see sportskeeda.ts).
   // Slug: lowercase alphanumerics and hyphens only, max 100 chars. Never a URL.
   /^sportskeeda\/series\/[a-z0-9-]{1,100}\/points-table$/,
 ]
@@ -69,7 +69,7 @@ export function checkUpstreamPath(pathname: string, search: string): AllowCheck 
 
 /**
  * Turn an API-returned link (absolute URL on the production origin, or a root-absolute
- * path) into a same-origin proxy URL. Returns null for anything else — callers must
+ * path) into a same-origin proxy URL. Returns null for anything else – callers must
  * then render it as a labelled external link (https only) or drop it.
  */
 export function toProxyUrl(link: string | null | undefined): string | null {
@@ -102,7 +102,7 @@ export function isSafeExternalHref(link: string | null | undefined): boolean {
 
 /**
  * Derive the provider slug from an API-returned link or provider identity string.
- * Never trust the match ID alone — providers namespace IDs differently.
+ * Never trust the match ID alone – providers namespace IDs differently.
  */
 export function providerFromLinkOrSource(link: string | null | undefined, source: string | null | undefined): 'espn' | 'crex' | 'cb' {
   const fromLink = typeof link === 'string' ? (link.match(/\/(espn|crex|cb)\//)?.[1] ?? null) : null

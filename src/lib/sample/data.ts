@@ -367,7 +367,7 @@ export const sampleStandings = {
     season: '2026 (fictional)',
     groups: [
       {
-        name: 'Sample Premier — Group A (fictional)',
+        name: 'Sample Premier – Group A (fictional)',
         entries: [
           { team: { id: '900011', name: 'Harbour City CC', short: 'HAR' }, stats: { rank: 1, matchesPlayed: 6, matchesWon: 5, matchesLost: 1, matchPoints: 10, netrr: '+1.24' } },
           { team: { id: '900013', name: 'Valley Riders', short: 'VAL' }, stats: { rank: 2, matchesPlayed: 6, matchesWon: 4, matchesLost: 2, matchPoints: 8, netrr: '+0.61' } },

@@ -3,7 +3,7 @@ import { TeamDetail } from '@/components/TeamDetail'
 
 export async function generateMetadata({ params }: { params: Promise<{ provider: string; id: string }> }): Promise<Metadata> {
   const { provider, id } = await params
-  return { title: `Team ${id} · ${provider.toUpperCase()}` }
+  return { title: `Team ${id}` }
 }
 
 export default async function TeamDetailPage({

@@ -1,20 +1,20 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { Header, Footer, DisclaimerBar } from '@/components/Header'
+import { Header, Footer } from '@/components/Header'
 import { QueryProvider } from '@/components/QueryProvider'
 import { SampleModeBanner } from '@/components/SampleModeBanner'
 
 export const metadata: Metadata = {
   title: {
-    default: 'CricScore — Cricket scores, clearly',
-    template: '%s · CricScore',
+    default: 'Cricline: Cricket scores, clearly',
+    template: '%s · Cricline',
   },
   description:
-    'Educational cricket scores demo for a school presentation. Live, recent and upcoming matches via a community cricket API. Not affiliated with Cricbuzz, ESPNcricinfo or CREX.',
+    'Live, recent and upcoming cricket matches with full scorecards, fixtures, tables and squads. A school presentation project.',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#10233a',
+  themeColor: '#0c261b',
   width: 'device-width',
   initialScale: 1,
 }
@@ -24,7 +24,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-screen bg-paper font-sans antialiased">
         <a href="#main" className="skip-link">Skip to main content</a>
-        <DisclaimerBar />
         <SampleModeBanner />
         <QueryProvider>
           <Header />
