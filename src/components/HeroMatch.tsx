@@ -7,6 +7,7 @@ import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/fo
 import { TeamIdentity } from './TeamIdentity'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
+import { splitScoreForDisplay } from '@/lib/score'
 
 function scoreForTeam(m: MatchView, name: string, short: string) {
   const lower = name.toLowerCase()
@@ -35,6 +36,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
 
   const TeamBlock = ({ team, score }: { team: MatchView['team1']; score: ReturnType<typeof scoreForTeam> }) => {
     const label = team?.name ?? 'Team not supplied'
+    const disp = score ? splitScoreForDisplay(score.score) : null
     return (
       <div className="flex min-w-0 items-center gap-3">
         <TeamIdentity
@@ -48,8 +50,8 @@ export function HeroMatch({ match }: { match: MatchView }) {
           <p className="truncate text-base font-bold text-[#f5f0e4] sm:text-lg" title={label}>{label}</p>
           {score ? (
             <p className="score-nums mt-1 font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
-              {score.score}
-              {score.overs ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">({score.overs} ov)</span> : null}
+              {disp!.main}
+              {score.overs ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">({score.overs} ov)</span> : disp!.sub ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">{disp!.sub}</span> : null}
             </p>
           ) : (
             <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8aa392]">To bat</p>
