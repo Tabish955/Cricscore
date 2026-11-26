@@ -16,6 +16,7 @@ import { POLL } from '@/lib/polling'
 import { useOnlineStatus } from '@/lib/hooks'
 import { venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import type { MatchView } from '@/lib/api/normalize'
+import { parseScoreText, splitScoreForDisplay } from '@/lib/score'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
 import { TeamIdentity } from '@/components/TeamIdentity'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -347,15 +348,6 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
   )
 }
 
-/** Parse a cricket score string like "134/2" or "250". Returns null when unparseable. */
-function parseScoreText(score: string): { runs: number; wickets: number } | null {
-  const m = /^(\d+)(?:\s*\/\s*(\d+))?$/.exec(score.trim())
-  if (!m) return null
-  const runs = Number(m[1])
-  const wickets = m[2] !== undefined ? Number(m[2]) : 0
-  return Number.isFinite(runs) && Number.isFinite(wickets) ? { runs, wickets } : null
-}
-
 function momentLabel(runsDelta: number, wicketDelta: number): string {
   if (wicketDelta > 0 && runsDelta === 0) return 'WICKET'
   if (wicketDelta > 0) return `WICKET +${runsDelta}`
@@ -404,6 +396,7 @@ function ScoreMomentButton({ match, side, moment, onOpen }: { match: MatchView; 
     return t && (t === n || t === sh || n.includes(t) || t.includes(n))
   })
   if (!hit) return <span className="score-nums text-sm text-[#a9bfb0]">–</span>
+  const disp = splitScoreForDisplay(hit.score)
   const fresh = moment?.side === side ? moment : null
   return (
     <button
@@ -413,9 +406,9 @@ function ScoreMomentButton({ match, side, moment, onOpen }: { match: MatchView; 
       className="group relative -mx-1.5 rounded-lg px-1.5 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light"
     >
       <span className={`score-nums flex items-baseline whitespace-nowrap font-display text-2xl font-black leading-none text-brass-light transition-transform duration-150 group-hover:scale-[1.04] group-hover:text-[#f5d98a] sm:text-[30px] ${fresh ? 'ball-ping' : ''}`}>
-        {hit.score}
+        {disp.main}
         {hit.declared ? '*' : ''}
-        {hit.overs ? <span className="score-nums ml-1.5 font-sans text-[11px] font-semibold text-[#a9bfb0]">({hit.overs} ov)</span> : null}
+        {hit.overs ? <span className="score-nums ml-1.5 font-sans text-[11px] font-semibold text-[#a9bfb0]">({hit.overs} ov)</span> : disp.sub ? <span className="score-nums ml-1.5 font-sans text-[10px] font-semibold text-[#a9bfb0]">{disp.sub}</span> : null}
       </span>
       {fresh ? (
         <span key={fresh.id} aria-hidden="true" className="burst-rise pointer-events-none absolute -top-3.5 left-1 rounded-md bg-brass-light px-1.5 py-0.5 text-[10px] font-black uppercase leading-none tracking-[0.12em] text-pine-950 shadow">

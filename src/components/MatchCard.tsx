@@ -7,6 +7,7 @@ import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/fo
 import { TeamIdentity } from './TeamIdentity'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
+import { splitScoreForDisplay } from '@/lib/score'
 
 function scoreForTeam(m: MatchView, name: string, short: string): { score: string; overs: string; declared: boolean } | null {
   const lower = name.toLowerCase()
@@ -22,6 +23,7 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
   const label = team?.name ?? 'Team not supplied'
   const short = team?.short ?? ''
   const hit = team ? scoreForTeam(m, label, short) : null
+  const disp = hit ? splitScoreForDisplay(hit.score) : null
   return (
     <div className="flex items-center gap-3 py-2.5">
       <TeamIdentity
@@ -36,9 +38,9 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
       </span>
       {hit ? (
         <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-xl font-black text-pine-950">
-          {hit.score}
+          {disp!.main}
           {hit.declared ? <span title="declared">*</span> : null}
-          {hit.overs ? <span className="ml-1 align-baseline font-sans text-[10px] font-medium text-slate-500">({hit.overs} ov)</span> : null}
+          {hit.overs ? <span className="ml-1 align-baseline font-sans text-[10px] font-medium text-slate-500">({hit.overs} ov)</span> : disp!.sub ? <span className="score-nums ml-1 align-baseline font-sans text-[9.5px] font-medium text-slate-500">{disp!.sub}</span> : null}
         </span>
       ) : null}
     </div>

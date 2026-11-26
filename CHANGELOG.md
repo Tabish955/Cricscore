@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-26 — Score display split for embedded chase context
+
+### Changed
+- `src/lib/score.ts` (new, tested): `parseScoreText` is now lenient about the upstream's
+  embedded context (`"265/1 (35.1/50 ov, target 318)"` → 265/1) — the previous strict
+  pattern silently disabled the score-moment detection for chases. `splitScoreForDisplay`
+  splits the headline figure from its embedded context.
+- Match Center scoreboard, MatchCard and the hero render the figure big and the embedded
+  context (`(35.1/50 ov, target 318)`) as a subordinate run instead of one unreadable
+  string. Frontend only; data handling unchanged.
+
 ## 2026-11-26 — Premium pass: generous layout, score-tap replay, logo triage
 
 ### Added
