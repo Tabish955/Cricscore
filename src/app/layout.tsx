@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { Header, Footer } from '@/components/Header'
+import { TickerBar } from '@/components/TickerBar'
 import { QueryProvider } from '@/components/QueryProvider'
 import { SampleModeBanner } from '@/components/SampleModeBanner'
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SampleModeBanner />
         <QueryProvider>
           <Header />
+          <TickerBar />
           <main id="main" className="mx-auto max-w-7xl px-3 py-4 sm:px-4">
             {children}
           </main>

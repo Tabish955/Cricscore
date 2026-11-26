@@ -167,32 +167,32 @@ describe('StandingsTable', () => {
 })
 
 describe('TeamIdentity — image failure falls down the candidate chain', () => {
-  it('feed imageUrl failure falls back to the monogram after the proxy candidate', () => {
+  it('feed imageUrl is tried first (browser-direct), then direct CDN, registry, proxy, then monogram', () => {
     const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/baroda.png', size: 'xs' }))
-    // Candidate 1 for numeric espn keys is the same-origin proxy
+    // Candidate 1: the feed-supplied URL (browser-direct, proven to load)
     const img1 = container.querySelector('img')!
-    expect(img1.getAttribute('src')).toBe('/api/team-logo/espn/1559')
-    // Candidate 2: the feed-supplied URL
+    expect(img1.getAttribute('src')).toBe('https://cdn.example.test/baroda.png')
+    // Candidate 2: direct ESPN CDN
     fireEvent.error(img1)
     const img2 = container.querySelector('img')!
-    expect(img2.getAttribute('src')).toBe('https://cdn.example.test/baroda.png')
-    // Candidate 3: direct ESPN CDN
+    expect(img2.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    // Candidate 3 (verified registry empty in jsdom): same-origin proxy
     fireEvent.error(img2)
     const img3 = container.querySelector('img')!
-    expect(img3.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    expect(img3.getAttribute('src')).toBe('/api/team-logo/espn/1559')
     // Exhausted → monogram, never a wrong crest
     fireEvent.error(img3)
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
   })
 
-  it('numeric espn keys without any URL use proxy → direct CDN → monogram', () => {
+  it('numeric espn keys without any URL use direct CDN → proxy → monogram', () => {
     const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     const img1 = container.querySelector('img')!
-    expect(img1.getAttribute('src')).toBe('/api/team-logo/espn/1559')
+    expect(img1.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
     fireEvent.error(img1)
     const img2 = container.querySelector('img')!
-    expect(img2.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    expect(img2.getAttribute('src')).toBe('/api/team-logo/espn/1559')
     fireEvent.error(img2)
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()

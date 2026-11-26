@@ -7,6 +7,7 @@ import { listPollInterval } from '@/lib/polling'
 import { useOnlineStatus, useDebouncedValue } from '@/lib/hooks'
 import { rememberTeamAssets } from '@/lib/storage'
 import { MatchCard } from '@/components/MatchCard'
+import { HeroMatch } from '@/components/HeroMatch'
 import { FetchStatus } from '@/components/FetchStatus'
 import { LoadingCard, EmptyState, ErrorState } from '@/components/States'
 import { sortByImportance } from '@/lib/importance'
@@ -77,6 +78,9 @@ export default function HomePage() {
   }, [])
 
   const fetchedAtMs = query.dataUpdatedAt || null
+  // The first live match (importance order) is promoted into the scoreboard hero.
+  const featured = tab === 'live' ? filtered.find((m) => m.badge === 'live') ?? null : null
+  const gridItems = featured ? filtered.filter((m) => m !== featured) : filtered
 
   return (
     <div className="flex flex-col gap-3">
@@ -175,8 +179,11 @@ export default function HomePage() {
           ) : null}
         </EmptyState>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((m) => <MatchCard key={m.key} match={m} />)}
+        <div className="flex flex-col gap-3">
+          {featured ? <HeroMatch match={featured} /> : null}
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {gridItems.map((m) => <MatchCard key={m.key} match={m} />)}
+          </div>
         </div>
       )}
 

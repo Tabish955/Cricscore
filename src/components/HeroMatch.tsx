@@ -1,0 +1,97 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import type { MatchView } from '@/lib/api/normalize'
+import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
+import { TeamIdentity } from './TeamIdentity'
+import { StatusBadge } from './StatusBadge'
+import { FavoriteMatchButton } from './FavoriteToggle'
+
+function scoreForTeam(m: MatchView, name: string, short: string) {
+  const lower = name.toLowerCase()
+  const hit = m.scores.find((s) => {
+    const t = s.team.toLowerCase()
+    return t === lower || t === short.toLowerCase() || lower.includes(t) || t.includes(lower)
+  })
+  return hit ?? null
+}
+
+/**
+ * Featured live match – the scoreboard hero pinned above the grid.
+ * Big tabular figures, marks, verdict in serif italic, one CTA.
+ */
+export function HeroMatch({ match }: { match: MatchView }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const href = matchHref(match)
+  const t1 = match.team1
+  const t2 = match.team2
+  const s1 = t1 ? scoreForTeam(match, t1.name, t1.short) : null
+  const s2 = t2 ? scoreForTeam(match, t2.name, t2.short) : null
+  const time = formatMatchTime(match.startDateMs)
+  const venue = venueLine(match.venueGround, match.venueCity, match.venueCountry)
+  const dateText = match.startDateMs ? `${formatMatchDate(match.startDateMs)}${time ? ` · ${time}` : ''}` : match.startTimeText ?? ''
+
+  const TeamBlock = ({ team, score }: { team: MatchView['team1']; score: ReturnType<typeof scoreForTeam> }) => {
+    const label = team?.name ?? 'Team not supplied'
+    return (
+      <div className="flex min-w-0 items-center gap-3">
+        <TeamIdentity
+          assetKey={team?.id ? `${match.provider}:${team.id}` : `${match.provider}:${label}`}
+          name={label}
+          short={team?.short ?? ''}
+          imageUrl={team?.imageUrl ?? null}
+          size="lg"
+        />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-[#f5f0e4]" title={label}>{label}</p>
+          {score ? (
+            <p className="score-nums mt-0.5 font-display text-[30px] font-black leading-none tracking-tight text-white sm:text-[34px]">
+              {score.score}
+              {score.overs ? <span className="ml-1.5 align-baseline font-sans text-[11px] font-semibold text-[#9db4a4]">({score.overs} ov)</span> : null}
+            </p>
+          ) : (
+            <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8aa392]">To bat</p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <section aria-label={`Featured match: ${match.teams || 'live match'}`} className="card-in overflow-hidden rounded-2xl border border-brass/40 bg-pine-950 shadow-lift">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-4 py-1.5">
+        <span className="min-w-0 max-w-full truncate font-display text-[11px] font-semibold uppercase tracking-[0.14em] text-brass-light" title={match.seriesName}>
+          {match.seriesName || 'Live match'}
+        </span>
+        {match.format ? <span className="rounded border border-brass-light/40 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-brass-light">{match.format}</span> : null}
+        <div className="ml-auto flex items-center gap-1.5">
+          <StatusBadge badge={match.badge} label={match.badgeLabel} />
+          <FavoriteMatchButton match={{ key: match.key, provider: match.provider, matchId: match.matchId, label: match.teams || `${t1?.name ?? '?'} vs ${t2?.name ?? '?'}`, seriesName: match.seriesName, href }} />
+        </div>
+      </div>
+
+      <Link href={href} className="block px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass-light">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <TeamBlock team={t1} score={s1} />
+          <span className="hidden select-none font-display text-xl font-black text-brass/60 sm:block">v</span>
+          <TeamBlock team={t2} score={s2} />
+        </div>
+        {match.status ? (
+          <p className="mt-3 border-t border-white/10 pt-2.5 font-display text-[15px] italic leading-snug text-brass-light" title={match.status}>
+            {match.status}
+          </p>
+        ) : null}
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[#8aa392]">
+          {venue ? <span className="max-w-[70%] truncate" title={venue}>{venue}</span> : null}
+          <span className="tabular">{mounted ? dateText : '–'}</span>
+          <span className="ml-auto inline-flex items-center gap-1 font-bold uppercase tracking-[0.14em] text-brass-light">
+            Open match center
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          </span>
+        </div>
+      </Link>
+    </section>
+  )
+}

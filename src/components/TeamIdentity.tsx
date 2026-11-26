@@ -6,8 +6,8 @@ import { loadTeamAssets } from '@/lib/storage'
 const assetCache: { map: Map<string, string> | null } = { map: null }
 
 /**
- * Marks chain for a team: same-origin logo proxy (numeric keys) -> feed
- * imageUrl -> verified registry -> direct CDN -> monogram. Each candidate
+ * Marks chain for a team: feed imageUrl -> direct CDN -> verified
+ * registry -> same-origin logo proxy (numeric keys) -> monogram. Each candidate
  * advances on a failed image load; the monogram renders underneath at all
  * times, and the <img> fades in only after it has actually loaded.
  *
@@ -60,10 +60,13 @@ export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', cla
     const espnId = espnIdFromKey(assetKey)
     const feedUrl = imageUrl && /^https:\/\//i.test(imageUrl) ? imageUrl : null
     const registryUrl = assetCache.map?.get(assetKey) ?? null
-    if (espnId) list.push(proxyLogo(espnId))
+    // Browser-direct first: the CDN serves what it serves to the browser
+    // (proven to load); the same-origin proxy costs a round trip only for
+    // files the CDN hotlink-blocks, then the registry, then the proxy.
     if (feedUrl) list.push(feedUrl)
-    if (registryUrl && registryUrl !== feedUrl) list.push(registryUrl)
     if (espnId) list.push(`${ESPN_LOGO_BASE}${espnId}.png`)
+    if (registryUrl && registryUrl !== feedUrl) list.push(registryUrl)
+    if (espnId) list.push(proxyLogo(espnId))
     return list
   }, [imageUrl, assetKey])
 
