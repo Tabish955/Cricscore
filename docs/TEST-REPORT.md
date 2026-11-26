@@ -79,3 +79,36 @@ from what is merely asserted.
 - `/series/[leagueId]` shows **one date only** — labelled "Matches for selected date", never "Archive".
 - Bilateral standings are frequently empty → empty table with explanation, by design.
 - Sample-mode data is fictional league "9001"; it is contract-validated but is **not a real match**.
+
+---
+
+# Round 3 addendum — 2026-11-26 (extended-scorecard release + team logos)
+
+Supersedes the stale "backend unreleased" rows above; those were true at build time and are kept
+for history.
+
+**Live-verified against production (via the agent fetch tool, ~14:26Z):**
+`/espn/match/1546783/scorecard?league=8661&date=20261126` now returns, in both innings,
+`extras` (Mumbai **total 7**: 1 bye, 2 leg byes, 3 wides, 1 no-ball, 0 penalties),
+`fallOfWickets` (10 rows per innings, provider order) and `partnerships` (10 rows per innings);
+each innings also carries `teamId`. A verbatim subset of that very payload is pinned as a
+regression fixture in `tests/extended-api.test.ts`.
+
+**Not verified live:** in-browser pixel rendering of logos/scorecard (no Playwright; jsdom only);
+whether every numeric ESPN id in the current feeds has a CDN logo file (misses fall back through
+the candidate chain to the monogram by design); Sportskeeda route (still absent — panel ships
+"not configured" by design).
+
+Round-3 gates: `tsc --noEmit` **0 errors** · `next build` **13/13 routes** (incl. the new
+`ƒ /api/team-logo/espn/[id]`) · vitest **126/126** across 13 files — all upstream calls mocked
+in unit tests; extended-field claims are **live-verified** via the payload fetch above.
+
+Logo root cause (why ~1–2% showed): standings/favorites/team pages rendered `TeamIdentity` with
+no `imageUrl` and an empty client-side registry, so nearly everything fell through to the
+monogram; and direct browser loads of `a.espncdn.com` were lost to hotlink/referer blocking
+wherever they were attempted. Fix: `/api/team-logo/espn/<id>` same-origin proxy (strict numeric
+id, image-only passthrough, 512 KB cap, day-long cache, `no-store` on failure) as the primary
+candidate for numeric `espn:<id>` keys, with direct CDN and monogram as progressive fallbacks.
+The scorecard query key was bumped (`v2-extended`) to invalidate pre-release cached payloads in
+long-open tabs; server and client fetches were already `no-store`, and TanStack Query runs with
+`staleTime: 0`.

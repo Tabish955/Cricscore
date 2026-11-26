@@ -167,31 +167,45 @@ describe('StandingsTable', () => {
   })
 })
 
-describe('TeamIdentity — image failure falls back once', () => {
-  it('shows fallback initials badge after the image errors', () => {
+describe('TeamIdentity — image failure falls down the candidate chain', () => {
+  it('feed imageUrl failure falls back to the monogram after the proxy candidate', () => {
     const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/baroda.png', size: 'xs' }))
-    const img = container.querySelector('img')!
-    expect(img).toBeTruthy()
-    fireEvent.error(img)
+    // Candidate 1 for numeric espn keys is the same-origin proxy
+    const img1 = container.querySelector('img')!
+    expect(img1.getAttribute('src')).toBe('/api/team-logo/espn/1559')
+    // Candidate 2: the feed-supplied URL
+    fireEvent.error(img1)
+    const img2 = container.querySelector('img')!
+    expect(img2.getAttribute('src')).toBe('https://cdn.example.test/baroda.png')
+    // Candidate 3: direct ESPN CDN
+    fireEvent.error(img2)
+    const img3 = container.querySelector('img')!
+    expect(img3.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    // Exhausted → monogram, never a wrong crest
+    fireEvent.error(img3)
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
   })
 
-  it('derives the ESPN CDN logo from a numeric espn assetKey when nothing else is known', () => {
+  it('numeric espn keys without any URL use proxy → direct CDN → monogram', () => {
     const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
-    const img = container.querySelector('img')!
-    expect(img).toBeTruthy()
-    expect(img.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
-    // a failed derived image still falls back to the monogram, never loops or guesses identity
-    fireEvent.error(img)
+    const img1 = container.querySelector('img')!
+    expect(img1.getAttribute('src')).toBe('/api/team-logo/espn/1559')
+    fireEvent.error(img1)
+    const img2 = container.querySelector('img')!
+    expect(img2.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    fireEvent.error(img2)
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
   })
 
-  it('does not derive CDN logos for non-espn keys (monogram instead)', () => {
+  it('does not proxy non-espn keys (monogram instead, feed URL if supplied)', () => {
     const { container } = render(createElement(TeamIdentity, { assetKey: 'sportskeeda:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+    const withFeed = render(createElement(TeamIdentity, { assetKey: 'sportskeeda:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
+    const img = withFeed.container.querySelector('img')!
+    expect(img.getAttribute('src')).toBe('https://cdn.example.test/b.png')
   })
 })
 

@@ -61,7 +61,7 @@ export default function AboutPage() {
         <h2 id="attribution" className="text-xs font-black uppercase tracking-[0.16em] text-navy-900">Attribution &amp; sources</h2>
         <ul className="mt-2 list-disc space-y-1 pl-4 text-[11px] leading-5 text-slate-600">
           <li>Match data: <strong>cricketapi-beryl.vercel.app</strong> — a community API whose list chain is Cricbuzz → Cricinfo → ESPN public scoreboards → independent CREX. Used as-is; no keys, no scraping of sources.</li>
-          <li>Team marks: from the upstream feed when provided (via <code>TeamIdentity</code>); otherwise ESPN&apos;s public team-logo CDN keyed to the provider&apos;s numeric team id (same CDN family the feed uses — a failed image falls back silently); otherwise generic monogram badges labelled as fallbacks. Nothing here is an official club, board or broadcaster logo unless it comes from the feed or ESPN&apos;s CDN for that exact team.</li>
+          <li>Team marks: feed-supplied images when provided; otherwise served from our own <code>/api/team-logo/espn/&lt;id&gt;</code> — a same-origin cache of ESPN&apos;s public team-logo CDN, keyed to the provider&apos;s numeric team id; a missing logo falls back to the direct CDN URL, then a generic monogram badge labelled as a fallback. Nothing here is an official club, board or broadcaster logo unless it comes from the feed or ESPN&apos;s CDN for that exact team.</li>
           <li>This site is not affiliated with Cricbuzz, ESPNcricinfo, CREX, the ICC, any board, franchise or broadcaster.</li>
         </ul>
       </section>

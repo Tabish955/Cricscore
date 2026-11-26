@@ -123,7 +123,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
   })
 
   const scorecardQ = useQuery({
-    queryKey: ['scorecard', seed.key, league, date],
+    queryKey: ['scorecard', 'v2-extended', seed.key, league, date],
     enabled: isEspn && !!seed.links.scorecard,
     queryFn: ({ signal }) => fetchScorecard(seed, signal),
     refetchInterval: isLive ? POLL.scorecardLive : false,
@@ -362,7 +362,7 @@ function OverviewNotices({ match, canDeepDive }: { match: MatchView; canDeepDive
           <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">What the API can see</h2>
           <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-5 text-slate-600">
             <li>Toss, weather, umpires and pitch reports are <strong>not exposed</strong> — deliberately shown as missing, never invented.</li>
-            <li>Extras, fall of wickets and partnerships: shown only when the scorecard endpoint sends them (older backend responses won&rsquo;t include them).</li>
+            <li>Extras, fall of wickets and partnerships: included in the production scorecard as of 2026-11-26; they render when the endpoint sends them (very old cached responses won&rsquo;t include them).</li>
             <li>{canDeepDive ? 'Scorecard, squads and commentary load from the ESPN detail endpoints on demand.' : 'This provider exposes no per-match detail endpoints — scores come from the list feed only.'}</li>
           </ul>
         </section>

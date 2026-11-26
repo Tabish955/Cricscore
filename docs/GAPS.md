@@ -28,8 +28,9 @@ out-of-scope by requirement, or explicitly deferred.
 
 9. **No news anywhere** — no headlines surface exists.
 10. **No betting/odds/fantasy/payments/ads/tracking** — none included, ever.
-11. **No official club/board/franchise crests bundled** — feed-supplied images or ESPN-CDN
-    id-derived logos with labelled monogram fallback only.
+11. **No official club/board/franchise crests bundled** — feed-supplied images, ESPN-CDN logos
+    served same-origin via `/api/team-logo/espn/<id>` (direct CDN as second chance), or a
+    clearly-labelled monogram. The id *is* the team; artwork is never re-mapped between teams.
 12. **No win prediction, wagon wheels, ball tracking** — protected/proprietary; absent.
 13. **Spec example IDs never seeded** as fixtures (`1546783`/`8661`/`20261126` treated as
     historical references only).
@@ -38,11 +39,12 @@ out-of-scope by requirement, or explicitly deferred.
 
 14. **No ESLint configuration.** Verification = strict `tsc` + `next build` + unit tests. Adding
     `eslint-config-next` + CI would be the first follow-up.
-15. **Extended scorecard fields (extras / fall of wickets / partnerships) — backend release
-    pending.** As of 2026-11-26 the deployed upstream does not send them (checked: root index
-    does not list them; `/espn/match/1546783/scorecard` returns neither). The website renders
-    them when they arrive, keeps “not supplied” as an explicit state, and is contract-tested only
-    with synthetic fixtures. **No live verification is possible until the backend deploys.**
+15. **Extended scorecard fields (extras / fall of wickets / partnerships) — shipped and verified
+    live (2026-11-26, ~14:26Z).** `/espn/match/1546783/scorecard?league=8661&date=20261126`
+    returns `extras.total` 7 for Mumbai plus populated fallOfWickets and partnerships arrays
+    (both innings). The website renders them with a verbatim-payload regression test
+    (`tests/extended-api.test.ts`); “not supplied” remains an explicit state and is shown only
+    when sections are genuinely missing (e.g. older cached responses lack the fields entirely).
 16. **Sportskeeda points table — not released.** `/sportskeeda/series/:slug/points-table` is
     absent from the upstream index and direct requests fail. The website ships the allowlist
     route, client, normalizer and UI behind an **empty** verified-mapping registry; until the
