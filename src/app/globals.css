@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background-color: theme('colors.paper');
+  color: #1f2937;
+}
+
+.tabular,
+.score-nums {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+/* Accessible skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: theme('colors.navy.900');
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Live pulse — subtle, disabled under reduced motion */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+.live-dot {
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* Compact table scrollbars */
+.score-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+.score-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+.score-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* Sticky first column for wide tables on small screens */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: inherit;
+  z-index: 1;
+}
+
+:focus-visible {
+  outline: 2px solid theme('colors.amber.brand');
+  outline-offset: 2px;
+}
