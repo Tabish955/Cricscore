@@ -166,7 +166,8 @@ function deriveBadge(category: string, live: boolean, status: string, stateTitle
   const label = str(stateTitle) || str(status)
   // Never show LIVE for a fixture that has not started, even if the upstream flagged it 'in'.
   if (STARTS_AT_RE.test(str(status))) {
-    return { badge: 'upcoming', badgeLabel: label || 'Upcoming' }
+    // The fixture has not started — never surface an upstream 'Live' stateTitle next to it.
+    return { badge: 'upcoming', badgeLabel: 'Upcoming' }
   }
   if (category === 'upcoming' || (!live && RESULT_RE.test(status) === false && /^(upcoming|scheduled|not started)/i.test(status))) {
     return { badge: 'upcoming', badgeLabel: label || 'Upcoming' }

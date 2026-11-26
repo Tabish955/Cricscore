@@ -267,6 +267,7 @@ describe('badge derivation (regressions)', () => {
       result: { found: true, count: 1, matches: [{ matchId: 'm-start', teams: 'A vs B', category: 'live', live: true, status: 'Starts at 10:00 local time', state: 'in', stateTitle: 'Live', series: 'S', seriesId: '9', format: 'First-class', source: 'espn-site', detail: '/espn/match/m-start?league=9&date=20261126', scores: [] }] },
     }, 'live')
     expect(out.matches[0]!.badge).toBe('upcoming')
+    expect(out.matches[0]!.badgeLabel).toBe('Upcoming')
   })
 
   it('detail payload overrides a falsey list seed and keeps a live match LIVE', () => {
