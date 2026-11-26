@@ -28,8 +28,8 @@ out-of-scope by requirement, or explicitly deferred.
 
 9. **No news anywhere** — no headlines surface exists.
 10. **No betting/odds/fantasy/payments/ads/tracking** — none included, ever.
-11. **No official club/board/franchise crests bundled** — feed-supplied images or labelled
-    monograms only.
+11. **No official club/board/franchise crests bundled** — feed-supplied images or ESPN-CDN
+    id-derived logos with labelled monogram fallback only.
 12. **No win prediction, wagon wheels, ball tracking** — protected/proprietary; absent.
 13. **Spec example IDs never seeded** as fixtures (`1546783`/`8661`/`20261126` treated as
     historical references only).

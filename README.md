@@ -10,8 +10,9 @@ commentary, scorecards, squads, series scoreboards, standings, search and favori
 being honest about where the data comes from, how fresh it is, and what it can never do
 (no news, no betting, no payments, no ads, no tracking, no invented records or logos).
 
-**Original brand.** No third-party trademarks, crests or artwork are used. Team images appear
-only when the feed itself supplies them; otherwise the app renders clearly-labelled monogram
+**Original brand.** No third-party trademarks, crests or artwork are bundled. Team images appear
+when the feed supplies them, or from ESPN's public team-logo CDN keyed to the provider's numeric
+team id (a failed image falls back silently); otherwise the app renders clearly-labelled monogram
 fallbacks. Nothing is scraped, bypassed, or impersonated.
 
 ## Quick start

@@ -82,7 +82,9 @@ on `/demo` and `/about`. Sample mode is **never** enabled by default.
 
 `src/components/TeamIdentity.tsx` resolves, in order: feed `team.imageUrl` (plain `<img>`, a.espncdn.com
 not proxied/allowlisted; `referrerPolicy="no-referrer"`) → provider+teamId local registry
-(`src/lib/teamAssets.ts`, populated only from verified feed metadata) → monogram badge labelled
+(`src/lib/teamAssets.ts`, populated only from verified feed metadata) → ESPN team-logo CDN derived
+from numeric `espn:<id>` asset keys (`a.espncdn.com/i/teamlogos/cricket/500/<id>.png` — the same CDN
+family the feed emits; a failed image falls back silently) → monogram badge labelled
 "fallback badge — not an official crest". Flag images are never mapped onto domestic/franchise
 teams. Status never conveyed by colour alone (badges carry text + icon).
 
