@@ -35,7 +35,7 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
         {label}
       </span>
       {hit ? (
-        <span className="score-nums whitespace-nowrap font-display text-[15px] font-black text-pine-950">
+        <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-[16px] font-black text-pine-950">
           {hit.score}
           {hit.declared ? <span title="declared">*</span> : null}
           {hit.overs ? <span className="ml-1 align-baseline font-sans text-[10px] font-medium text-slate-500">({hit.overs} ov)</span> : null}
@@ -69,8 +69,8 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
 
   return (
     <article
-      className={`group flex flex-col overflow-hidden rounded-xl border shadow-card transition-shadow duration-200 hover:shadow-lift ${
-        live ? 'border-pine-700/30 bg-liveSoft' : 'border-edge bg-card'
+      className={`group lift flex flex-col overflow-hidden rounded-xl border shadow-card transition-shadow duration-200 hover:shadow-lift ${
+        live ? 'border-pine-700/30 border-l-4 border-l-brass bg-liveSoft' : 'border-edge bg-card'
       }`}
       aria-label={match.teams || 'Match'}
     >

@@ -7,6 +7,7 @@ import { clampCommentaryPage, dedupeCommentary, latestCommentaryPage } from '@/l
 import { fetchCommentaryPage } from '@/lib/api/client'
 import { POLL } from '@/lib/polling'
 import { CoverageNote, ErrorState, LoadingCard } from '@/components/States'
+import { BallPlayer } from './BallPlayer'
 
 const chipStyles: Record<CommentaryView['event'], string> = {
   wicket: 'bg-red-100 text-red-800 ring-red-300',
@@ -51,6 +52,13 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
     return newestFirst ? [...list].reverse() : list
   }, [data?.items, innings, newestFirst])
 
+  const chronological = useMemo(() => (newestFirst ? [...items].reverse() : items), [items, newestFirst])
+  const latestBall = useMemo(() => {
+    for (let i = chronological.length - 1; i >= 0; i--) {
+      if (chronological[i]!.event !== 'info') return chronological[i]!
+    }
+    return chronological[chronological.length - 1] ?? null
+  }, [chronological])
   const inningsIds = useMemo(() => [...new Set((data?.items ?? []).map((i) => i.inningsId).filter((v): v is number => v !== null))].sort((a, b) => a - b), [data?.items])
 
   const jumpToLatest = () => {
@@ -73,6 +81,9 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
 
   return (
     <div className="flex flex-col gap-2">
+      {/* Ball re-enactment of the newest delivery on this page */}
+      <BallPlayer item={latestBall} />
+
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-edge bg-card p-2">
         <div role="group" aria-label="Commentary order" className="flex overflow-hidden rounded-lg border border-edge text-[11px] font-bold">

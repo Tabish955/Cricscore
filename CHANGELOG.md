@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-11-26 — Density pass: live hero, ticker, ball re-enactment, motion pack
+
+### Added
+- Live hero on the home lists: the top live match (importance order) promoted into a full-width
+  pavilion-night scoreboard card with big tabular figures, verdict in serif italic, CTA to Match Center.
+- Global live ticker under the header: brass-on-pine marquee of verdict lines for all live matches,
+  importance order; pauses on hover/focus; wrapped static row under reduced motion.
+- Ball re-enactment in Match Center → Commentary: bowler runs in, the ball travels the lane, outcome
+  lands (dot, 1-3 with fielder converge + running hints, FOUR/SIX boundary flight, WICKET with tumbling
+  bails and stump flash, extra tag). Driven by the recorded ball's event class only; replay on demand and
+  auto re-runs when a newer ball lands. Reduced-motion renders the final frame statically.
+- Score-flash: polled score changes bloom brass briefly (keyed remount on value change).
+- Skeleton shimmer loading cards (no lone spinner), card entrance animation, hover lift on cards,
+  star-pop on favorite toggle, ticker marquee CSS.
+
+### Changed
+- Team logo candidate chain reordered to feed imageUrl → direct CDN → verified registry → same-origin proxy:
+  browser-direct loads are the proven path; the proxy remains as the final network attempt before the
+  monogram. (Fewer working marks were resolving when the proxy was tried first.)
+
 ## 2026-11-26 – Cricline rebrand, visual overhaul (antislop DURING), importance ordering, provenance scrub
 
 ### Added

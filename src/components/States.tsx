@@ -10,10 +10,29 @@ export function Spinner({ label }: { label?: string }) {
 }
 
 export function LoadingCard({ label = 'Loading…' }: { label?: string }) {
+  // Shimmer skeleton grid: reads as incoming data, never as a broken page.
   return (
-    <div className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-xl border border-edge bg-card p-6 text-center">
-      <Spinner label={label} />
-      <p className="text-[11px] text-slate-400">Scores can take a few seconds to arrive. The screen never fakes them.</p>
+    <div role="status" aria-label={label} aria-busy="true" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 6 }, (_, i) => (
+        <div key={i} className="flex flex-col gap-2 rounded-xl border border-edge bg-card p-3 shadow-card">
+          <div className="flex items-center gap-2">
+            <div className="skeleton h-3 w-2/5" />
+            <div className="skeleton ml-auto h-4 w-10" />
+          </div>
+          {[0, 1].map((j) => (
+            <div key={j} className="flex items-center gap-2.5 py-1.5">
+              <div className="skeleton h-10 w-10 !rounded-full" />
+              <div className="flex-1">
+                <div className="skeleton h-3.5 w-3/4" />
+                <div className="skeleton mt-1.5 h-2.5 w-1/3" />
+              </div>
+              <div className="skeleton h-5 w-14" />
+            </div>
+          ))}
+          <div className="skeleton h-3 w-4/5" />
+        </div>
+      ))}
+      <span className="sr-only">{label} Scores can take a few seconds to arrive.</span>
     </div>
   )
 }
