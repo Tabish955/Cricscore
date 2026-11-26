@@ -17,11 +17,11 @@ export function BrandMark({ size = 30 }: { size?: number }) {
 export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-pine-950 shadow-[0_2px_0_0_#a87b24]">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-1.5 px-3 py-2.5 sm:px-4">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-7 gap-y-2 px-4 py-3 sm:px-6">
         <Link href="/" className="group flex items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light">
           <BrandMark size={30} />
           <span className="flex flex-col leading-none">
-            <span className="font-display text-[22px] font-black tracking-tight text-[#f5f0e4] transition-colors group-hover:text-brass-light">
+            <span className="font-display text-2xl font-black tracking-tight text-[#f5f0e4] transition-colors group-hover:text-brass-light">
               Cricline
             </span>
             <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.22em] text-[#9db4a4] group-hover:text-[#c4d4c8]">

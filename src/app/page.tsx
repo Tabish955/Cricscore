@@ -83,12 +83,12 @@ export default function HomePage() {
   const gridItems = featured ? filtered.filter((m) => m !== featured) : filtered
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
       {/* Page heading + freshness */}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="font-display text-3xl font-black tracking-tight text-pine-950">Match Center</h1>
-          <p className="mt-0.5 text-[11px] text-slate-500">Live, recent and upcoming fixtures, most important first.</p>
+          <h1 className="font-display text-4xl font-black tracking-tight text-pine-950 sm:text-5xl">Match Center</h1>
+          <p className="mt-2 max-w-md text-xs leading-5 text-slate-500 sm:text-[13px]">Live, recent and upcoming fixtures, most important first. Times in your local zone.</p>
         </div>
         <FetchStatus
           lastOkMs={fetchedAtMs}
@@ -117,7 +117,7 @@ export default function HomePage() {
             onClick={() => setTab(t.id)}
             onKeyDown={(e) => onTabKeyDown(e, i)}
             title={t.hint}
-            className={`-mb-px min-h-[44px] rounded-t-md border-b-2 px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
+            className={`-mb-px min-h-[48px] rounded-t-md border-b-2 px-5 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${
               tab === t.id ? 'border-brass text-pine-950' : 'border-transparent text-slate-500 hover:text-pine-900'
             }`}
           >
@@ -128,21 +128,21 @@ export default function HomePage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2">
-        <label className="relative min-w-[200px] flex-1">
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="relative min-w-[220px] flex-1">
           <span className="sr-only">Filter matches by team, series or venue</span>
-          <svg aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <svg aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             type="search"
             placeholder="Filter by team, series, venue…"
-            className="w-full rounded-lg border border-edge bg-white py-2 pl-9 pr-3 text-sm shadow-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass"
+            className="w-full rounded-xl border border-edge bg-white py-2.5 pl-10 pr-3 text-sm shadow-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass"
           />
         </label>
         <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
           Format
-          <select value={format} onChange={(e) => setFormat(e.target.value)} className="rounded-lg border border-edge bg-white px-2 py-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">
+          <select value={format} onChange={(e) => setFormat(e.target.value)} className="rounded-lg border border-edge bg-white px-2.5 py-2.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass">
             <option value="all">All</option>
             {formats.map((f) => <option key={f} value={f}>{f}</option>)}
           </select>
@@ -179,9 +179,9 @@ export default function HomePage() {
           ) : null}
         </EmptyState>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-5">
           {featured ? <HeroMatch match={featured} /> : null}
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
             {gridItems.map((m) => <MatchCard key={m.key} match={m} />)}
           </div>
         </div>

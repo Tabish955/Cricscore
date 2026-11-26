@@ -7,7 +7,6 @@ import { clampCommentaryPage, dedupeCommentary, latestCommentaryPage } from '@/l
 import { fetchCommentaryPage } from '@/lib/api/client'
 import { POLL } from '@/lib/polling'
 import { CoverageNote, ErrorState, LoadingCard } from '@/components/States'
-import { BallPlayer } from './BallPlayer'
 
 const chipStyles: Record<CommentaryView['event'], string> = {
   wicket: 'bg-red-100 text-red-800 ring-red-300',
@@ -52,13 +51,6 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
     return newestFirst ? [...list].reverse() : list
   }, [data?.items, innings, newestFirst])
 
-  const chronological = useMemo(() => (newestFirst ? [...items].reverse() : items), [items, newestFirst])
-  const latestBall = useMemo(() => {
-    for (let i = chronological.length - 1; i >= 0; i--) {
-      if (chronological[i]!.event !== 'info') return chronological[i]!
-    }
-    return chronological[chronological.length - 1] ?? null
-  }, [chronological])
   const inningsIds = useMemo(() => [...new Set((data?.items ?? []).map((i) => i.inningsId).filter((v): v is number => v !== null))].sort((a, b) => a - b), [data?.items])
 
   const jumpToLatest = () => {
@@ -81,9 +73,6 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Ball re-enactment of the newest delivery on this page */}
-      <BallPlayer item={latestBall} />
-
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-edge bg-card p-2">
         <div role="group" aria-label="Commentary order" className="flex overflow-hidden rounded-lg border border-edge text-[11px] font-bold">
@@ -112,11 +101,11 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
       <p className="text-[9px] text-slate-400">Page 1 is the first page of the record, not necessarily the newest ball. Pages hold ~{pageSize} deliveries. {isLive ? 'Live pages poll every 20s while this tab is visible.' : 'Completed match – no polling.'}</p>
 
       {/* Deliveries */}
-      <ol className="flex flex-col gap-1.5" aria-live="off">
+      <ol className="flex flex-col gap-2" aria-live="off">
         {items.length === 0 ? (
           <li className="rounded-lg border border-dashed border-edge bg-card px-3 py-4 text-center text-[11px] text-slate-500">No deliveries on this page{innings !== 'all' ? ' for the selected innings' : ''}.</li>
         ) : items.map((item) => (
-          <li key={item.key} className={`rounded-lg border px-3 py-2 ${item.event === 'wicket' ? 'border-red-200 bg-red-50/50' : item.event === 'six' || item.event === 'four' ? 'border-emerald-200 bg-emerald-50/40' : 'border-edge bg-card'}`}>
+          <li key={item.key} className={`rounded-xl border px-3.5 py-2.5 ${item.event === 'wicket' ? 'border-red-200 bg-red-50/50' : item.event === 'six' || item.event === 'four' ? 'border-emerald-200 bg-emerald-50/40' : 'border-edge bg-card'}`}>
             <div className="flex items-start gap-2">
               <span className="tabular mt-0.5 inline-flex w-10 shrink-0 justify-center rounded bg-pine-900 px-1 py-0.5 text-[9px] font-black text-white">{item.overLabel}</span>
               <div className="min-w-0 flex-1">
@@ -126,7 +115,7 @@ export function CommentaryPanel({ match, league, date, isLive }: { match: MatchV
                   {item.cumulativeScore ? <span className="tabular text-[10px] font-bold text-pine-900">{item.cumulativeScore}</span> : null}
                   {item.batsman ? <span className="text-[9px] text-slate-400">{item.batsman}{item.bowler ? ` · ${item.bowler}` : ''}</span> : null}
                 </div>
-                {item.text ? <p className="mt-0.5 text-[12px] leading-5 text-slate-700">{item.text}</p> : null}
+                {item.text ? <p className="mt-1 text-[13px] leading-6 text-slate-700">{item.text}</p> : null}
               </div>
             </div>
           </li>
