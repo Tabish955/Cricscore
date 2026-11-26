@@ -27,13 +27,48 @@ const FICTIONAL_SCORECARD: Scorecard = {
       overs: '16.2',
       declared: false,
       batsmen: [
-        { position: 1, id: 'demo-p1', name: 'A. Rafiq', runs: 44, balls: 31, fours: 5, sixes: 1, strikeRate: 141.93, dismissal: 'c D. Menon b S. Whitmore', isBatting: false },
-        { position: 2, id: 'demo-p2', name: 'T. Okafor', runs: 58, balls: 39, fours: 6, sixes: 2, strikeRate: 148.71, dismissal: 'lbw b R. Saldanha', isBatting: false },
-        { position: 3, id: 'demo-p3', name: 'M. Ferreira', runs: 12, balls: 11, fours: 1, sixes: 0, strikeRate: 109.09, dismissal: 'c L. Brandt b S. Whitmore', isBatting: false },
-        { position: 4, id: 'demo-p4', name: 'J. Castillo', runs: 8, balls: 9, fours: 0, sixes: 0, strikeRate: 88.88, dismissal: 'run out (D. Menon)', isBatting: false },
-        { position: 5, id: 'demo-p5', name: 'D. Whitcombe', runs: 3, balls: 4, fours: 0, sixes: 0, strikeRate: 75.0, dismissal: 'not out — sample', isBatting: true },
-        { position: 6, id: 'demo-p6', name: 'S. Iwu', runs: 2, balls: 3, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'not out — sample', isBatting: true },
-        { position: 7, id: 'demo-p7', name: 'R. Saldanha (wk)', runs: 0, balls: 1, fours: 0, sixes: 0, strikeRate: 0.0, dismissal: '—', isBatting: false },
+        { position: 1, id: 'demo-p1', name: 'A. Rafiq', runs: 34, balls: 26, fours: 4, sixes: 1, strikeRate: 130.76, dismissal: 'c D. Menon b S. Whitmore', isBatting: false },
+        { position: 2, id: 'demo-p2', name: 'T. Okafor', runs: 41, balls: 24, fours: 5, sixes: 2, strikeRate: 170.83, dismissal: 'b R. Saldanha', isBatting: false },
+        { position: 3, id: 'demo-p3', name: 'M. Ferreira', runs: 22, balls: 15, fours: 2, sixes: 1, strikeRate: 146.66, dismissal: 'lbw b S. Whitmore', isBatting: false },
+        { position: 4, id: 'demo-p4', name: 'J. Castillo', runs: 9, balls: 9, fours: 1, sixes: 0, strikeRate: 100.0, dismissal: 'run out (D. Menon)', isBatting: false },
+        { position: 5, id: 'demo-p5', name: 'D. Whitcombe', runs: 3, balls: 5, fours: 0, sixes: 0, strikeRate: 60.0, dismissal: 'c L. Brandt b S. Whitmore', isBatting: false },
+        { position: 6, id: 'demo-p6', name: 'S. Iwu', runs: 11, balls: 7, fours: 1, sixes: 0, strikeRate: 157.14, dismissal: 'b R. Saldanha', isBatting: false },
+        { position: 7, id: 'demo-p7', name: 'R. Saldanha (wk)', runs: 4, balls: 6, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'not out — sample', isBatting: true },
+      ],
+      extras: { total: 8, byes: 1, legByes: 2, noBalls: 1, wides: 4, penalties: 0 },
+      fallOfWickets: [
+        { wicketNumber: 1, overs: '6.4', runs: 51, type: 'c D. Menon b S. Whitmore', batsmanId: 'demo-p1', batsmanName: 'A. Rafiq', batsmanRuns: 34, ballsFaced: 26 },
+        { wicketNumber: 2, overs: '11.2', runs: 97, type: 'b R. Saldanha', batsmanId: 'demo-p2', batsmanName: 'T. Okafor', batsmanRuns: 41, ballsFaced: 24 },
+        { wicketNumber: 3, overs: '13.1', runs: 112, type: 'lbw b S. Whitmore', batsmanId: 'demo-p3', batsmanName: 'M. Ferreira', batsmanRuns: 22, ballsFaced: 15 },
+        { wicketNumber: 4, overs: '14.3', runs: 122, type: 'run out (D. Menon)', batsmanId: 'demo-p4', batsmanName: 'J. Castillo', batsmanRuns: 9, ballsFaced: 9 },
+        { wicketNumber: 5, overs: '15.2', runs: 127, type: 'c L. Brandt b S. Whitmore', batsmanId: 'demo-p5', batsmanName: 'D. Whitcombe', batsmanRuns: 3, ballsFaced: 5 },
+        { wicketNumber: 6, overs: '16.2', runs: 132, type: 'b R. Saldanha', batsmanId: 'demo-p6', batsmanName: 'S. Iwu', batsmanRuns: 11, ballsFaced: 7 },
+      ],
+      partnerships: [
+        { wicketNumber: 1, type: 'wicket', runs: 51, overs: '6.4', runRate: 7.35, start: { overs: '0.0', runs: 0, wickets: 0 }, end: { overs: '6.4', runs: 51, wickets: 1 }, batsmen: [
+          { id: 'demo-p1', name: 'A. Rafiq', runs: 34, balls: 26 },
+          { id: 'demo-p2', name: 'T. Okafor', runs: 13, balls: 11 },
+        ] },
+        { wicketNumber: 2, type: 'wicket', runs: 46, overs: '4.2', runRate: 10.15, start: { overs: '6.4', runs: 51, wickets: 1 }, end: { overs: '11.2', runs: 97, wickets: 2 }, batsmen: [
+          { id: 'demo-p2', name: 'T. Okafor', runs: 28, balls: 13 },
+          { id: 'demo-p3', name: 'M. Ferreira', runs: 17, balls: 12 },
+        ] },
+        { wicketNumber: 3, type: 'wicket', runs: 15, overs: '1.5', runRate: 9.0, start: { overs: '11.2', runs: 97, wickets: 2 }, end: { overs: '13.1', runs: 112, wickets: 3 }, batsmen: [
+          { id: 'demo-p3', name: 'M. Ferreira', runs: 5, balls: 3 },
+          { id: 'demo-p4', name: 'J. Castillo', runs: 9, balls: 9 },
+        ] },
+        { wicketNumber: 4, type: 'wicket', runs: 10, overs: '1.2', runRate: 7.5, start: { overs: '13.1', runs: 112, wickets: 3 }, end: { overs: '14.3', runs: 122, wickets: 4 }, batsmen: [
+          { id: 'demo-p4', name: 'J. Castillo', runs: 0, balls: 0 },
+          { id: 'demo-p5', name: 'D. Whitcombe', runs: 3, balls: 5 },
+        ] },
+        { wicketNumber: 5, type: 'wicket', runs: 5, overs: '0.5', runRate: 10.0, start: { overs: '14.3', runs: 122, wickets: 4 }, end: { overs: '15.2', runs: 127, wickets: 5 }, batsmen: [
+          { id: 'demo-p5', name: 'D. Whitcombe', runs: 0, balls: 1 },
+          { id: 'demo-p6', name: 'S. Iwu', runs: 4, balls: 4 },
+        ] },
+        { wicketNumber: 6, type: 'wicket', runs: 5, overs: '1.0', runRate: 8.33, start: { overs: '15.2', runs: 127, wickets: 5 }, end: { overs: '16.2', runs: 132, wickets: 6 }, batsmen: [
+          { id: 'demo-p6', name: 'S. Iwu', runs: 7, balls: 3 },
+          { id: 'demo-p7', name: 'R. Saldanha (wk)', runs: 4, balls: 6 },
+        ] },
       ],
       bowlers: [
         { id: 'demo-b1', name: 'S. Whitmore', overs: '4', maidens: 0, runs: 34, wickets: 2, economy: 8.5, wides: 1, noBalls: 0 },
@@ -64,6 +99,16 @@ const FICTIONAL_SCORECARD: Scorecard = {
         { id: 'demo-c4', name: 'S. Iwu', overs: '4', maidens: 0, runs: 24, wickets: 3, economy: 6.0, wides: 0, noBalls: 0 },
         { id: 'demo-c5', name: 'D. Whitcombe', overs: '4', maidens: 0, runs: 20, wickets: 1, economy: 5.0, wides: 1, noBalls: 0 },
       ],
+      extras: { total: 6, byes: 0, legByes: 1, noBalls: 2, wides: 3, penalties: 0 },
+      fallOfWickets: [
+        { wicketNumber: 1, overs: '4.2', runs: 38, type: 'b M. Ferreira', batsmanId: 'demo-q2', batsmanName: 'D. Menon', batsmanRuns: 10, ballsFaced: 12 },
+        { wicketNumber: 2, overs: '8.1', runs: 67, type: 'c A. Rafiq b M. Ferreira', batsmanId: 'demo-q3', batsmanName: 'P. Nakamura', batsmanRuns: 15, ballsFaced: 14 },
+        { wicketNumber: 3, overs: '11.4', runs: 94, type: 'lbw b M. Ferreira', batsmanId: 'demo-q4', batsmanName: 'S. Whitmore', batsmanRuns: 8, ballsFaced: 9 },
+        { wicketNumber: 4, overs: '13.3', runs: 104, type: 'b R. Saldanha', batsmanId: 'demo-q1', batsmanName: 'L. Brandt', batsmanRuns: 51, ballsFaced: 44 },
+        { wicketNumber: 5, overs: '14.2', runs: 111, type: 'st T. Okafor b M. Ferreira', batsmanId: 'demo-q5', batsmanName: 'G. Almeida', batsmanRuns: 4, ballsFaced: 6 },
+        { wicketNumber: 6, overs: '15.4', runs: 118, type: 'run out (A. Rafiq)', batsmanId: 'demo-q6', batsmanName: 'C. Nkomo', batsmanRuns: 2, ballsFaced: 4 },
+      ],
+      partnerships: null,
     },
   ],
 }
@@ -102,16 +147,20 @@ const FICTIONAL_SQUADS: SquadsView = {
 
 const FICTIONAL_STANDINGS: StandingsView = {
   leagueId: 'demo-league',
+  name: 'Harbour Premier League (fictional)',
   season: '2026 (fictional)',
+  seasonMeta: { year: 2026, startDate: null, endDate: null },
   provenance: { upstream: null, fetchedAt: null, cached: null, source: null },
   groups: [
     {
+      id: 'sample-a',
       name: 'Harbour Premier — Group A (sample)',
+      season: 2026,
       entries: [
-        { team: { id: 'demo-har', name: 'Harbour City CC', short: 'HAR', imageUrl: null }, known: { rank: 1, matchesPlayed: 6, matchesWon: 5, matchesLost: 1, matchesTied: 0, noresult: 0, matchPoints: 10, netrr: '+1.24' }, extra: {} },
-        { team: { id: 'demo-val', name: 'Valley Riders', short: 'VAL', imageUrl: null }, known: { rank: 2, matchesPlayed: 6, matchesWon: 4, matchesLost: 2, matchesTied: 0, noresult: 0, matchPoints: 8, netrr: '+0.61' }, extra: {} },
-        { team: { id: 'demo-ply', name: 'Pier Point CCO', short: 'PIER', imageUrl: null }, known: { rank: 3, matchesPlayed: 6, matchesWon: 2, matchesLost: 4, matchesTied: 0, noresult: 0, matchPoints: 4, netrr: '-0.83' }, extra: {} },
-        { team: { id: 'demo-dun', name: 'Dune Wanderers', short: 'DUNE', imageUrl: null }, known: { rank: 4, matchesPlayed: 6, matchesWon: 0, matchesLost: 6, matchesTied: 0, noresult: 0, matchPoints: 0, netrr: '-2.02' }, extra: {} },
+        { team: { id: 'demo-har', name: 'Harbour City CC', short: 'HAR', imageUrl: null }, known: { rank: 1, matchesPlayed: 6, matchesWon: 5, matchesLost: 1, matchesTied: 0, matchesDraw: 0, noresult: 0, matchPoints: 10, netrr: '+1.24' }, display: {}, extra: {} },
+        { team: { id: 'demo-val', name: 'Valley Riders', short: 'VAL', imageUrl: null }, known: { rank: 2, matchesPlayed: 6, matchesWon: 4, matchesLost: 2, matchesTied: 0, matchesDraw: 0, noresult: 0, matchPoints: 8, netrr: '+0.61' }, display: {}, extra: {} },
+        { team: { id: 'demo-ply', name: 'Pier Point CCO', short: 'PIER', imageUrl: null }, known: { rank: 3, matchesPlayed: 6, matchesWon: 2, matchesLost: 4, matchesTied: 0, matchesDraw: 0, noresult: 0, matchPoints: 4, netrr: '-0.83' }, display: {}, extra: {} },
+        { team: { id: 'demo-dun', name: 'Dune Wanderers', short: 'DUNE', imageUrl: null }, known: { rank: 4, matchesPlayed: 6, matchesWon: 0, matchesLost: 6, matchesTied: 0, matchesDraw: 0, noresult: 0, matchPoints: 0, netrr: '-2.02' }, display: {}, extra: {} },
       ],
     },
   ],

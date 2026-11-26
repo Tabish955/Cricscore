@@ -18,6 +18,7 @@ import {
   SquadsResponseSchema,
   SeriesMatchesResponseSchema,
   StandingsResponseSchema,
+  SportskeedaStandingsResponseSchema,
   SearchResponseSchema,
 } from './schema'
 import { providerFromLinkOrSource, toProxyUrl } from './allowlist'
@@ -83,6 +84,8 @@ export interface ProvenanceView {
   fetchedAt: string | null
   cached: boolean | null
   source: string | null
+  /** Scorecards carry player-statistics provenance one level deeper (meta.source.playerStatistics). */
+  playerStatistics?: ProvenanceView | null
 }
 
 /* ---------------------------------------------------------------- helpers */
@@ -125,18 +128,27 @@ function cleanUrl(v: unknown): string | null {
 }
 
 export function extractProvenance(meta: unknown): ProvenanceView {
-  const empty: ProvenanceView = { upstream: null, fetchedAt: null, cached: null, source: null }
-  if (!meta || typeof meta !== 'object') return empty
+  const parseSource = (c: unknown): ProvenanceView => {
+    const empty: ProvenanceView = { upstream: null, fetchedAt: null, cached: null, source: null }
+    if (!c || typeof c !== 'object') return empty
+    const r = c as Record<string, unknown>
+    return {
+      upstream: str(r.upstream) || null,
+      fetchedAt: str(r.fetchedAt) || null,
+      cached: typeof r.cached === 'boolean' ? r.cached : null,
+      source: str(r.source) || null,
+    }
+  }
+  if (!meta || typeof meta !== 'object') return { upstream: null, fetchedAt: null, cached: null, source: null }
   const m = meta as Record<string, unknown>
   const cand = (m.primary ?? m.source) as unknown
-  if (!cand || typeof cand !== 'object') return empty
-  const c = cand as Record<string, unknown>
-  return {
-    upstream: str(c.upstream) || null,
-    fetchedAt: str(c.fetchedAt) || null,
-    cached: typeof c.cached === 'boolean' ? c.cached : null,
-    source: str(c.source) || null,
+  if (!cand || typeof cand !== 'object') return { upstream: null, fetchedAt: null, cached: null, source: null }
+  const base = parseSource(cand)
+  const nested = (cand as Record<string, unknown>).playerStatistics
+  if (nested && typeof nested === 'object') {
+    base.playerStatistics = parseSource(nested)
   }
+  return base
 }
 
 function teamView(t: { id?: unknown; name?: unknown; short?: unknown; imageUrl?: unknown } | null | undefined): TeamView | null {
@@ -393,6 +405,54 @@ export interface BowlerView {
   noBalls: number | null
 }
 
+export interface ExtrasView {
+  total: number | null
+  byes: number | null
+  legByes: number | null
+  noBalls: number | null
+  wides: number | null
+  penalties: number | null
+}
+
+export interface FallOfWicketView {
+  wicketNumber: number | null
+  /** Cricket notation exactly as supplied ("4.4"). Never parsed as decimal. */
+  overs: string
+  /** TEAM score at dismissal — not the dismissed batter's runs. */
+  runs: number | null
+  /** Provider fowType string, verbatim; may not be a conventional dismissal. */
+  type: string | null
+  batsmanId: string | null
+  batsmanName: string | null
+  batsmanRuns: number | null
+  ballsFaced: number | null
+}
+
+export interface InningsEndpointView {
+  overs: string
+  runs: number | null
+  wickets: number | null
+}
+
+export interface PartnershipBatsmanView {
+  id: string | null
+  name: string
+  runs: number | null
+  balls: number | null
+}
+
+export interface PartnershipView {
+  wicketNumber: number | null
+  type: string | null
+  /** Partnership total INCLUDING relevant extras — batter contributions need not add up to this. */
+  runs: number | null
+  overs: string
+  runRate: number | null
+  start: InningsEndpointView | null
+  end: InningsEndpointView | null
+  batsmen: PartnershipBatsmanView[]
+}
+
 export interface InningsView {
   inningsId: number | null
   team: string
@@ -401,6 +461,12 @@ export interface InningsView {
   declared: boolean
   batsmen: BatsmanView[]
   bowlers: BowlerView[]
+  /** null = not supplied for this match; object = supplied (individual parts may still be null). */
+  extras: ExtrasView | null
+  /** null = not supplied; [] = explicitly nothing to report (e.g. no wickets yet). Provider order preserved. */
+  fallOfWickets: FallOfWicketView[] | null
+  /** null = not supplied; [] = explicitly none recorded. */
+  partnerships: PartnershipView[] | null
 }
 
 export type CoverageLevel = 'full' | 'partial' | 'totals-only' | 'unknown'
@@ -446,6 +512,54 @@ export function normalizeScorecard(json: unknown): ScorecardView {
       wides: num(b.wides),
       noBalls: num(b.noBalls),
     }))
+    const extras: ExtrasView | null = inn.extras
+      ? {
+          // ?? semantics: real zeros survive; junk becomes null; the provider total is
+          // rendered as supplied and is NEVER recomputed from the breakdown.
+          total: num(inn.extras.total) ?? null,
+          byes: num(inn.extras.byes) ?? null,
+          legByes: num(inn.extras.legByes) ?? null,
+          noBalls: num(inn.extras.noBalls) ?? null,
+          wides: num(inn.extras.wides) ?? null,
+          penalties: num(inn.extras.penalties) ?? null,
+        }
+      : null
+    const mapEndpoint = (e: { overs?: unknown; runs?: unknown; wickets?: unknown } | null | undefined): InningsEndpointView | null => {
+      if (!e) return null
+      const overs = str(e.overs ?? '')
+      // An endpoint with no overs AND no runs is not an endpoint at all.
+      if (!overs && num(e.runs) === null && num(e.wickets) === null) return null
+      return { overs, runs: num(e.runs), wickets: num(e.wickets) }
+    }
+    const fallOfWickets: FallOfWicketView[] | null = inn.fallOfWickets
+      ? inn.fallOfWickets.map((f) => ({
+          wicketNumber: num(f.wicketNumber),
+          overs: str(f.overs ?? ''),
+          runs: num(f.runs),
+          type: str(f.type) || null,
+          batsmanId: str(f.batsman?.id) || null,
+          batsmanName: str(f.batsman?.name) || null,
+          batsmanRuns: num(f.batsmanRuns),
+          ballsFaced: num(f.ballsFaced),
+        }))
+      : null // undefined and null both mean "not supplied"; [] stays [] (explicitly empty)
+    const partnerships: PartnershipView[] | null = inn.partnerships
+      ? inn.partnerships.map((pt) => ({
+          wicketNumber: num(pt.wicketNumber),
+          type: str(pt.type) || null,
+          runs: num(pt.runs),
+          overs: str(pt.overs ?? ''),
+          runRate: num(pt.runRate),
+          start: mapEndpoint(pt.start ?? null),
+          end: mapEndpoint(pt.end ?? null),
+          batsmen: (pt.batsmen ?? []).map((b) => ({
+            id: str(b.id) || null,
+            name: str(b.name, 'Unknown batter'),
+            runs: num(b.runs),
+            balls: num(b.balls),
+          })),
+        }))
+      : null
     return {
       inningsId: inn.inningsId ?? i + 1,
       team: str(inn.team),
@@ -454,6 +568,9 @@ export function normalizeScorecard(json: unknown): ScorecardView {
       declared: bool(inn.declared) ?? false,
       batsmen,
       bowlers,
+      extras,
+      fallOfWickets,
+      partnerships,
     }
   })
 
@@ -659,24 +776,61 @@ export interface StandingEntryView {
     matchesWon: number | null
     matchesLost: number | null
     matchesTied: number | null
+    matchesDraw: number | null
     noresult: number | null
     matchPoints: number | null
+    /** Kept verbatim as a string exactly as the provider sent it (signs preserved). */
     netrr: string | null
   }
-  /** Every other numeric/string stat the provider sent, for dynamic display. */
+  /**
+   * Provider-verbatim display strings (displayStats), preferred for rendering —
+   * e.g. "137/20.0" for for/against, or a signed NRR. Never parsed into runs.
+   */
+  display: Partial<Record<
+    'rank' | 'matchesPlayed' | 'matchesWon' | 'matchesLost' | 'matchesTied' | 'matchesDraw' | 'noresult' | 'matchPoints' | 'netrr' | 'for' | 'against',
+    string
+  >>
+  /** Every other stat the provider sent, for dynamic display. */
   extra: Record<string, string>
 }
 
 export interface StandingsGroupView {
+  id: string | null
   name: string
+  /** Group-scoped season year when the provider sends one (a group can differ from the league season). */
+  season: number | null
   entries: StandingEntryView[]
+}
+
+export interface StandingsSeasonMeta {
+  year: number | null
+  startDate: string | null
+  endDate: string | null
 }
 
 export interface StandingsView {
   leagueId: string
+  name: string | null
+  /** Season as a display label ("2026"); never "[object Object]". */
   season: string | null
+  /** Validated raw season fields when the provider sent a season object; else null. */
+  seasonMeta: StandingsSeasonMeta | null
   groups: StandingsGroupView[]
   provenance: ProvenanceView
+}
+
+const DISPLAY_KEY_MAP: Record<string, keyof StandingEntryView['display']> = {
+  rank: 'rank',
+  matchesplayed: 'matchesPlayed',
+  matcheswon: 'matchesWon',
+  matcheslost: 'matchesLost',
+  matchestied: 'matchesTied',
+  matchesdraw: 'matchesDraw',
+  noresult: 'noresult',
+  matchpoints: 'matchPoints',
+  netrr: 'netrr',
+  for: 'for',
+  against: 'against',
 }
 
 export function normalizeStandings(json: unknown): StandingsView {
@@ -691,30 +845,54 @@ export function normalizeStandings(json: unknown): StandingsView {
     ['matcheswon', 'matchesWon'],
     ['matcheslost', 'matchesLost'],
     ['matchestied', 'matchesTied'],
+    ['matchesdraw', 'matchesDraw'],
     ['noresult', 'noresult'],
     ['matchpoints', 'matchPoints'],
     ['netrr', 'netrr'],
   ])
+
+  // Season may be "2026", 2026, or { year, startDate, endDate }. Validate each path.
+  const isoDate = (v: unknown): string | null => {
+    const s = str(v)
+    return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null
+  }
+  let season: string | null = null
+  let seasonMeta: StandingsSeasonMeta | null = null
+  const rawSeason = r.season
+  if (typeof rawSeason === 'object' && rawSeason !== null) {
+    const meta: StandingsSeasonMeta = { year: num(rawSeason.year), startDate: isoDate(rawSeason.startDate), endDate: isoDate(rawSeason.endDate) }
+    if (meta.year !== null || meta.startDate || meta.endDate) seasonMeta = meta
+    season = meta.year !== null ? String(Math.trunc(meta.year)) : null
+  } else if (rawSeason !== null && rawSeason !== undefined && str(rawSeason)) {
+    season = str(rawSeason)
+  }
+
   const groups: StandingsGroupView[] = (r.groups ?? []).map((g) => ({
+    id: str(g.id) || null,
     name: str(g.name, 'Table'),
+    season: num(g.season),
     entries: (g.entries ?? []).map((e) => {
       const stats = e.stats ?? {}
+      const displayStats = e.displayStats ?? {}
       const known: StandingEntryView['known'] = {
         rank: null,
         matchesPlayed: null,
         matchesWon: null,
         matchesLost: null,
         matchesTied: null,
+        matchesDraw: null,
         noresult: null,
         matchPoints: null,
         netrr: null,
       }
+      const display: StandingEntryView['display'] = {}
       const extra: Record<string, string> = {}
       for (const [k, v] of Object.entries(stats)) {
         if (v === null || v === undefined) continue
-        const target = knownKeys.get(k.toLowerCase())
-        if (k.toLowerCase() === 'netrr' || target === 'netrr') {
-          known.netrr = str(v)
+        const lk = k.toLowerCase()
+        const target = knownKeys.get(lk)
+        if (lk === 'netrr' || target === 'netrr') {
+          known.netrr = str(v) // verbatim: sign and precision preserved
           continue
         }
         if (target) {
@@ -723,12 +901,92 @@ export function normalizeStandings(json: unknown): StandingsView {
         }
         extra[k] = str(v)
       }
-      return { team: teamView(e.team ?? {}), known, extra }
+      for (const [k, v] of Object.entries(displayStats)) {
+        if (v === null || v === undefined) continue
+        const lk = k.toLowerCase()
+        const target = DISPLAY_KEY_MAP[lk]
+        if (target) display[target] = str(v) // verbatim, never parsed
+        else extra[k] = str(v)
+      }
+      // Numeric for/against are run-rate scale on ESPN; only shown if displayStats
+      // is absent, and labelled as supplied numbers in the UI title.
+      if (!display.for && stats['for'] !== null && stats['for'] !== undefined) display.for = str(stats['for'])
+      if (!display.against && stats['against'] !== null && stats['against'] !== undefined) display.against = str(stats['against'])
+      return { team: teamView(e.team ?? {}), known, display, extra }
     }),
   }))
   return {
     leagueId: str(r.leagueId),
-    season: str(r.season) || null,
+    name: str(r.name) || null,
+    season,
+    seasonMeta,
+    groups,
+    provenance: extractProvenance(parsed.data.meta),
+  }
+}
+
+/* --------------------------------------------------- experimental source */
+
+export interface SportskeedaEntryView {
+  team: TeamView | null
+  stats: {
+    rank: number | null
+    matchesPlayed: number | null
+    matchesWon: number | null
+    matchesLost: number | null
+    matchesTied: number | null
+    matchesDraw: number | null
+    noresult: number | null
+    matchPoints: number | null
+    netrr: number | null
+  }
+}
+
+export interface SportskeedaGroupView {
+  name: string
+  entries: SportskeedaEntryView[]
+}
+
+export interface SportskeedaStandingsView {
+  provider: 'sportskeeda'
+  seriesSlug: string
+  title: string
+  /** Backend reports seasonVerified; anything other than literal true is treated as false. */
+  seasonVerified: boolean
+  warnings: string[]
+  groups: SportskeedaGroupView[]
+  provenance: ProvenanceView
+}
+
+export function normalizeSportskeedaStandings(json: unknown): SportskeedaStandingsView {
+  const parsed = SportskeedaStandingsResponseSchema.safeParse(json)
+  if (!parsed.success || !parsed.data.success) {
+    throw new Error('Sportskeeda standings response did not match the expected shape.')
+  }
+  const r = parsed.data.result
+  const groups: SportskeedaGroupView[] = (r.groups ?? []).map((g) => ({
+    name: str(g.name, 'Table'),
+    entries: (g.entries ?? []).map((e) => ({
+      team: teamView(e.team ?? {}),
+      stats: {
+        rank: num(e.stats?.rank),
+        matchesPlayed: num(e.stats?.matchesPlayed),
+        matchesWon: num(e.stats?.matchesWon),
+        matchesLost: num(e.stats?.matchesLost),
+        matchesTied: num(e.stats?.matchesTied),
+        matchesDraw: num(e.stats?.matchesDraw),
+        noresult: num(e.stats?.noresult),
+        matchPoints: num(e.stats?.matchPoints),
+        netrr: num(e.stats?.netrr),
+      },
+    })),
+  }))
+  return {
+    provider: 'sportskeeda',
+    seriesSlug: str(r.seriesSlug),
+    title: str(r.title, str(r.seriesSlug, 'Sportskeeda table')),
+    seasonVerified: r.seasonVerified === true,
+    warnings: (r.warnings ?? []).map((w) => str(w)).filter(Boolean),
     groups,
     provenance: extractProvenance(parsed.data.meta),
   }

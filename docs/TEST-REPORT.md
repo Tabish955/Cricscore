@@ -9,7 +9,7 @@ from what is merely asserted.
 | --- | --- | --- |
 | `tsc --noEmit` (strict) | ✅ 0 errors | Includes tests; fixed 2 test-only type errors found by it |
 | `next build` | ✅ success | 11 routes compiled & prerendered; dynamic match/series routes server-render on demand |
-| `vitest run` | ✅ **73/73** across 9 files | All upstream calls mocked; no live network in tests |
+| `vitest run` | ✅ **113/113** across 12 files | All upstream calls mocked; no live network in tests. Extended-field + Sportskeeda contract fixtures are **synthetic**, not live captures |
 | ESLint | ⚠️ not configured | No eslint config in repo; `next build` performs type checks only. Type safety comes from strict TS. Flagged in GAPS.md |
 | Playwright/browser e2e | ⚠️ not run | Playwright not installed; no browsers in sandbox. UI verified via curl HTML assertions only — see below |
 | **Live API from build sandbox** | ❌ unreachable | `curl https://cricketapi-beryl.vercel.app/health` → exit 35; site proxy → **HTTP 502** "could not be reached" |
@@ -19,6 +19,12 @@ from what is merely asserted.
 | TanStack Query dedupe/last-good | ✅ unit-tested | `tests/query-dedupe.test.ts` |
 | Favorites storage (corrupt JSON, caps) | ✅ unit-tested | `tests/storage.test.ts` |
 | Sample mode contract + offline wiring | ✅ unit-tested | `tests/sample-mode.test.ts`, `tests/client-sample-mode.test.ts` |
+| Extended scorecard contract (extras/FOW/partnerships) | ✅ unit-tested | `tests/extended-api.test.ts` — **synthetic** fixtures; backend unreleased |
+| Standings season-object / displayStats / group season | ✅ unit-tested | `tests/extended-api.test.ts` |
+| Sportskeeda allowlist / slug registry / normalizer | ✅ unit-tested | `tests/sportskeeda.test.ts` — synthetic; route unreleased |
+| Innings sections UI (zeros, unavailable vs explicit empty, re-fetch identity) | ✅ component-tested | `tests/views.test.tsx` (jsdom + Testing Library) |
+| Standings UI (season label, verbatim displayStats, empty-table state) | ✅ component-tested | `tests/views.test.tsx` |
+| Image failure fallback (single onError → initials badge) | ✅ component-tested | `tests/views.test.tsx` |
 | Match href league/date preservation | ✅ unit-tested | `tests/format.test.ts` |
 
 ## What was verified against reality
@@ -39,21 +45,22 @@ from what is merely asserted.
 ## What is NOT verified
 
 1. **Live upstream behavior.** No successful response from `cricketapi-beryl.vercel.app` was
-   ever observed from this sandbox (TLS/connect failure; through-proxy 502). Every claim about
-   the live API contract here is taken from the project spec, and every normalizer path is
-   tested against fixtures authored to match that contract — **not** against a live capture.
-   The first time the site runs on a network where the API is reachable, some payload quirk
-   may surface (see GAPS.md → "Contract drift").
-2. **Real-browser interaction.** No browser automation was run. Keyboard tab order, focus rings,
-   `prefers-reduced-motion`, h-scroll behavior on 360 px screens, and sticky scorecard headings
-   are implemented to spec but only curl-verified for markup presence, not click-tested.
+   ever observed from this sandbox (TLS/connect failure; through-proxy 502 — re-confirmed for
+   `/espn/standings/20921` during this pass). Every claim about the live API contract here is
+   taken from the project spec, except the capabilities that WERE observed via the fetch tool:
+   the upstream **does not** send `extras`/`fallOfWickets`/`partnerships` yet, standings `season`
+   IS an object upstream today, and the sportskeeda route IS absent. The extended-field code is
+   exercised only by **synthetic** fixtures and must be re-verified live after the backend ships.
+2. **Browser interaction (click-level).** jsdom component tests cover rendering and error-fallback
+   behavior, but there is no real-browser automation (Playwright absent). Viewport behavior at
+   360 px has not been click-tested — see preview for a manual pass.
 3. **Field-level visual correctness** of TeamIdentity images (feed URLs) — no live feed was
-   available to confirm `<img>` rendering success paths.
+   available to confirm `<img>` rendering success paths; onError → initials fallback is tested.
 4. **Performance/load** — no profiling; first-load JS ≈ 140 kB is the build report's number.
 5. **Accessibility audit** — manual coding to WCAG-minded patterns (semantic tables, labels,
    focus-visible); no axe/Lighthouse run in sandbox.
 6. **Playwright** — absent. The spec asks for browser e2e where feasible; this sandbox cannot
-   run it, and the two-day build delta was spent on the real product instead of installing browsers.
+   run it; jsdom component tests were added instead (`tests/views.test.tsx`).
 
 ## How to re-verify before class (15 minutes, on a network with API access)
 

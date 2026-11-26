@@ -32,7 +32,7 @@ Quality gates (all must be green before class):
 
 ```bash
 npm run typecheck  # tsc --noEmit — strict, zero errors
-npm run test       # vitest run — 73 tests across 9 files
+npm run test       # vitest run — 113 tests across 12 files
 npm run build      # next build — lints types, compiles, prerenders
 ```
 
@@ -55,7 +55,8 @@ Browser ──► /api/cricket/* (same-origin proxy, allowlist, GET only, no-sto
                 ├── /cb/live|recent|upcoming|search   (lists; Cricbuzz → ESPN/CREX chain)
                 ├── /espn/match/:id?league&date(+/scorecard|/commentary|/squads)
                 ├── /espn/series/:league/matches?date=YYYYMMDD
-                └── /espn/standings/:leagueId
+                ├── /espn/standings/:leagueId
+                └── /sportskeeda/series/:slug/points-table   (experimental — NOT released upstream yet; allowlisted, unconfigured)
 ```
 
 - The browser **never** calls the upstream host. Every request goes through the Next.js proxy,
@@ -87,7 +88,8 @@ amber banner on every page while active, and is contract-tested against the real
 `/match/[provider]/[id]` Match Center (persistent score header, Overview/Scorecard/Commentary/Squads/Table tabs) ·
 `/series` + `/series/[leagueId]` dated scoreboard (single-day, explicitly **not** an archive) ·
 `/teams` + `/teams/[provider]/[id]` (feed-derived only) · `/players/[provider]/[id]` (match-observed stats only) ·
-`/standings` (provider ranks, no invented NRR) · `/search` (≥350ms debounce, match-derived index) ·
+`/standings` (provider ranks, verbatim NRR, optional league name/season year; no invented values; optional
+Sportskeeda secondary source once verified+released) · `/search` (≥350ms debounce, match-derived index) ·
 `/favorites` (localStorage, provider-scoped) · `/about` (disclaimer, attribution, coverage matrix, diagnostics) ·
 `/demo` (sample-mode toggle + recorded showcase) · custom `404` and error boundary.
 
@@ -101,6 +103,12 @@ amber banner on every page while active, and is contract-tested against the real
   never parsed as JSON.
 - Spec example IDs (match `1546783`, league `8661`, date `20261126`) are historical references,
   never seeded as fixtures.
+- **Backend release pending (checked 2026-11-26):** the upstream API does **not** yet send the
+  new innings-level `extras`, `fallOfWickets` and `partnerships` fields (root index and a live
+  scorecard both lack them), and the experimental `/sportskeeda/series/:slug/points-table` route
+  is not advertised or reachable. The website ships backward-compatible support with contract
+  tests on synthetic fixtures — sections show "not supplied" until the backend deploys. See
+  `docs/GAPS.md`.
 
 ## Documentation
 

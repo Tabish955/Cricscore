@@ -23,6 +23,9 @@ const PATH_PATTERNS: RegExp[] = [
   /^espn\/series\/\d{1,12}\/matches$/,
   // Standings by league
   /^espn\/standings\/\d{1,12}$/,
+  // Experimental Sportskeeda adapter (backend release pending — see sportskeeda.ts).
+  // Slug: lowercase alphanumerics and hyphens only, max 100 chars. Never a URL.
+  /^sportskeeda\/series\/[a-z0-9-]{1,100}\/points-table$/,
 ]
 
 const QUERY_VALIDATORS: Record<string, (v: string) => boolean> = {

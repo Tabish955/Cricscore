@@ -38,6 +38,22 @@ out-of-scope by requirement, or explicitly deferred.
 
 14. **No ESLint configuration.** Verification = strict `tsc` + `next build` + unit tests. Adding
     `eslint-config-next` + CI would be the first follow-up.
+15. **Extended scorecard fields (extras / fall of wickets / partnerships) — backend release
+    pending.** As of 2026-11-26 the deployed upstream does not send them (checked: root index
+    does not list them; `/espn/match/1546783/scorecard` returns neither). The website renders
+    them when they arrive, keeps “not supplied” as an explicit state, and is contract-tested only
+    with synthetic fixtures. **No live verification is possible until the backend deploys.**
+16. **Sportskeeda points table — not released.** `/sportskeeda/series/:slug/points-table` is
+    absent from the upstream index and direct requests fail. The website ships the allowlist
+    route, client, normalizer and UI behind an **empty** verified-mapping registry; until the
+    route ships *and* a slug (e.g. for Syed Mushtaq Ali Trophy) is validated against the public
+    Sportskeeda page, the UI shows “Additional source not configured” — never an invented table,
+    never a merged ranking.
+17. **Standings `season` is an object upstream today** (`{year, startDate, endDate}`) which the
+    old website schema rejected outright — standings rendered as unavailable. The schema and
+    normalizer now accept it; season shows as the year label plus validated ISO dates.
+    `displayStats` (runs/overs strings like `137/20.0`) is preferred verbatim over numeric
+    run-rate-scale fields when present.
 15. **No browser e2e (Playwright).** Spec asks for it "where feasible"; the sandbox has no
     browsers. All UI verification is curl/HTML + unit tests; keyboard/focus/h-scroll/360 px
     behavior implemented but not click-tested.

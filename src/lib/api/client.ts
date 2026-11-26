@@ -12,6 +12,7 @@ import {
   normalizeSquads,
   normalizeSeriesMatches,
   normalizeStandings,
+  normalizeSportskeedaStandings,
   normalizeSearch,
   type ListOutcome,
   type MatchView,
@@ -20,9 +21,11 @@ import {
   type SquadsView,
   type SeriesMatchesView,
   type StandingsView,
+  type SportskeedaStandingsView,
   type SearchHitView,
 } from './normalize'
 import { toProxyUrl } from './allowlist'
+import { SPORTSKEEDA_SLUG_RE } from '@/lib/sportskeeda'
 import { isSampleMode } from '@/lib/sample/mode'
 import {
   SAMPLE_LEAGUE,
@@ -171,6 +174,22 @@ export async function fetchSeriesMatches(leagueId: string, date: string, signal?
   }
   const json = await proxyGet(`/api/cricket/espn/series/${leagueId}/matches?date=${date}`, signal)
   return { data: normalizeSeriesMatches(json, leagueId, date), fetchedAtMs: Date.now() }
+}
+
+/**
+ * Experimental Sportskeeda secondary standings source.
+ * Only call with a slug from VERIFIED_SPORTSKEEDA_MAPPINGS after the backend
+ * route ships. Throws otherwise — callers must degrade this source only.
+ */
+export async function fetchSportskeedaStandings(slug: string, signal?: AbortSignal): Promise<Fetched<SportskeedaStandingsView>> {
+  if (!SPORTSKEEDA_SLUG_RE.test(slug)) {
+    throw new ApiError('Invalid Sportskeeda series slug.')
+  }
+  if (isSampleMode()) {
+    throw new ApiError('Sportskeeda is a live-only experimental source. Sample mode has no recorded payload for it.')
+  }
+  const json = await proxyGet(`/api/cricket/sportskeeda/series/${slug}/points-table`, signal)
+  return { data: normalizeSportskeedaStandings(json), fetchedAtMs: Date.now() }
 }
 
 export async function fetchStandings(leagueId: string, signal?: AbortSignal): Promise<Fetched<StandingsView>> {

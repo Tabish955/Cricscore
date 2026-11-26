@@ -10,6 +10,7 @@ import { CoverageNote, EmptyState, ErrorState, LoadingCard } from '@/components/
 import { inputValueToApiDate, apiDateToInputValue } from '@/lib/format'
 
 import { StandingsTable } from '@/components/StandingsTable'
+import { SportskeedaAdditionalSource } from '@/components/SportskeedaAdditionalSource'
 
 export function TablePanel({ match, league, date }: { match: MatchView; league: string; date: string }) {
   const [dateValue, setDateValue] = useState(apiDateToInputValue(date))
@@ -47,6 +48,9 @@ export function TablePanel({ match, league, date }: { match: MatchView; league: 
           ) : standings ? (
             <StandingsTable view={standings} />
           ) : null}
+          <div className="mt-3">
+            <SportskeedaAdditionalSource leagueId={league} />
+          </div>
         </div>
       </section>
 

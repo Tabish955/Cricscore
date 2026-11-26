@@ -6,6 +6,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { fetchList, fetchStandings } from '@/lib/api/client'
 import { listPollInterval, POLL } from '@/lib/polling'
 import { StandingsTable } from '@/components/StandingsTable'
+import { SportskeedaAdditionalSource } from '@/components/SportskeedaAdditionalSource'
 import { EmptyState, ErrorState, LoadingCard, CoverageNote } from '@/components/States'
 
 export default function StandingsPage() {
@@ -102,6 +103,9 @@ export default function StandingsPage() {
             ) : standingsQ.data ? (
               <StandingsTable view={standingsQ.data.data} />
             ) : null}
+            <div className="mt-3">
+              <SportskeedaAdditionalSource leagueId={activeLeague} />
+            </div>
           </div>
         </section>
       ) : (
