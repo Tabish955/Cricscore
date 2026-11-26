@@ -83,10 +83,11 @@ describe('ScorecardView — extended sections', () => {
     expect(screen.getAllByText(/not supplied for this match/i).length).toBeGreaterThan(0)
   })
 
-  it('old scorecard without new fields shows unavailable states, never zeros', () => {
+  it('old scorecard without new fields shows one consolidated not-supplied note, never zeros', () => {
     const view = normalizeScorecard(scorecardPayload(false))
     renderCard(view)
-    expect(screen.getAllByText(/not supplied for this match/i).length).toBe(3 * 3) // 3 sections x 3 innings
+    expect(screen.queryAllByText(/not supplied for this match/i).length).toBe(0) // consolidated, not 3 placeholders per innings
+    expect(screen.getByText(/not supplied by the provider for this match/i)).toBeTruthy()
   })
 
   it('re-fetch preserves innings order and identities (keyed by inningsId, all innings kept)', () => {
@@ -172,6 +173,23 @@ describe('TeamIdentity — image failure falls back once', () => {
     const img = container.querySelector('img')!
     expect(img).toBeTruthy()
     fireEvent.error(img)
+    expect(container.querySelector('img')).toBeNull()
+    expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+  })
+
+  it('derives the ESPN CDN logo from a numeric espn assetKey when nothing else is known', () => {
+    const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
+    const img = container.querySelector('img')!
+    expect(img).toBeTruthy()
+    expect(img.getAttribute('src')).toBe('https://a.espncdn.com/i/teamlogos/cricket/500/1559.png')
+    // a failed derived image still falls back to the monogram, never loops or guesses identity
+    fireEvent.error(img)
+    expect(container.querySelector('img')).toBeNull()
+    expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+  })
+
+  it('does not derive CDN logos for non-espn keys (monogram instead)', () => {
+    const { container } = render(createElement(TeamIdentity, { assetKey: 'sportskeeda:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
   })

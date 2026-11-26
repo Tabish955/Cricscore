@@ -14,7 +14,7 @@ function coverageBanner(view: Scorecard) {
   if (view.coverageLevel === 'totals-only')
     return 'The API returned totals only for this match — no ball-by-ball batting/bowling tables. Nothing is invented below.'
   if (view.coverageLevel === 'partial')
-    return 'Partial scorecard: some batting or bowling detail is missing from the provider. Missing values render as —, never as 0.'
+    return 'Partial scorecard: some innings are missing batting or bowling tables from the provider (or the provider flagged gaps). Missing values render as —, never as 0.'
   if (view.coverageLevel === 'unknown')
     return 'Coverage unknown: treat any table below as the provider sent it.'
   return null
@@ -50,10 +50,13 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
     )
   }
   const banner = coverageBanner(view)
+  // Provider gave nothing for extras/FOW/partnerships in ANY innings (current live
+  // backend): say it once, compactly — don't repeat three placeholders per innings.
+  const extAllMissing = view.innings.length > 0 && view.innings.every((i) => i.extras === null && i.fallOfWickets === null && i.partnerships === null)
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        {banner ? <CoverageNote>{banner}</CoverageNote> : <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Full scorecard as supplied by provider</span>}
+        {banner ? <CoverageNote>{banner}</CoverageNote> : <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Batting &amp; bowling as supplied by the provider</span>}
         <div className="flex items-center gap-2 text-[10px] text-slate-500">
           {stale ? <span className="rounded bg-amber-100 px-1.5 py-0.5 font-bold uppercase text-amber-deep">Stale</span> : null}
           <span>Updated {formatFetchedAt(refreshedAt)}</span>
@@ -152,12 +155,17 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
             ) : (
               <p className="px-3 py-2 text-[11px] text-slate-400">Bowling table not returned for this innings.</p>
             )}
-            <ExtendedInningsSections innings={inn} />
+            {!extAllMissing && <ExtendedInningsSections innings={inn} />}
           </div>
         </section>
       ))}
+      {extAllMissing ? (
+        <p className="rounded-md border border-edge bg-slate-50 px-3 py-2 text-[10px] leading-4 text-slate-500">
+          <strong className="font-semibold text-slate-600">Extras, fall of wickets and partnerships:</strong> not supplied by the provider for this match — &quot;not supplied&quot; means the provider sent nothing, not zero. These sections render automatically once the provider sends them.
+        </p>
+      ) : null}
       <p className="text-[10px] leading-4 text-slate-400">
-        Extras, fall of wickets and partnerships render only when the endpoint supplies them; &quot;not supplied&quot; means the provider sent nothing, not zero.
+        {extAllMissing ? '' : 'Extras, fall of wickets and partnerships render only when the endpoint supplies them; "not supplied" means the provider sent nothing, not zero. '}
         Overs are cricket notation (19.5 = 19 overs, 5 balls). &quot;•&quot; marks the provider&apos;s at-the-crease flag, not an out/not-out ruling.
       </p>
     </div>
