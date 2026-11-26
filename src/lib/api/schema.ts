@@ -84,6 +84,7 @@ export const MatchDetailResponseSchema = z.object({
         matchId: idLike.optional().nullable(),
         status: z.string().optional().nullable(),
         category: z.string().optional().nullable(),
+        live: z.boolean().optional().nullable(),
         state: z.string().optional().nullable(),
         stateTitle: z.string().optional().nullable(),
         series: z.unknown().optional().nullable(),

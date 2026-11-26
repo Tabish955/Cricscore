@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { formatFetchedAt } from '@/lib/format'
 
 export interface FetchStatusProps {
@@ -22,6 +23,8 @@ export interface FetchStatusProps {
  * occur — old scores stay on screen, never silently swapped or faked.
  */
 export function FetchStatus({ lastOkMs, isFetching, isStale, provenanceText, provider, onRefresh, compact = false }: FetchStatusProps) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-500 ${compact ? '' : 'mt-1'}`} role="status" aria-live="off">
       {provider ? (
@@ -29,7 +32,7 @@ export function FetchStatus({ lastOkMs, isFetching, isStale, provenanceText, pro
           via {provider}
         </span>
       ) : null}
-      <span>Updated {formatFetchedAt(lastOkMs)}</span>
+      <span title="Your local time">Updated {mounted ? formatFetchedAt(lastOkMs) : '…'}</span>
       {provenanceText ? <span title={provenanceText}>· provider: {provenanceText}</span> : null}
       {isFetching ? <span className="font-medium text-slate-600">Refreshing…</span> : null}
       {isStale ? (

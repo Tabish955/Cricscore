@@ -250,6 +250,52 @@ describe('search normalization (reduced shape)', () => {
   })
 })
 
+const matchViewForTest1546786 = {
+  key: 'espn:1546786', provider: 'espn' as const, matchId: '1546786', teams: 'GUJ vs GOA',
+  team1: null, team2: null, scores: [], category: '', live: false,
+  status: '', state: '', stateTitle: '', seriesName: '', seriesId: '8661', format: '',
+  venueGround: '', venueCity: '', venueCountry: '', startDateMs: null, endDateMs: null,
+  startTimeText: null, source: 'espn-site', badge: 'unknown' as const, badgeLabel: 'Status unknown',
+  links: { detail: '/espn/match/1546786?league=8661&date=20261126', scorecard: null, commentary: null, squads: null, upstream: null },
+  playerOfTheMatch: [],
+}
+
+describe('badge derivation (regressions)', () => {
+  it('never badges a not-yet-started match LIVE, even when the feed flags it in', () => {
+    const out = normalizeListPayload({
+      success: true,
+      result: { found: true, count: 1, matches: [{ matchId: 'm-start', teams: 'A vs B', category: 'live', live: true, status: 'Starts at 10:00 local time', state: 'in', stateTitle: 'Live', series: 'S', seriesId: '9', format: 'First-class', source: 'espn-site', detail: '/espn/match/m-start?league=9&date=20261126', scores: [] }] },
+    }, 'live')
+    expect(out.matches[0]!.badge).toBe('upcoming')
+  })
+
+  it('detail payload overrides a falsey list seed and keeps a live match LIVE', () => {
+    const detail = normalizeMatchDetail({
+      success: true,
+      result: { match: { matchId: '1546786', series: { id: '8661', name: 'Syed Mushtaq Ali Trophy' }, scores: [{ inningsId: 1, team: 'GUJ', score: '194/5', overs: '20' }], venue: { ground: 'Eden Gardens, Kolkata', city: 'Kolkata', country: 'India' }, category: 'live', live: true, state: 'in', status: 'Gujarat won toss & batted', stateTitle: 'Innings break' } },
+    }, matchViewForTest1546786)
+    expect(detail).not.toBeNull()
+    expect(detail!.live).toBe(true)
+    expect(detail!.badge).toBe('live')
+  })
+
+  it('toss-win status alone does not read as a result', () => {
+    const detail = normalizeMatchDetail({
+      success: true,
+      result: { match: { matchId: 'x1', scores: [], status: 'Assam won toss & fielded', state: 'in', stateTitle: 'Innings break' } },
+    })
+    expect(detail!.badge).not.toBe('result')
+  })
+
+  it('genuine results still badge as result', () => {
+    const detail = normalizeMatchDetail({
+      success: true,
+      result: { match: { matchId: 'x2', scores: [], status: 'Jharkhand won by 7 wkts (3b rem)', state: 'post', stateTitle: 'Result' } },
+    })
+    expect(detail!.badge).toBe('result')
+  })
+})
+
 describe('match detail normalization', () => {
   it('handles detail-shaped series object and prefers fresher detail scores', () => {
     const listFallback = {

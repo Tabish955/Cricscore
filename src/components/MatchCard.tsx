@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
@@ -45,6 +46,10 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
 }
 
 export function MatchCard({ match, index }: { match: MatchView; index?: number }) {
+  // Date/time text renders only after mount — server (UTC) and browser timezones
+  // differ, so SSR and hydration would otherwise print different clocks.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const href = matchHref(match)
   const t1 = match.team1
   const t2 = match.team2
@@ -110,7 +115,7 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
 
       <div className="mt-auto flex flex-wrap items-center gap-x-2 border-t border-edge/70 px-3 py-1.5 text-[9px] text-slate-400">
         {venue ? <span className="max-w-[45%] truncate" title={venue}>{venue}</span> : null}
-        <span className="tabular whitespace-nowrap">{dateText}</span>
+        <span className="tabular whitespace-nowrap" title="Times shown in your local time">{mounted ? dateText : '—'}</span>
         <span className="ml-auto font-semibold uppercase tracking-wide">{match.provider}</span>
       </div>
     </article>

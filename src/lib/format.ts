@@ -64,7 +64,21 @@ export function inputValueToApiDate(v: string): string {
 }
 
 export function venueLine(ground: string, city: string, country: string): string {
-  return [ground, city, country].filter((s) => s && s.trim().length > 0).join(', ')
+  // Feeds frequently embed the city inside the ground string ('Eden Gardens, Kolkata');
+  // split on commas and keep each piece once, case-insensitively.
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const chunk of [ground, city, country]) {
+    for (const piece of String(chunk ?? '').split(',')) {
+      const p = piece.trim()
+      if (!p) continue
+      const key = p.toLowerCase()
+      if (seen.has(key)) continue
+      seen.add(key)
+      out.push(p)
+    }
+  }
+  return out.join(', ')
 }
 
 export function matchHref(m: { provider: string; matchId: string; links: { detail: string | null; scorecard: string | null; commentary?: string | null; squads?: string | null; upstream?: string | null } }): string {
