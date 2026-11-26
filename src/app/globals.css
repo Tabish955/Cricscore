@@ -27,7 +27,7 @@ body {
   color: var(--ink);
 }
 
-/* Pavilion paper grain — faint tooth so the cream never reads as flat plastic.
+/* Pavilion paper grain – faint tooth so the cream never reads as flat plastic.
    Purpose: heritage paper identity; purely decorative, no meaning carried. */
 body::before {
   content: '';
@@ -68,7 +68,7 @@ body::before {
   left: 0;
 }
 
-/* Live pulse — subtle, disabled under reduced motion */
+/* Live pulse – subtle, disabled under reduced motion */
 @keyframes live-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.45; transform: scale(0.8); }

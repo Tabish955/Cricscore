@@ -31,7 +31,7 @@ function fail(status: number): NextResponse {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
-  // Belt and braces: this handler must never surface an unhandled 500 — any
+  // Belt and braces: this handler must never surface an unhandled 500 – any
   // unexpected failure degrades to a controlled 502 with no-store.
   try {
     const { id } = await params

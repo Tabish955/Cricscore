@@ -1,10 +1,10 @@
-# Cricline — architecture notes
+# Cricline – architecture notes
 
 ## Principles
 
 1. **The browser never touches the upstream.** Everything flows through one same-origin proxy.
 2. **Trust nothing until it parses.** zod schemas validate structure; normalizers coerce,
-   drop or null — never fabricate. `success !== true` throws a labelled error; empty arrays
+   drop or null – never fabricate. `success !== true` throws a labelled error; empty arrays
    are valid empty results; `0` is real data.
 3. **Provider identity is preserved end-to-end** (`espn:`, `cb:`, `crex:`), in caches, routes,
    favorites and the team-asset registry. Never route ESPN IDs into `/cb/*`.
@@ -55,7 +55,7 @@ src/lib/api/schema.ts    zod contracts (lenient scalars, strict structure, .pass
 
 TanStack Query (`src/components/QueryProvider.tsx`) keys every query by provider-scoped id.
 Default retry: 404 fails after ≤1 attempt; 429/5xx/network retry ≤3 with
-`retryDelayMs` (15s → 30s → 60s, ±20% jitter — unit-tested). `keepPreviousData`-style
+`retryDelayMs` (15s → 30s → 60s, ±20% jitter – unit-tested). `keepPreviousData`-style
 last-good retention is achieved by rendering `data ?? lastData` and flagging staleness.
 
 ## Polling (visible-tab, route-aware)
@@ -67,7 +67,7 @@ last-good retention is achieved by rendering `data ?? lastData` and flagging sta
 | Live match detail & scorecard | 10s |
 | Live commentary (+ pageCount) | 20s |
 | Squads / standings | 300s (5 min, on entry) |
-| Completed matches | no polling — manual `Refresh now` |
+| Completed matches | no polling – manual `Refresh now` |
 | Hidden tab / offline | paused; refreshes on visibility return |
 
 Intervals respect the upstream cache TTLs plus headroom (it has its own caches; we never claim
@@ -79,7 +79,7 @@ instant sync). Implemented via `useQuery({ refetchInterval })` + `useOnlineStatu
 `src/lib/sample/mode.ts` holds the opt-in flag (`localStorage cricscore:sample-mode:v1`);
 `src/lib/sample/data.ts` holds a recorded FICTIONAL dataset (invented teams/players, league
 `9001`, match IDs `900000000x`). `client.ts` checks `isSampleMode()` at the top of every fetch
-and routes through the same normalizers — so Sample Mode can never drift from the real contract
+and routes through the same normalizers – so Sample Mode can never drift from the real contract
 (it is tested against it: `tests/sample-mode.test.ts`, plus `tests/client-sample-mode.test.ts`
 simulating a fully-offline network). Unsupported entities (e.g. scorecard for a match with no
 recording) throw a labelled "Sample mode has no recorded scorecard" error instead of inventing.
@@ -91,12 +91,12 @@ on `/demo` and `/about`. Sample mode is **never** enabled by default.
 `src/components/TeamIdentity.tsx` resolves a candidate chain, advancing on a single failed image
 load (no loops, a missing file can never show a wrong crest): the same-origin proxy
 `/api/team-logo/espn/<id>` for numeric `espn:<id>` keys (it fetches the very same public
-`a.espncdn.com/i/teamlogos/cricket/500/<id>.png` server-side — direct browser loads were being
-lost to hotlink/referer blocking — with a strict id regex, image-only passthrough, 512 KB cap,
+`a.espncdn.com/i/teamlogos/cricket/500/<id>.png` server-side – direct browser loads were being
+lost to hotlink/referer blocking – with a strict id regex, image-only passthrough, 512 KB cap,
 day-long `Cache-Control`, `no-store` on failure) → feed `team.imageUrl` (plain `<img>`,
 `referrerPolicy="no-referrer"`) → provider+teamId local registry (`src/lib/teamAssets.ts`,
 populated only from verified feed metadata) → direct ESPN CDN URL → monogram badge labelled
-"fallback badge — not an official crest". Flag images are never mapped onto domestic/franchise
+"fallback badge – not an official crest". Flag images are never mapped onto domestic/franchise
 teams. Status never conveyed by colour alone (badges carry text + icon).
 
 ## Storage keys
@@ -112,14 +112,14 @@ Never returns a shared mutable EMPTY object (that bug was caught by tests and fi
 
 ## Why no news, no websockets, no server DB
 
-- **No news** — explicit product requirement; there is no headlines surface anywhere.
-- **No WebSocket/SSE** — upstream is polling-only; we poll with backoff instead of pretending push.
-- **No DB** — everything is client-cache + localStorage; a school project needs no accounts or infra.
+- **No news** – explicit product requirement; there is no headlines surface anywhere.
+- **No WebSocket/SSE** – upstream is polling-only; we poll with backoff instead of pretending push.
+- **No DB** – everything is client-cache + localStorage; a school project needs no accounts or infra.
 
 ## Verification status
 
 See [TEST-REPORT.md](./TEST-REPORT.md). Headline: typecheck clean, production build green.
 Live upstream **is** reachable from the agent's fetch tool (bash's direct network is not): the
 extended scorecard contract was verified against production on 2026-11-26 (~14:26Z, match
-1546783 — MUM extras 7). See the round-3 addendum in TEST-REPORT.md; the original build-day
+1546783 – MUM extras 7). See the round-3 addendum in TEST-REPORT.md; the original build-day
 "live unreachable" note below is kept for history.

@@ -1,12 +1,12 @@
-# Cricline — feature & data coverage matrix
+# Cricline – feature & data coverage matrix
 
 Honest tiers:
 
-- **Verified** — implemented, and tested against the API contract (mocked upstream fixtures;
+- **Verified** – implemented, and tested against the API contract (mocked upstream fixtures;
   the live upstream was unreachable from the build sandbox, see TEST-REPORT.md).
-- **Conditional** — implemented and contract-tested, but depends on what the upstream returns
+- **Conditional** – implemented and contract-tested, but depends on what the upstream returns
   for a given match/series. Never upgraded silently.
-- **Unsupported** — not implemented because the API cannot provide it (or the feature is
+- **Unsupported** – not implemented because the API cannot provide it (or the feature is
   prohibited for this project). Absent by design, not hidden.
 
 ## Match discovery & lists
@@ -17,7 +17,7 @@ Honest tiers:
 | Empty feed = valid empty state | Verified | Empty match arrays render an empty state, never an error |
 | Search (match-derived local index) | Verified | ≥350ms debounce; searches teams/series currently loaded |
 | Server search enrichment (`/cb/search`) | Conditional | Reduced response shape; used as optional boost only |
-| Date-filtered Cricbuzz lists | Unsupported | Upstream date filter broken for Cricinfo family — not allowlisted |
+| Date-filtered Cricbuzz lists | Unsupported | Upstream date filter broken for Cricinfo family – not allowlisted |
 
 ## Match center
 
@@ -25,9 +25,9 @@ Honest tiers:
 | --- | --- | --- |
 | Persistent score header + TeamIdentity | Verified | Monogram fallback labelled; provider+teamId scoped registry |
 | Overview tab (status, series, venue, POTM) | Conditional | POTM/series only when detail payload carries them |
-| Scorecard — full (bat+bowl, both innings, 4-innings Tests) | Conditional | Per match; real zeros preserved; h-scroll, sticky heads |
-| Scorecard — totals-only fallback | Conditional | Rendered as totals + "detailed scorecard unavailable" — never faked tables |
-| Commentary — server pagination, 1-based pages | Conditional | `page=1` start, `pageCount` respected, zero-pageCount ⇒ empty state (never page 0); 20s poll while live |
+| Scorecard – full (bat+bowl, both innings, 4-innings Tests) | Conditional | Per match; real zeros preserved; h-scroll, sticky heads |
+| Scorecard – totals-only fallback | Conditional | Rendered as totals + "detailed scorecard unavailable" – never faked tables |
+| Commentary – server pagination, 1-based pages | Conditional | `page=1` start, `pageCount` respected, zero-pageCount ⇒ empty state (never page 0); 20s poll while live |
 | Commentary event chips (wicket/six/four) | Verified | Derived from event text + wicket flag |
 | Squads (roles, captain, starter, styles) | Conditional | No bios, caps, portraits or career stats |
 | Extras / fall of wickets / partnerships | Verified live 2026-11-26 | Production endpoint sends them (match 1546783: MUM extras 7; populated FOW/partnerships). Render only when present; zeros are real; breakdown never re-summed; provider order kept; “not supplied” ≠ zero; verbatim-payload regression test |
@@ -38,13 +38,13 @@ Honest tiers:
 
 | Feature | Tier | Notes |
 | --- | --- | --- |
-| Series scoreboard for one YYYYMMDD | Conditional | `/espn/series/:league/matches?date=` — single day; **not** an archive |
-| Standings (points table) | Conditional | `/espn/standings/:leagueId`; empty table is valid (bilaterals by design); season object → year label + validated dates, never `[object Object]`; `displayStats` verbatim (e.g. `137/20.0`) preferred over numeric rate-scale fallbacks; group id/season preserved; missing fields shown as "—" |
-| Additional source — Sportskeeda points table (experimental) | Unsupported today | Route not released upstream (2026-11-26); registry ships **empty** — no verified league→slug mapping, so the UI renders "not configured"; if configured later: always-visible "Season not verified" banner, never merged with ESPN rows, degrades independently |
+| Series scoreboard for one YYYYMMDD | Conditional | `/espn/series/:league/matches?date=` – single day; **not** an archive |
+| Standings (points table) | Conditional | `/espn/standings/:leagueId`; empty table is valid (bilaterals by design); season object → year label + validated dates, never `[object Object]`; `displayStats` verbatim (e.g. `137/20.0`) preferred over numeric rate-scale fallbacks; group id/season preserved; missing fields shown as "–" |
+| Additional source – Sportskeeda points table (experimental) | Unsupported today | Route not released upstream (2026-11-26); registry ships **empty** – no verified league→slug mapping, so the UI renders "not configured"; if configured later: always-visible "Season not verified" banner, never merged with ESPN rows, degrades independently |
 | Series deep-dives | Conditional | ESPN league IDs only; CB/CREX series IDs not routable |
 | Team pages (match-observed fixtures) | Verified | From loaded feeds; no squad history, no honours |
 | Player pages (match-observed stats only) | Verified | Only stats visible in this app's data; no career records |
-| ICC rankings | Unsupported | No endpoint — intentionally absent |
+| ICC rankings | Unsupported | No endpoint – intentionally absent |
 | Career records / bios / portraits | Unsupported | No endpoint |
 
 ## Trust, freshness, failure
