@@ -579,11 +579,18 @@ export function normalizeScorecard(json: unknown): ScorecardView {
   const hasDetails = innings.some((i) => i.batsmen.length > 0 || i.bowlers.length > 0)
   const hasTotals = innings.some((i) => i.score.length > 0)
   const cov = (coverage ?? '').toLowerCase()
+  // The provider sends descriptive strings, not enums — live ESPN currently answers
+  // "innings totals and available player statistics", which describes COMPLETE
+  // batting/bowling tables. Classify by what actually arrived: every innings has
+  // tables → full; some innings lack tables (or the provider says detail is
+  // missing) → partial; no tables → totals-only. Never upgrade beyond the evidence.
+  const someInningsMissing = innings.some((i) => i.batsmen.length === 0 || i.bowlers.length === 0)
+  const covSaysPartial = /partial|missing|incomplete/.test(cov) || /\btotals?\s*only\b/.test(cov)
   let coverageLevel: CoverageLevel = 'unknown'
   if (!innings.length) coverageLevel = 'unknown'
-  else if (cov.includes('full') && hasDetails) coverageLevel = 'full'
-  else if (hasDetails) coverageLevel = 'partial'
-  else if (hasTotals) coverageLevel = 'totals-only'
+  else if (!hasDetails) coverageLevel = 'totals-only'
+  else if (someInningsMissing || covSaysPartial) coverageLevel = 'partial'
+  else coverageLevel = 'full'
 
   return {
     matchId: str(r.matchId),

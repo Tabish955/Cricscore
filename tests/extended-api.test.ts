@@ -216,3 +216,31 @@ describe('standings — improved ESPN contract', () => {
     expect(normalizeStandings(envelope({ leagueId: '8661', groups: [] })).name).toBeNull()
   })
 })
+
+describe('coverage classification (evidence-based, not keyword guessing)', () => {
+  const fullBowler = (id: string) => ({ id, name: `Bowler ${id}`, overs: '4', maidens: 0, runs: 34, wickets: 2, economy: 8.5, wides: 0, noBalls: 0 })
+
+  it('treats the live provider coverage string with complete tables as full', () => {
+    const view = normalizeScorecard(battingCard([
+      { inningsId: 1, team: 'GUJ', score: '194/5', overs: '20', batsmen: [batsman('1', 38, 18)], bowlers: [fullBowler('b1')] },
+      { inningsId: 2, team: 'GOA', score: '137/7', overs: '17.1', batsmen: [batsman('2', 58, 32)], bowlers: [fullBowler('b2')] },
+    ]))
+    expect(view.coverage).toBe('innings totals and available player statistics')
+    expect(view.coverageLevel).toBe('full')
+  })
+
+  it('flags partial when some innings lack tables, even with the live coverage string', () => {
+    const view = normalizeScorecard(battingCard([
+      { inningsId: 1, team: 'GUJ', score: '194/5', overs: '20', batsmen: [batsman('1', 38, 18)], bowlers: [fullBowler('b1')] },
+      { inningsId: 2, team: 'GOA', score: '137/7', overs: '17.1', batsmen: [], bowlers: [] },
+    ]))
+    expect(view.coverageLevel).toBe('partial')
+  })
+
+  it('flags totals-only when no tables arrive at all', () => {
+    const view = normalizeScorecard(battingCard([
+      { inningsId: 1, team: 'GUJ', score: '194/5', overs: '20' },
+    ]))
+    expect(view.coverageLevel).toBe('totals-only')
+  })
+})

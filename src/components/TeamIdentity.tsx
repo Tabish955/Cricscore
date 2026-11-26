@@ -5,6 +5,15 @@ import { loadTeamAssets } from '@/lib/storage'
 
 const assetCache: { map: Map<string, string> | null } = { map: null }
 
+/** ESPN cricket team-logo CDN — the exact family of URLs the live feed emits.
+ * Derived only for `espn:<numeric id>` asset keys; any miss falls back to the
+ * monogram via onError, so a missing file can never show a wrong crest. */
+const ESPN_LOGO_BASE = 'https://a.espncdn.com/i/teamlogos/cricket/500/'
+function derivedEspnLogo(assetKey: string): string | null {
+  const m = /^espn:(\d{2,})$/.exec(assetKey.trim())
+  return m ? `${ESPN_LOGO_BASE}${m[1]}.png` : null
+}
+
 function initials(short: string, name: string): string {
   const base = (short || name).trim()
   const words = base.split(/\s+/).filter(Boolean)
@@ -34,8 +43,9 @@ const SIZES = { xs: 24, sm: 32, md: 40, lg: 64, xl: 88 } as const
 
 /**
  * One reusable identity mark everywhere. Priority: feed imageUrl -> verified
- * registry -> monogram fallback (never an official crest claim). Single-shot
- * onError; cannot loop.
+ * registry -> ESPN CDN (derived from the provider's numeric team id; a failed
+ * image falls back to the monogram) -> monogram fallback (never an official
+ * crest claim). Single-shot onError; cannot loop.
  */
 export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', className = '' }: TeamIdentityProps) {
   const px = SIZES[size]
@@ -47,7 +57,7 @@ export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', cla
 
   const resolved = useMemo(() => {
     if (imageUrl && /^https:\/\//i.test(imageUrl)) return imageUrl
-    return assetCache.map?.get(assetKey) ?? null
+    return assetCache.map?.get(assetKey) ?? derivedEspnLogo(assetKey)
   }, [imageUrl, assetKey])
 
   // Reset failure state when the resolved URL changes (e.g. provider switch).
