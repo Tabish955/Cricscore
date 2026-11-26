@@ -68,7 +68,7 @@ Honest tiers:
 | Betting, fantasy, odds, payments, ads, tracking | Unsupported | Prohibited |
 | Win predictors / wagon wheels / ball tracking | Unsupported | Not in the API; protected models not reproduced |
 | Head-to-head / venue stats / all-time archives | Unsupported | No endpoints; date-filtered Cricinfo broken upstream |
-| Official crests of clubs/boards/broadcasters | Unsupported | Never bundled; feed images shown verbatim when supplied, monograms otherwise |
+| Official crests of clubs/boards/broadcasters | Unsupported | Never bundled; feed images shown verbatim when supplied, ESPN CDN logos derived from the provider's numeric team id otherwise, monograms as final fallback |
 | Push/live WebSocket stream | Unsupported | Upstream is polling; we say "updates when our provider updates", never "instant" |
 
 Last reviewed: 2026-11-26. The same matrix appears (abbreviated) on `/about` in the running app.
