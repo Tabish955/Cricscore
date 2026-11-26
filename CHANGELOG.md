@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-11-26 — Cricline rebrand, visual overhaul (antislop DURING), importance ordering, provenance scrub
+## 2026-11-26 – Cricline rebrand, visual overhaul (antislop DURING), importance ordering, provenance scrub
 
 ### Added
 - `DESIGN.md`: the product's design direction (pavilion-broadsheet language, dial
@@ -54,13 +54,13 @@
 All notable changes to Cricline are tracked here. Commit hashes are the source of truth;
 this file summarises them for humans. Format: `Added` / `Changed` / `Fixed` / `Removed`.
 
-## 2026-11-26 — Extended-scorecard release pickup + team-logo delivery
+## 2026-11-26 – Extended-scorecard release pickup + team-logo delivery
 
 ### Added
 - `/api/team-logo/espn/<id>` same-origin proxy: strict 1–7-digit numeric validation, image-only
   passthrough (content-type must start with `image/`), 512 KB cap, 8s upstream timeout, redirects
   refused, day-long `Cache-Control` on success, `no-store` on failure. Serves the exact public
-  `a.espncdn.com/i/teamlogos/cricket/500/<id>.png` asset the upstream feed references — no access
+  `a.espncdn.com/i/teamlogos/cricket/500/<id>.png` asset the upstream feed references – no access
   control is bypassed and it cannot proxy arbitrary URLs.
 - `TeamIdentity` candidate chain, advancing on one failed image load: same-origin logo proxy →
   feed `imageUrl` → verified registry → direct ESPN CDN → labelled monogram.
@@ -83,7 +83,7 @@ this file summarises them for humans. Format: `Added` / `Changed` / `Fixed` / `R
   `imageUrl` and direct browser loads of `a.espncdn.com` were lost to hotlink/referer blocking;
   marks now resolve via the same-origin proxy with progressive fallbacks.
 
-## 2026-11-26 — Initial build for the school presentation
+## 2026-11-26 – Initial build for the school presentation
 
 ### Added
 - Complete app: Live Center (live/recent/upcoming tabs, format filter, 350ms search, provider
@@ -110,5 +110,5 @@ this file summarises them for humans. Format: `Added` / `Changed` / `Fixed` / `R
 - App icon (original mark), `.nvmrc`, `vercel.json`, `maxDuration = 60` on the proxy route.
 
 ### Known limitations
-- Upstream unreachable from the build sandbox — live-path verified via fixtures only, not live.
+- Upstream unreachable from the build sandbox – live-path verified via fixtures only, not live.
 - No browser e2e (Playwright absent), no ESLint config; gates are strict tsc + build + vitest.

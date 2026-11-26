@@ -1,18 +1,18 @@
-# Cricline — cricket scores, clearly
+# Cricline – cricket scores, clearly
 
 > **School project · Educational presentation only · Commercial use prohibited.**
 > Cricket data and team marks belong to their respective owners.
 
 Cricline is a complete, working cricket-scores website built for a **school presentation**.
-It delivers the core experience fans expect — live centre, match centre with ball-by-ball
-commentary, scorecards, squads, series scoreboards, standings, search and favorites — while
+It delivers the core experience fans expect – live centre, match centre with ball-by-ball
+commentary, scorecards, squads, series scoreboards, standings, search and favorites – while
 being honest about where the data comes from, how fresh it is, and what it can never do
 (no news, no betting, no payments, no ads, no tracking, no invented records or logos).
 
 **Original brand.** No third-party trademarks, crests or artwork are bundled. Team images appear
 when the feed supplies them, or are served from our own same-origin `/api/team-logo/espn/<id>`
 proxy over ESPN's public team-logo CDN for numeric ESPN ids (a missing logo falls back to the
-labelled monogram — never a wrong crest). Nothing is scraped, bypassed, or impersonated.
+labelled monogram – never a wrong crest). Nothing is scraped, bypassed, or impersonated.
 
 ## Quick start
 
@@ -31,9 +31,9 @@ npm run start      # http://0.0.0.0:3000
 Quality gates (all must be green before class):
 
 ```bash
-npm run typecheck  # tsc --noEmit — strict, zero errors
+npm run typecheck  # tsc --noEmit – strict, zero errors
 npm run test       # vitest run
-npm run build      # next build — lints types, compiles, prerenders
+npm run build      # next build – lints types, compiles, prerenders
 ```
 
 ## Configuration
@@ -56,7 +56,7 @@ Browser ──► /api/cricket/* (same-origin proxy, allowlist, GET only, no-sto
                 ├── /espn/match/:id?league&date(+/scorecard|/commentary|/squads)
                 ├── /espn/series/:league/matches?date=YYYYMMDD
                 ├── /espn/standings/:leagueId
-                └── /sportskeeda/series/:slug/points-table   (experimental — NOT released upstream yet; allowlisted, unconfigured)
+                └── /sportskeeda/series/:slug/points-table   (experimental – NOT released upstream yet; allowlisted, unconfigured)
 ```
 
 - The browser **never** calls the upstream host. Every request goes through the Next.js proxy,
@@ -71,7 +71,7 @@ Browser ──► /api/cricket/* (same-origin proxy, allowlist, GET only, no-sto
   (15s → 30s → 60s, ±20% jitter) and keep the last good data with a stale badge.
 - **Provider-scoped keys everywhere** (`espn:1546783` ≠ `cb:1546783`): caches, favorites,
   navigable routes and the local team-asset registry all carry the provider.
-- ESPN IDs are never routed into `/cb/match/:id` — those routes return nothing useful, and the
+- ESPN IDs are never routed into `/cb/match/:id` – those routes return nothing useful, and the
   allowlist refuses them.
 
 ## Sample mode (offline presentation fallback)
@@ -94,10 +94,10 @@ amber banner on every page while active, and is contract-tested against the real
 
 ## Honest scope
 
-- **No news anywhere.** No articles, headlines or CMS feeds — by requirement.
-- **No claims of parity** with Cricbuzz/ESPNcricinfo/CREX, and no claim of instant sync — this is polling.
+- **No news anywhere.** No articles, headlines or CMS feeds – by requirement.
+- **No claims of parity** with Cricbuzz/ESPNcricinfo/CREX, and no claim of instant sync – this is polling.
 - Player/team pages show only what the feed exposed in matches. No career records, bios,
-  rankings, head-to-head, venue stats or win predictors — the API has no such endpoints.
+  rankings, head-to-head, venue stats or win predictors – the API has no such endpoints.
 - CREX matches render as a limited-coverage card with a labelled external link; CREX HTML is
   never parsed as JSON.
 - Spec example IDs (match `1546783`, league `8661`, date `20261126`) are historical references,
@@ -107,15 +107,15 @@ amber banner on every page while active, and is contract-tested against the real
 
 ## Documentation
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — proxy, allowlist, normalization, polling, caching
-- [`docs/COVERAGE-MATRIX.md`](docs/COVERAGE-MATRIX.md) — verified / conditional / unsupported features
-- [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md) — the 5-minute classroom walkthrough
-- [`docs/TEST-REPORT.md`](docs/TEST-REPORT.md) — exactly what was tested, and what was not
-- [`docs/GAPS.md`](docs/GAPS.md) — known gaps and limitations
-- [`docs/DEPLOY.md`](docs/DEPLOY.md) — Vercel setup, previews, change tracking
-- [`CHANGELOG.md`](CHANGELOG.md) — human-readable summary of every change
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) – proxy, allowlist, normalization, polling, caching
+- [`docs/COVERAGE-MATRIX.md`](docs/COVERAGE-MATRIX.md) – verified / conditional / unsupported features
+- [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md) – the 5-minute classroom walkthrough
+- [`docs/TEST-REPORT.md`](docs/TEST-REPORT.md) – exactly what was tested, and what was not
+- [`docs/GAPS.md`](docs/GAPS.md) – known gaps and limitations
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) – Vercel setup, previews, change tracking
+- [`CHANGELOG.md`](CHANGELOG.md) – human-readable summary of every change
 
-## Deploy on Vercel (recommended — tracks every change automatically)
+## Deploy on Vercel (recommended – tracks every change automatically)
 
 Pushed branches get **preview deployments** on Vercel; merges to `main` promote to production.
 Full guide: [`docs/DEPLOY.md`](docs/DEPLOY.md). Short version:
@@ -123,10 +123,10 @@ Full guide: [`docs/DEPLOY.md`](docs/DEPLOY.md). Short version:
 1. Production lives at **https://cricline.vercel.app** (renamed from `cricline.vercel.app` on 2026-11-26).
 2. vercel.com → **Import** `Tabish955/Cricscore` → framework auto-detects Next.js → Deploy.
    No secrets required; optional env `CRICKET_API_BASE` only if self-hosting a compatible backend.
-3. Open a PR into `main` — Vercel posts a preview URL on the PR for every commit; that is the
+3. Open a PR into `main` – Vercel posts a preview URL on the PR for every commit; that is the
    change tracker. Merging promotes to production.
 
 Self-host alternative: any Node ≥ 20.12 host running `next start` (non-Vercel hosts ignore the
 `maxDuration` export). Bind `-H 0.0.0.0` for LAN/projector access. There are no secrets to
-provision; the upstream needs no key. Do not deploy this publicly with commercial intent — it is
+provision; the upstream needs no key. Do not deploy this publicly with commercial intent – it is
 a school project and commercial use is prohibited.
