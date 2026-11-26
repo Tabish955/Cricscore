@@ -30,6 +30,7 @@ Honest tiers:
 | Commentary — server pagination, 1-based pages | Conditional | `page=1` start, `pageCount` respected, zero-pageCount ⇒ empty state (never page 0); 20s poll while live |
 | Commentary event chips (wicket/six/four) | Verified | Derived from event text + wicket flag |
 | Squads (roles, captain, starter, styles) | Conditional | No bios, caps, portraits or career stats |
+| Extras / fall of wickets / partnerships | Conditional | Render only when the endpoint sends them (backend release pending as of 2026-11-26); zeros are real; breakdown never re-summed; provider order kept; “not supplied” ≠ zero; synthetic-fixture contract tests |
 | Table tab (series standings for this match's league) | Conditional | Hidden/gated when league unknown or table empty |
 | Jump-to-latest commentary | Verified | Fetches `pageCount` page; dedupes by play ID |
 
@@ -38,7 +39,8 @@ Honest tiers:
 | Feature | Tier | Notes |
 | --- | --- | --- |
 | Series scoreboard for one YYYYMMDD | Conditional | `/espn/series/:league/matches?date=` — single day; **not** an archive |
-| Standings (points table) | Conditional | `/espn/standings/:leagueId`; empty table is valid (bilaterals by design); no invented NRR — missing fields shown as "—" |
+| Standings (points table) | Conditional | `/espn/standings/:leagueId`; empty table is valid (bilaterals by design); season object → year label + validated dates, never `[object Object]`; `displayStats` verbatim (e.g. `137/20.0`) preferred over numeric rate-scale fallbacks; group id/season preserved; missing fields shown as "—" |
+| Additional source — Sportskeeda points table (experimental) | Unsupported today | Route not released upstream (2026-11-26); registry ships **empty** — no verified league→slug mapping, so the UI renders "not configured"; if configured later: always-visible "Season not verified" banner, never merged with ESPN rows, degrades independently |
 | Series deep-dives | Conditional | ESPN league IDs only; CB/CREX series IDs not routable |
 | Team pages (match-observed fixtures) | Verified | From loaded feeds; no squad history, no honours |
 | Player pages (match-observed stats only) | Verified | Only stats visible in this app's data; no career records |

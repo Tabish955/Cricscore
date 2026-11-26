@@ -170,24 +170,73 @@ export const sampleScorecardByMatch: Record<string, unknown> = {
         {
           inningsId: 1, team: 'Harbour City CC', score: '132/6', overs: '16.2', declared: false,
           batsmen: [
-            { id: 's-p1', position: 1, name: 'A. Rafiq', runs: 44, balls: 31, fours: 5, sixes: 1, strikeRate: 141.93, dismissal: 'c D. Menon b S. Whitmore', isBatting: false },
-            { id: 's-p2', position: 2, name: 'T. Okafor', runs: 58, balls: 39, fours: 6, sixes: 2, strikeRate: 148.71, dismissal: 'lbw b R. Saldanha', isBatting: false },
-            { id: 's-p3', position: 3, name: 'M. Ferreira', runs: 12, balls: 11, fours: 1, sixes: 0, strikeRate: 109.09, dismissal: 'c L. Brandt b S. Whitmore', isBatting: false },
-            { id: 's-p4', position: 4, name: 'J. Castillo', runs: 8, balls: 9, fours: 0, sixes: 0, strikeRate: 88.88, dismissal: 'run out (D. Menon)', isBatting: false },
-            { id: 's-p5', position: 5, name: 'D. Whitcombe', runs: 3, balls: 4, fours: 0, sixes: 0, strikeRate: 75, dismissal: 'not out (sample)', isBatting: true },
+            { id: 's-p1', position: 1, name: 'A. Rafiq', runs: 34, balls: 26, fours: 4, sixes: 1, strikeRate: 130.76, dismissal: 'c D. Menon b S. Whitmore', isBatting: false },
+            { id: 's-p2', position: 2, name: 'T. Okafor', runs: 41, balls: 24, fours: 5, sixes: 2, strikeRate: 170.83, dismissal: 'b R. Saldanha', isBatting: false },
+            { id: 's-p3', position: 3, name: 'M. Ferreira', runs: 22, balls: 15, fours: 2, sixes: 1, strikeRate: 146.66, dismissal: 'lbw b S. Whitmore', isBatting: false },
+            { id: 's-p4', position: 4, name: 'J. Castillo', runs: 9, balls: 9, fours: 1, sixes: 0, strikeRate: 100, dismissal: 'run out (D. Menon)', isBatting: false },
+            { id: 's-p5', position: 5, name: 'D. Whitcombe', runs: 3, balls: 5, fours: 0, sixes: 0, strikeRate: 60, dismissal: 'c L. Brandt b S. Whitmore', isBatting: false },
+            { id: 's-p6', position: 6, name: 'S. Iwu', runs: 11, balls: 7, fours: 1, sixes: 0, strikeRate: 157.14, dismissal: 'b R. Saldanha', isBatting: false },
+            { id: 's-p7', position: 7, name: 'R. Saldanha (wk)', runs: 4, balls: 6, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'not out (sample)', isBatting: true },
+          ],
+          extras: { total: 8, byes: 1, legByes: 2, noBalls: 1, wides: 4, penalties: 0 },
+          fallOfWickets: [
+            { wicketNumber: 1, overs: '6.4', runs: 51, type: 'c D. Menon b S. Whitmore', batsman: { id: 's-p1', name: 'A. Rafiq' }, batsmanRuns: 34, ballsFaced: 26 },
+            { wicketNumber: 2, overs: '11.2', runs: 97, type: 'b R. Saldanha', batsman: { id: 's-p2', name: 'T. Okafor' }, batsmanRuns: 41, ballsFaced: 24 },
+            { wicketNumber: 3, overs: '13.1', runs: 112, type: 'lbw b S. Whitmore', batsman: { id: 's-p3', name: 'M. Ferreira' }, batsmanRuns: 22, ballsFaced: 15 },
+            { wicketNumber: 4, overs: '14.3', runs: 122, type: 'run out (D. Menon)', batsman: { id: 's-p4', name: 'J. Castillo' }, batsmanRuns: 9, ballsFaced: 9 },
+            { wicketNumber: 5, overs: '15.2', runs: 127, type: 'c L. Brandt b S. Whitmore', batsman: { id: 's-p5', name: 'D. Whitcombe' }, batsmanRuns: 3, ballsFaced: 5 },
+            { wicketNumber: 6, overs: '16.2', runs: 132, type: 'b R. Saldanha', batsman: { id: 's-p6', name: 'S. Iwu' }, batsmanRuns: 11, ballsFaced: 7 },
+          ],
+          partnerships: [
+            { wicketNumber: 1, type: 'wicket', runs: 51, overs: '6.4', runRate: 7.35, start: { overs: '0.0', runs: 0, wickets: 0 }, end: { overs: '6.4', runs: 51, wickets: 1 }, batsmen: [
+              { id: 's-p1', name: 'A. Rafiq', runs: 34, balls: 26 },
+              { id: 's-p2', name: 'T. Okafor', runs: 13, balls: 11 },
+            ] },
+            { wicketNumber: 2, type: 'wicket', runs: 46, overs: '4.2', runRate: 10.15, start: { overs: '6.4', runs: 51, wickets: 1 }, end: { overs: '11.2', runs: 97, wickets: 2 }, batsmen: [
+              { id: 's-p2', name: 'T. Okafor', runs: 28, balls: 13 },
+              { id: 's-p3', name: 'M. Ferreira', runs: 17, balls: 12 },
+            ] },
+            { wicketNumber: 3, type: 'wicket', runs: 15, overs: '1.5', runRate: 9.0, start: { overs: '11.2', runs: 97, wickets: 2 }, end: { overs: '13.1', runs: 112, wickets: 3 }, batsmen: [
+              { id: 's-p3', name: 'M. Ferreira', runs: 5, balls: 3 },
+              { id: 's-p4', name: 'J. Castillo', runs: 9, balls: 9 },
+            ] },
+            { wicketNumber: 4, type: 'wicket', runs: 10, overs: '1.2', runRate: 7.5, start: { overs: '13.1', runs: 112, wickets: 3 }, end: { overs: '14.3', runs: 122, wickets: 4 }, batsmen: [
+              { id: 's-p4', name: 'J. Castillo', runs: 0, balls: 0 },
+              { id: 's-p5', name: 'D. Whitcombe', runs: 3, balls: 5 },
+            ] },
+            { wicketNumber: 5, type: 'wicket', runs: 5, overs: '0.5', runRate: 10.0, start: { overs: '14.3', runs: 122, wickets: 4 }, end: { overs: '15.2', runs: 127, wickets: 5 }, batsmen: [
+              { id: 's-p5', name: 'D. Whitcombe', runs: 0, balls: 1 },
+              { id: 's-p6', name: 'S. Iwu', runs: 4, balls: 4 },
+            ] },
+            { wicketNumber: 6, type: 'wicket', runs: 5, overs: '1.0', runRate: 8.33, start: { overs: '15.2', runs: 127, wickets: 5 }, end: { overs: '16.2', runs: 132, wickets: 6 }, batsmen: [
+              { id: 's-p6', name: 'S. Iwu', runs: 7, balls: 3 },
+              { id: 's-p7', name: 'R. Saldanha (wk)', runs: 4, balls: 6 },
+            ] },
           ],
           bowlers: [
-            { id: 's-b1', name: 'S. Whitmore', overs: '4', maidens: 0, runs: 34, wickets: 2, economy: 8.5, wides: 1, noBalls: 0 },
-            { id: 's-b2', name: 'R. Saldanha', overs: '3.2', maidens: 0, runs: 29, wickets: 1, economy: 8.7, wides: 2, noBalls: 0 },
+            { id: 's-b1', name: 'S. Whitmore', overs: '4', maidens: 0, runs: 34, wickets: 4, economy: 8.5, wides: 1, noBalls: 0 },
+            { id: 's-b2', name: 'R. Saldanha', overs: '3.2', maidens: 0, runs: 29, wickets: 3, economy: 8.7, wides: 2, noBalls: 0 },
             { id: 's-b3', name: 'D. Menon', overs: '4', maidens: 0, runs: 27, wickets: 0, economy: 6.75, wides: 0, noBalls: 1 },
           ],
         },
         {
           inningsId: 2, team: 'Valley Riders', score: '129/9', overs: '20', declared: false,
           batsmen: [
-            { id: 's-q1', position: 1, name: 'L. Brandt', runs: 51, balls: 44, fours: 6, sixes: 1, strikeRate: 115.9, dismissal: 'c M. Ferreira b R. Saldanha', isBatting: false },
-            { id: 's-q2', position: 2, name: 'D. Menon', runs: 22, balls: 18, fours: 2, sixes: 1, strikeRate: 122.22, dismissal: 'b S. Iwu', isBatting: false },
+            { id: 's-q1', position: 1, name: 'L. Brandt', runs: 51, balls: 44, fours: 6, sixes: 1, strikeRate: 115.9, dismissal: 'b R. Saldanha', isBatting: false },
+            { id: 's-q2', position: 2, name: 'D. Menon', runs: 10, balls: 12, fours: 1, sixes: 0, strikeRate: 83.33, dismissal: 'b M. Ferreira', isBatting: false },
             { id: 's-q3', position: 3, name: 'P. Nakamura', runs: 19, balls: 17, fours: 1, sixes: 1, strikeRate: 111.76, dismissal: 'c A. Rafiq b M. Ferreira', isBatting: false },
+            { id: 's-q4', position: 4, name: 'S. Whitmore', runs: 14, balls: 15, fours: 1, sixes: 0, strikeRate: 93.33, dismissal: 'lbw b M. Ferreira', isBatting: false },
+            { id: 's-q5', position: 5, name: 'G. Almeida', runs: 9, balls: 12, fours: 1, sixes: 0, strikeRate: 75, dismissal: 'st T. Okafor b M. Ferreira', isBatting: false },
+            { id: 's-q6', position: 6, name: 'C. Nkomo', runs: 6, balls: 9, fours: 0, sixes: 0, strikeRate: 66.66, dismissal: 'run out (A. Rafiq)', isBatting: false },
+          ],
+          extras: { total: 6, byes: 0, legByes: 1, noBalls: 2, wides: 3, penalties: 0 },
+          fallOfWickets: [
+            { wicketNumber: 1, overs: '4.2', runs: 38, type: 'b M. Ferreira', batsman: { id: 's-q2', name: 'D. Menon' }, batsmanRuns: 10, ballsFaced: 12 },
+            { wicketNumber: 2, overs: '8.1', runs: 67, type: 'c A. Rafiq b M. Ferreira', batsman: { id: 's-q3', name: 'P. Nakamura' }, batsmanRuns: 15, ballsFaced: 14 },
+            { wicketNumber: 3, overs: '11.4', runs: 94, type: 'lbw b M. Ferreira', batsman: { id: 's-q4', name: 'S. Whitmore' }, batsmanRuns: 8, ballsFaced: 9 },
+            { wicketNumber: 4, overs: '13.3', runs: 104, type: 'b R. Saldanha', batsman: { id: 's-q1', name: 'L. Brandt' }, batsmanRuns: 51, ballsFaced: 44 },
+            { wicketNumber: 5, overs: '14.2', runs: 111, type: 'st T. Okafor b M. Ferreira', batsman: { id: 's-q5', name: 'G. Almeida' }, batsmanRuns: 4, ballsFaced: 6 },
+            { wicketNumber: 6, overs: '15.4', runs: 118, type: 'run out (A. Rafiq)', batsman: { id: 's-q6', name: 'C. Nkomo' }, batsmanRuns: 2, ballsFaced: 4 },
           ],
           bowlers: [
             { id: 's-c1', name: 'M. Ferreira', overs: '4', maidens: 0, runs: 28, wickets: 2, economy: 7, wides: 0, noBalls: 0 },

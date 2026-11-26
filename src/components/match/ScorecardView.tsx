@@ -4,6 +4,7 @@ import type { ScorecardView as Scorecard } from '@/lib/api/normalize'
 import { formatRate, formatInt, formatFetchedAt } from '@/lib/format'
 import { TeamIdentity } from '@/components/TeamIdentity'
 import { CoverageNote } from '@/components/States'
+import { ExtendedInningsSections } from '@/components/match/ExtendedInningsSections'
 import Link from 'next/link'
 
 const CELL = 'px-2 py-1.5 text-right text-xs tabular text-slate-700 whitespace-nowrap'
@@ -60,6 +61,11 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
           <button type="button" onClick={onRefresh} className="rounded border border-edge bg-white px-1.5 py-0.5 font-semibold text-slate-600 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-brand">Refresh</button>
         </div>
       </div>
+      {view.provenance.playerStatistics ? (
+        <p className="text-[10px] text-slate-400">
+          Player statistics fetched {view.provenance.playerStatistics.fetchedAt ?? 'at an unrecorded time'}{view.provenance.playerStatistics.cached === true ? ' (cached)' : view.provenance.playerStatistics.cached === false ? ' (live)' : ''} · {view.provenance.playerStatistics.upstream ? 'provider summary endpoint' : 'provider'}
+        </p>
+      ) : null}
       {view.warnings.length ? (
         <ul className="list-disc rounded-md border border-amber-200 bg-amber-50 py-2 pl-8 pr-3 text-[11px] text-amber-deep">
           {view.warnings.map((w, i) => <li key={i}>{w}</li>)}
@@ -146,11 +152,12 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
             ) : (
               <p className="px-3 py-2 text-[11px] text-slate-400">Bowling table not returned for this innings.</p>
             )}
+            <ExtendedInningsSections innings={inn} />
           </div>
         </section>
       ))}
       <p className="text-[10px] leading-4 text-slate-400">
-        Extras, fall of wickets and partnerships are <strong>not provided</strong> by this API — shown as unavailable, never as zero.
+        Extras, fall of wickets and partnerships render only when the endpoint supplies them; &quot;not supplied&quot; means the provider sent nothing, not zero.
         Overs are cricket notation (19.5 = 19 overs, 5 balls). &quot;•&quot; marks the provider&apos;s at-the-crease flag, not an out/not-out ruling.
       </p>
     </div>

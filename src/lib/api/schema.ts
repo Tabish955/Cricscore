@@ -148,15 +148,88 @@ export const BowlerSchema = z
   })
   .passthrough()
 
+const ExtrasSchema = z
+  .object({
+    total: numLike,
+    byes: numLike,
+    legByes: numLike,
+    noBalls: numLike,
+    wides: numLike,
+    penalties: numLike,
+  })
+  .passthrough()
+
+/** Cricket overs stay strings — 4.4 overs is NOT 4.4 in decimal arithmetic. */
+const oversLike = z.union([z.string(), z.number()]).optional().nullable()
+
+const InningsEndpointSchema = z
+  .object({
+    overs: oversLike,
+    runs: numLike,
+    wickets: numLike,
+  })
+  .passthrough()
+
+const FallOfWicketSchema = z
+  .object({
+    wicketNumber: numLike,
+    overs: oversLike,
+    /** TEAM total at the dismissal — not the batter's score. */
+    runs: numLike,
+    type: z.string().optional().nullable(),
+    batsman: z
+      .object({
+        id: idLike.optional().nullable(),
+        name: z.string().optional().nullable(),
+      })
+      .passthrough()
+      .optional()
+      .nullable(),
+    batsmanRuns: numLike,
+    ballsFaced: numLike,
+  })
+  .passthrough()
+
+const PartnershipSchema = z
+  .object({
+    wicketNumber: numLike,
+    /** Provider fowType string — no undocumented enum is assumed. */
+    type: z.string().optional().nullable(),
+    runs: numLike,
+    overs: oversLike,
+    runRate: numLike,
+    start: InningsEndpointSchema.optional().nullable(),
+    end: InningsEndpointSchema.optional().nullable(),
+    batsmen: z
+      .array(
+        z
+          .object({
+            id: idLike.optional().nullable(),
+            name: z.string().optional().nullable(),
+            runs: numLike,
+            balls: numLike,
+          })
+          .passthrough(),
+      )
+      .optional()
+      .nullable(),
+  })
+  .passthrough()
+
 export const InningsScorecardSchema = z
   .object({
     inningsId: z.number().optional().nullable(),
+    teamId: idLike.optional().nullable(),
     team: z.string().optional().nullable(),
     score: z.union([z.string(), z.number()]).optional().nullable(),
-    overs: z.union([z.string(), z.number()]).optional().nullable(),
+    overs: oversLike,
     declared: z.boolean().optional().nullable(),
     batsmen: z.array(BatsmanSchema).optional().nullable(),
     bowlers: z.array(BowlerSchema).optional().nullable(),
+    // Absent (old backend) or null (no data) = unavailable; [] = explicitly empty.
+    extras: ExtrasSchema.optional().nullable(),
+    fallOfWickets: z.array(FallOfWicketSchema).optional().nullable(),
+    partnerships: z.array(PartnershipSchema).optional().nullable(),
   })
   .passthrough()
 
@@ -242,11 +315,56 @@ export const SeriesMatchesResponseSchema = z.object({
   meta: z.unknown().optional(),
 })
 
+const SeasonObjectSchema = z
+  .object({
+    year: numLike,
+    startDate: z.string().optional().nullable(),
+    endDate: z.string().optional().nullable(),
+  })
+  .passthrough()
+
 export const StandingsResponseSchema = z.object({
   success: z.boolean(),
   result: z.object({
     leagueId: idLike.optional().nullable(),
-    season: z.union([z.string(), z.number()]).optional().nullable(),
+    name: z.string().optional().nullable(),
+    season: z.union([z.string(), z.number(), SeasonObjectSchema]).optional().nullable(),
+    groups: z
+      .array(
+        z.object({
+          id: idLike.optional().nullable(),
+          name: z.string().optional().nullable(),
+          season: numLike,
+          entries: z
+            .array(
+              z.object({
+                team: TeamRefSchema.optional().nullable(),
+                stats: z.record(z.union([z.number(), z.string(), z.boolean(), z.null()])).optional().nullable(),
+                // Provider-verbatim display strings (e.g. "137/20.0"); may carry signed NRR.
+                displayStats: z.record(z.unknown()).optional().nullable(),
+              }),
+            )
+            .optional()
+            .nullable(),
+        }),
+      )
+      .optional()
+      .nullable(),
+  }),
+  meta: z.unknown().optional(),
+})
+
+/** Experimental Sportskeeda adapter — independent source, never merged with ESPN. */
+export const SportskeedaStandingsResponseSchema = z.object({
+  success: z.boolean(),
+  result: z.object({
+    provider: z.string().optional().nullable(),
+    seriesSlug: z.string().optional().nullable(),
+    title: z.string().optional().nullable(),
+    season: z.unknown().optional().nullable(),
+    // Unknown on purpose: anything other than literal `true` must degrade to "not verified".
+    seasonVerified: z.unknown().optional().nullable(),
+    warnings: z.array(z.string()).optional().nullable(),
     groups: z
       .array(
         z.object({
@@ -255,7 +373,21 @@ export const StandingsResponseSchema = z.object({
             .array(
               z.object({
                 team: TeamRefSchema.optional().nullable(),
-                stats: z.record(z.union([z.number(), z.string(), z.null()])).optional().nullable(),
+                stats: z
+                  .object({
+                    rank: numLike,
+                    matchesPlayed: numLike,
+                    matchesWon: numLike,
+                    matchesLost: numLike,
+                    noresult: numLike,
+                    matchPoints: numLike,
+                    netrr: numLike,
+                    matchesTied: numLike,
+                    matchesDraw: numLike,
+                  })
+                  .passthrough()
+                  .optional()
+                  .nullable(),
               }),
             )
             .optional()

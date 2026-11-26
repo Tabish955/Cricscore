@@ -9,6 +9,7 @@ import { apiDateToInputValue, inputValueToApiDate, toApiDate } from '@/lib/forma
 import { EmptyState, ErrorState, LoadingCard, CoverageNote } from '@/components/States'
 import { MatchCard } from '@/components/MatchCard'
 import { StandingsTable } from '@/components/StandingsTable'
+import { SportskeedaAdditionalSource } from '@/components/SportskeedaAdditionalSource'
 
 export function SeriesDetail({ leagueId, initialDate }: { leagueId: string; initialDate?: string }) {
   const [dateValue, setDateValue] = useState(() => apiDateToInputValue(initialDate ?? toApiDate(new Date())))
@@ -84,6 +85,9 @@ export function SeriesDetail({ leagueId, initialDate }: { leagueId: string; init
           ) : standings ? (
             <StandingsTable view={standings} />
           ) : null}
+          <div className="mt-3">
+            <SportskeedaAdditionalSource leagueId={leagueId} />
+          </div>
         </div>
       </section>
 
