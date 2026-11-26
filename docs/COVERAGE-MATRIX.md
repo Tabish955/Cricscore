@@ -30,7 +30,7 @@ Honest tiers:
 | Commentary — server pagination, 1-based pages | Conditional | `page=1` start, `pageCount` respected, zero-pageCount ⇒ empty state (never page 0); 20s poll while live |
 | Commentary event chips (wicket/six/four) | Verified | Derived from event text + wicket flag |
 | Squads (roles, captain, starter, styles) | Conditional | No bios, caps, portraits or career stats |
-| Extras / fall of wickets / partnerships | Conditional | Render only when the endpoint sends them (backend release pending as of 2026-11-26); zeros are real; breakdown never re-summed; provider order kept; “not supplied” ≠ zero; synthetic-fixture contract tests |
+| Extras / fall of wickets / partnerships | Verified live 2026-11-26 | Production endpoint sends them (match 1546783: MUM extras 7; populated FOW/partnerships). Render only when present; zeros are real; breakdown never re-summed; provider order kept; “not supplied” ≠ zero; verbatim-payload regression test |
 | Table tab (series standings for this match's league) | Conditional | Hidden/gated when league unknown or table empty |
 | Jump-to-latest commentary | Verified | Fetches `pageCount` page; dedupes by play ID |
 
@@ -68,7 +68,7 @@ Honest tiers:
 | Betting, fantasy, odds, payments, ads, tracking | Unsupported | Prohibited |
 | Win predictors / wagon wheels / ball tracking | Unsupported | Not in the API; protected models not reproduced |
 | Head-to-head / venue stats / all-time archives | Unsupported | No endpoints; date-filtered Cricinfo broken upstream |
-| Official crests of clubs/boards/broadcasters | Unsupported | Never bundled; feed images shown verbatim when supplied, ESPN CDN logos derived from the provider's numeric team id otherwise, monograms as final fallback |
+| Official crests of clubs/boards/broadcasters | Unsupported | Never bundled; feed images shown verbatim when supplied, ESPN CDN logos served same-origin (`/api/team-logo/espn/<id>`) for numeric ESPN ids otherwise, labelled monograms as final fallback |
 | Push/live WebSocket stream | Unsupported | Upstream is polling; we say "updates when our provider updates", never "instant" |
 
 Last reviewed: 2026-11-26. The same matrix appears (abbreviated) on `/about` in the running app.

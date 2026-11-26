@@ -11,9 +11,9 @@ being honest about where the data comes from, how fresh it is, and what it can n
 (no news, no betting, no payments, no ads, no tracking, no invented records or logos).
 
 **Original brand.** No third-party trademarks, crests or artwork are bundled. Team images appear
-when the feed supplies them, or from ESPN's public team-logo CDN keyed to the provider's numeric
-team id (a failed image falls back silently); otherwise the app renders clearly-labelled monogram
-fallbacks. Nothing is scraped, bypassed, or impersonated.
+when the feed supplies them, or are served from our own same-origin `/api/team-logo/espn/<id>`
+proxy over ESPN's public team-logo CDN for numeric ESPN ids (a missing logo falls back to the
+labelled monogram — never a wrong crest). Nothing is scraped, bypassed, or impersonated.
 
 ## Quick start
 
@@ -104,12 +104,13 @@ Sportskeeda secondary source once verified+released) · `/search` (≥350ms debo
   never parsed as JSON.
 - Spec example IDs (match `1546783`, league `8661`, date `20261126`) are historical references,
   never seeded as fixtures.
-- **Backend release pending (checked 2026-11-26):** the upstream API does **not** yet send the
-  new innings-level `extras`, `fallOfWickets` and `partnerships` fields (root index and a live
-  scorecard both lack them), and the experimental `/sportskeeda/series/:slug/points-table` route
-  is not advertised or reachable. The website ships backward-compatible support with contract
-  tests on synthetic fixtures — sections show "not supplied" until the backend deploys. See
-  `docs/GAPS.md`.
+- **Backend release shipped (verified live 2026-11-26, ~14:26Z):** the upstream API now sends the
+  innings-level `extras`, `fallOfWickets` and `partnerships` fields — verified against
+  `/espn/match/1546783/scorecard?league=8661&date=20261126` (Mumbai extras total **7**; populated
+  FOW/partnership arrays). The experimental `/sportskeeda/series/:slug/points-table` route is not
+  advertised or reachable, so the Sportskeeda panel still ships as "not configured" by design.
+  Extended sections render with the live data; older cached responses may lack it and then show
+  one consolidated "not supplied" note instead. See `docs/GAPS.md`.
 
 ## Documentation
 

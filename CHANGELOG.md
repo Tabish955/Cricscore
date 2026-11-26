@@ -3,6 +3,35 @@
 All notable changes to CricScore are tracked here. Commit hashes are the source of truth;
 this file summarises them for humans. Format: `Added` / `Changed` / `Fixed` / `Removed`.
 
+## 2026-11-26 — Extended-scorecard release pickup + team-logo delivery
+
+### Added
+- `/api/team-logo/espn/<id>` same-origin proxy: strict 1–7-digit numeric validation, image-only
+  passthrough (content-type must start with `image/`), 512 KB cap, 8s upstream timeout, redirects
+  refused, day-long `Cache-Control` on success, `no-store` on failure. Serves the exact public
+  `a.espncdn.com/i/teamlogos/cricket/500/<id>.png` asset the upstream feed references — no access
+  control is bypassed and it cannot proxy arbitrary URLs.
+- `TeamIdentity` candidate chain, advancing on one failed image load: same-origin logo proxy →
+  feed `imageUrl` → verified registry → direct ESPN CDN → labelled monogram.
+- Live-contract regression fixture: verbatim subset of the production 2026-11-26T14:26Z
+  `/espn/match/1546783/scorecard` response (Mumbai extras total 7; FOW/partnerships arrays).
+
+### Changed
+- Scorecard coverage classification is evidence-based: tables in every innings → `full`; some
+  innings lacking tables (or a provider flag) → `partial`; no tables → `totals-only`. The live
+  provider string ("innings totals and available player statistics") no longer mislabels complete
+  scorecards as Partial.
+- Scorecard extended sections: when the provider sends them for no innings (older cached
+  responses), one consolidated "not supplied" note renders instead of per-innings placeholders;
+  per-innings notices remain only where the provider genuinely omitted a section.
+- Scorecard query key bumped (`v2-extended`) to drop pre-release cached payloads.
+- Docs updated: backend extended release shipped and live-verified; logo chain documented.
+
+### Fixed
+- Team logos: ~all marks rendered as monograms because standings/favorites/team pages had no
+  `imageUrl` and direct browser loads of `a.espncdn.com` were lost to hotlink/referer blocking;
+  marks now resolve via the same-origin proxy with progressive fallbacks.
+
 ## 2026-11-26 — Initial build for the school presentation
 
 ### Added

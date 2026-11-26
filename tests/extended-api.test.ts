@@ -3,9 +3,13 @@
  * partnerships) and the improved ESPN standings shape (season objects,
  * displayStats, group id/season).
  *
- * Fixtures here are SYNTHETIC, constructed to the documented contract — the
- * deployed backend does NOT yet send these fields (checked 2026-11-26). Live
- * responses lacking them are also exercised (backward compatibility).
+ * Fixtures here were synthetic constructions of the documented extended-scorecard
+ * contract before 2026-11-26. The extended CricketAPI branch is now released:
+ * verified live 2026-11-26T14:26Z against match 1546783 (league=8661&date=20261126)
+ * — extras total 7, populated fallOfWickets and partnerships (arrays), innings
+ * also carrying teamId. The regression test at the bottom pins a verbatim subset
+ * of that live response. Live responses lacking the fields are also exercised
+ * (backward compatibility for older responses).
  */
 import { describe, it, expect } from 'vitest'
 import { normalizeScorecard, normalizeStandings } from '@/lib/api/normalize'
@@ -242,5 +246,64 @@ describe('coverage classification (evidence-based, not keyword guessing)', () =>
       { inningsId: 1, team: 'GUJ', score: '194/5', overs: '20' },
     ]))
     expect(view.coverageLevel).toBe('totals-only')
+  })
+})
+
+describe('live contract — match 1546783 (verbatim subset, fetched 2026-11-26T14:26Z)', () => {
+  // Verbatim objects from the production payload (arrays truncated for size;
+  // every field shown is exactly as the provider sent it).
+  const live = {
+    success: true,
+    result: {
+      matchId: '1546783',
+      innings: [
+        {
+          inningsId: 1, team: 'MUM', score: '209/10', overs: '20', declared: false, teamId: '1603',
+          extras: { total: 7, byes: 1, legByes: 2, wides: 3, noBalls: 1, penalties: 0 },
+          fallOfWickets: [
+            { wicketNumber: 1, overs: '4.4', runs: 66, type: 'out', batsman: { id: '1212583', name: 'Hardik Tamore' }, batsmanRuns: 39, ballsFaced: 14 },
+            { wicketNumber: 2, overs: '11.3', runs: 130, type: 'out', batsman: { id: '1292495', name: 'Angkrish Raghuvanshi' }, batsmanRuns: 51, ballsFaced: 34 },
+          ],
+          partnerships: [
+            { wicketNumber: 1, type: 'out', runs: 66, overs: '4.4', runRate: 14.14, start: { overs: '0', runs: 0, wickets: 0 }, end: { overs: '4.4', runs: 66, wickets: 1 }, batsmen: [
+              { id: '1212583', name: 'Hardik Tamore', runs: 39, balls: 14 },
+              { id: '1292495', name: 'Angkrish Raghuvanshi', runs: 26, balls: 15 },
+            ] },
+          ],
+          batsmen: [{ id: '1212583', name: 'Hardik Tamore', teamId: '1603', position: 1, runs: 39, balls: 14, fours: 4, sixes: 2, strikeRate: 278.57, dismissal: "c Dangwal b Swaminathan", isBatting: false }],
+          bowlers: [{ id: '1316430', name: 'Musheer Khan', teamId: '1603', overs: '1', maidens: 0, runs: 1, wickets: 1, economy: 1, wides: 0, noBalls: 0 }],
+        },
+        {
+          inningsId: 2, team: 'UTT', score: '123/10', overs: '16.5', declared: false, teamId: '1156784',
+          extras: { total: 2, byes: 0, legByes: 0, wides: 2, noBalls: 0, penalties: 0 },
+          fallOfWickets: [
+            { wicketNumber: 1, overs: '1.1', runs: 1, type: 'out', batsman: { id: '1449098', name: 'Rahul Namala' }, batsmanRuns: 1, ballsFaced: 7 },
+          ],
+          partnerships: [
+            { wicketNumber: 1, type: 'out', runs: 1, overs: '1.1', runRate: 0.85, start: { overs: '0', runs: 0, wickets: 0 }, end: { overs: '1.1', runs: 1, wickets: 1 }, batsmen: [
+              { id: '1449098', name: 'Rahul Namala', runs: 1, balls: 7 },
+              { id: '1460365', name: 'Sanskar Rawat', runs: 0, balls: 0 },
+            ] },
+          ],
+          batsmen: [{ id: '1449098', name: 'Rahul Namala', teamId: '1156784', position: 1, runs: 1, balls: 7, fours: 0, sixes: 0, strikeRate: 14.28, dismissal: 'c Yadav b Dube', isBatting: false }],
+          bowlers: [{ id: '1316430', name: 'Musheer Khan', teamId: '1603', overs: '1', maidens: 0, runs: 1, wickets: 1, economy: 1, wides: 0, noBalls: 0 }],
+        },
+      ],
+      coverage: 'innings totals and available player statistics',
+    },
+    meta: baseMeta,
+  }
+
+  it('preserves the real extras total (7) verbatim and the full FOW/partnerships arrays', () => {
+    const view = normalizeScorecard(live)
+    expect(view.innings[0]!.extras).toEqual({ total: 7, byes: 1, legByes: 2, wides: 3, noBalls: 1, penalties: 0 })
+    expect(view.innings[1]!.extras).toEqual({ total: 2, byes: 0, legByes: 0, wides: 2, noBalls: 0, penalties: 0 })
+    expect(view.innings[0]!.fallOfWickets).toHaveLength(2)
+    expect(view.innings[0]!.fallOfWickets![0]).toMatchObject({ wicketNumber: 1, overs: '4.4', runs: 66, batsmanName: 'Hardik Tamore', batsmanRuns: 39, ballsFaced: 14 })
+    expect(view.innings[0]!.partnerships).toHaveLength(1)
+    expect(view.innings[0]!.partnerships![0]).toMatchObject({ wicketNumber: 1, runs: 66, overs: '4.4' })
+    expect(view.innings[0]!.partnerships![0]!.batsmen.map((b) => b.name)).toEqual(['Hardik Tamore', 'Angkrish Raghuvanshi'])
+    // both innings have complete tables -> evidence-based 'full'
+    expect(view.coverageLevel).toBe('full')
   })
 })

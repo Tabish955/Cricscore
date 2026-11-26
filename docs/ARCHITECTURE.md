@@ -32,6 +32,14 @@ fetch('/api/cricket/<rest>?<query>')
 Known-failing upstream routes (`/cb/match/:id*`, `/cb/player/*`, `/cb/series/*`,
 `/cricinfo/match/*`, date-filtered Cricinfo lists) are **not allowlisted at all**.
 
+Separately, `src/app/api/team-logo/espn/[id]/route.ts` is **not** part of the cricket proxy and
+serves one fixed public asset family: `a.espncdn.com/i/teamlogos/cricket/500/<id>.png` for a
+strictly numeric `<id>` (1–7 digits, e.g. India `6`). It fetches it server-side so browsers get
+logos from our own origin (bypassing hotlink/referer/network blocking that left marks blank),
+passes through image bytes only (content-type must start with `image/`, 512 KB cap, redirects
+refused), and caches success for a day; failures are `no-store` 404/502 and the client's
+candidate chain advances to the next source. It cannot proxy arbitrary URLs.
+
 ## Browser data layer
 
 ```
@@ -80,11 +88,14 @@ on `/demo` and `/about`. Sample mode is **never** enabled by default.
 
 ## TeamIdentity
 
-`src/components/TeamIdentity.tsx` resolves, in order: feed `team.imageUrl` (plain `<img>`, a.espncdn.com
-not proxied/allowlisted; `referrerPolicy="no-referrer"`) → provider+teamId local registry
-(`src/lib/teamAssets.ts`, populated only from verified feed metadata) → ESPN team-logo CDN derived
-from numeric `espn:<id>` asset keys (`a.espncdn.com/i/teamlogos/cricket/500/<id>.png` — the same CDN
-family the feed emits; a failed image falls back silently) → monogram badge labelled
+`src/components/TeamIdentity.tsx` resolves a candidate chain, advancing on a single failed image
+load (no loops, a missing file can never show a wrong crest): the same-origin proxy
+`/api/team-logo/espn/<id>` for numeric `espn:<id>` keys (it fetches the very same public
+`a.espncdn.com/i/teamlogos/cricket/500/<id>.png` server-side — direct browser loads were being
+lost to hotlink/referer blocking — with a strict id regex, image-only passthrough, 512 KB cap,
+day-long `Cache-Control`, `no-store` on failure) → feed `team.imageUrl` (plain `<img>`,
+`referrerPolicy="no-referrer"`) → provider+teamId local registry (`src/lib/teamAssets.ts`,
+populated only from verified feed metadata) → direct ESPN CDN URL → monogram badge labelled
 "fallback badge — not an official crest". Flag images are never mapped onto domestic/franchise
 teams. Status never conveyed by colour alone (badges carry text + icon).
 
@@ -107,7 +118,8 @@ Never returns a shared mutable EMPTY object (that bug was caught by tests and fi
 
 ## Verification status
 
-See [TEST-REPORT.md](./TEST-REPORT.md). Headline: typecheck clean, production build green,
-73/73 vitest tests pass (mocked upstream), live upstream unreachable from the build sandbox
-(HTTP 000 / proxy 502) — live-path correctness is contract-tested via recorded fixtures, not
-against the real API.
+See [TEST-REPORT.md](./TEST-REPORT.md). Headline: typecheck clean, production build green.
+Live upstream **is** reachable from the agent's fetch tool (bash's direct network is not): the
+extended scorecard contract was verified against production on 2026-11-26 (~14:26Z, match
+1546783 — MUM extras 7). See the round-3 addendum in TEST-REPORT.md; the original build-day
+"live unreachable" note below is kept for history.
