@@ -26,6 +26,8 @@ describe('date/time formatting (never 1970, never Invalid Date)', () => {
     expect(venueLine('Ground A', '', '')).toBe('Ground A')
     expect(venueLine('', '', '')).toBe('')
     expect(venueLine('Oval', 'London', 'England')).toBe('Oval, London, England')
+    expect(venueLine('Eden Gardens, Kolkata', 'Kolkata', 'India')).toBe('Eden Gardens, Kolkata, India')
+    expect(venueLine('Eden Gardens, Kolkata', 'kolKATA', 'India')).toBe('Eden Gardens, Kolkata, India')
   })
 
   it('rates and overs display verbatim', () => {

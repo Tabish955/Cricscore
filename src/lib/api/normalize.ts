@@ -157,11 +157,17 @@ function splitTeamsDisplay(display: string): [string, string] | null {
   return m.length === 2 && m[0] && m[1] ? [m[0].trim(), m[1].trim()] : null
 }
 
-const RESULT_RE = /\b(won|beat|beaten|drawn|tied|abandon|no result|result|lost by)\b/i
+const RESULT_RE = /\b(won by|beat|beaten|defeated|draw(?:n)?|tie[sd]?|abandon|no result|result|lost by)\b/i
 const COMPLETED_STATE_RE = /\b(full time|innings break.*complete|stumps)\b/i
+
+const STARTS_AT_RE = /^starts at\b/i
 
 function deriveBadge(category: string, live: boolean, status: string, stateTitle: string): { badge: MatchBadge; badgeLabel: string } {
   const label = str(stateTitle) || str(status)
+  // Never show LIVE for a fixture that has not started, even if the upstream flagged it 'in'.
+  if (STARTS_AT_RE.test(str(status))) {
+    return { badge: 'upcoming', badgeLabel: label || 'Upcoming' }
+  }
   if (category === 'upcoming' || (!live && RESULT_RE.test(status) === false && /^(upcoming|scheduled|not started)/i.test(status))) {
     return { badge: 'upcoming', badgeLabel: label || 'Upcoming' }
   }
@@ -312,7 +318,9 @@ export function normalizeMatchDetail(json: unknown, listFallback?: MatchView | n
   const category = str(raw.category) || listFallback?.category || ''
   const status = str(raw.status) || listFallback?.status || ''
   const stateTitle = str(raw.stateTitle) || listFallback?.stateTitle || ''
-  const live = listFallback?.live ?? category === 'live'
+  // The ESPN detail payload carries its own live/state — never let a falsey
+  // list-seed mask them (a fresh SSR sees 'unknown' otherwise).
+  const live = Boolean(raw.live) || (listFallback?.live ?? false) || category === 'live' || str(raw.state) === 'in'
   const badge = deriveBadge(category, live, status, stateTitle)
 
   const rawScores = normalizeScores(raw.scores)
