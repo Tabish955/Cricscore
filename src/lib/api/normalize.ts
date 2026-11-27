@@ -30,6 +30,8 @@ export interface TeamView {
   name: string
   short: string
   imageUrl: string | null
+  /** Feed-supplied flag URL when one exists; null/absent means "the API does not provide flags" — never inferred. */
+  flagUrl?: string | null
 }
 
 export interface InningsScoreView {
@@ -151,7 +153,7 @@ export function extractProvenance(meta: unknown): ProvenanceView {
   return base
 }
 
-function teamView(t: { id?: unknown; name?: unknown; short?: unknown; imageUrl?: unknown } | null | undefined): TeamView | null {
+function teamView(t: { id?: unknown; name?: unknown; short?: unknown; imageUrl?: unknown; flagUrl?: unknown } | null | undefined): TeamView | null {
   if (!t) return null
   const name = str(t.name)
   const short = str(t.short)
@@ -161,6 +163,7 @@ function teamView(t: { id?: unknown; name?: unknown; short?: unknown; imageUrl?:
     name: name || short,
     short: short || name.slice(0, 4).toUpperCase(),
     imageUrl: cleanUrl(t.imageUrl),
+    flagUrl: cleanUrl(t.flagUrl),
   }
 }
 
@@ -658,12 +661,13 @@ export function normalizeCommentary(json: unknown): CommentaryPageView {
   const pageCount = Math.max(0, num(r.pageCount) ?? 0)
   const items: CommentaryView[] = (r.commentary ?? []).map((raw, i) => {
     const over = raw.over
-    const overLabel =
-      typeof over === 'number' || (over !== null && over !== undefined && str(over) !== '')
-        ? raw.ball !== null && raw.ball !== undefined && str(raw.ball) !== ''
-          ? `${str(over)}.${str(raw.ball)}`
-          : str(over)
-        : '–'
+    const overNum = num(over)
+    // The feed publishes overs in cricket notation *inside* a lossy float plus a
+    // separate ball counter (over: 41.1, ball: 1) — the integer part is the over.
+    // Using Math.floor avoids the "41.1.1" double-decimal that broke ball-parsing.
+    const overBase = overNum !== null ? String(Math.floor(overNum)) : str(over)
+    const ballStr = str(raw.ball)
+    const overLabel = ballStr ? (overBase ? `${overBase}.${ballStr}` : ballStr) : overBase || '–'
     const inningsId = num(raw.inningsId)
     const id = str(raw.id)
     const key = id || `${inningsId ?? 'x'}:${overLabel}:${i}:${str(raw.text).slice(0, 24)}`

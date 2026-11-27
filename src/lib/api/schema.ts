@@ -17,6 +17,7 @@ export const TeamRefSchema = z
     name: z.string().optional().nullable(),
     short: z.string().optional().nullable(),
     imageUrl: z.string().optional().nullable(),
+    flagUrl: z.string().optional().nullable(),
   })
   .passthrough()
 

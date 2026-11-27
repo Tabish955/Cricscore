@@ -5,6 +5,8 @@ import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import { TeamIdentity } from './TeamIdentity'
+import { FlagMark } from './FlagMark'
+import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
 import { splitScoreForDisplay } from '@/lib/score'
@@ -47,7 +49,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
           size="lg"
         />
         <div className="min-w-0">
-          <p className="truncate text-base font-bold text-[#f5f0e4] sm:text-lg" title={label}>{label}</p>
+          <p className="flex items-center gap-1.5 truncate text-base font-bold text-[#f5f0e4] sm:text-lg" title={label}>{label}<FlagMark flagUrl={team?.flagUrl} name={label} /></p>
           {score ? (
             <p className="score-nums mt-1 font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
               {disp!.main}
@@ -75,6 +77,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
       </div>
 
       <Link href={href} className="block px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass-light">
+        {match.live ? <div className="mb-1 sm:mb-2"><RatesLine scores={match.scores} /></div> : null}
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <TeamBlock team={t1} score={s1} />
           <span className="hidden select-none font-display text-xl font-black text-brass/60 sm:block">v</span>

@@ -195,6 +195,15 @@ describe('commentary normalization & pagination', () => {
     expect(view.items[1]!.event).toBe('six')
   })
 
+  it('float-notation overs collapse to "over.ball" once (regression: 41.1 + ball 1 must not become 41.1.1)', () => {
+    const items = normalizeCommentary(payload(1, 1, [
+      { id: 'a', inningsId: 1, over: 41.1, ball: 1, event: 'run', text: 'scored', runs: 1 },
+      { id: 'b', inningsId: 1, over: 42.6, ball: 6, event: 'no run', text: 'blocked', runs: 0 },
+      { id: 'c', inningsId: 1, over: 43.1, ball: 1, event: 'four', text: 'boundary', runs: 4 },
+    ])).items
+    expect(items.map((i) => i.overLabel)).toEqual(['41.1', '42.6', '43.1'])
+  })
+
   it('dedupes by play id and preserves order', () => {
     const items = normalizeCommentary(payload(1, 1, [
       { id: 'x', inningsId: 1, over: 1, ball: 1, text: 'one' },
