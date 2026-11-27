@@ -1,25 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { renderToString } from 'react-dom/server'
 import { createElement } from 'react'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { normalizeMatch } from '@/lib/api/normalize'
 
-describe('TeamIdentity flag handling', () => {
+describe('TeamBadge flag handling', () => {
   it('uses the feed-supplied flag as the badge when no crest exists', () => {
-    const html = renderToString(createElement(TeamIdentity, { assetKey: 'espn:668', name: 'Bangladesh A', short: 'BAN-A', imageUrl: null, flagUrl: 'https://flagcdn.com/w40/bd.png' }))
+    const html = renderToString(createElement(TeamBadge, { assetKey: 'espn:668', name: 'Bangladesh A', short: 'BAN-A', imageUrl: null, flagUrl: 'https://flagcdn.com/w40/bd.png' }))
     expect(html).toContain('https://flagcdn.com/w40/bd.png')
     expect(html).toContain('Bangladesh A badge')
   })
 
   it('prefers a verified crest image over the flag', () => {
-    const html = renderToString(createElement(TeamIdentity, { assetKey: 'espn:6', name: 'India', short: 'IND', imageUrl: 'https://a.espncdn.com/i/teamlogos/cricket/500/6.png', flagUrl: 'https://flagcdn.com/w40/in.png' }))
+    const html = renderToString(createElement(TeamBadge, { assetKey: 'espn:6', name: 'India', short: 'IND', imageUrl: 'https://a.espncdn.com/i/teamlogos/cricket/500/6.png', flagUrl: 'https://flagcdn.com/w40/in.png' }))
     expect(html).toContain('500/6.png')
     expect(html).not.toContain('w40/in.png')
   })
 
   it('renders no <img> for non-https or absent flags', () => {
-    expect(renderToString(createElement(TeamIdentity, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: null }))).not.toContain('<img')
-    expect(renderToString(createElement(TeamIdentity, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: 'http://flagcdn.com/w40/now.png' }))).not.toContain('<img')
+    expect(renderToString(createElement(TeamBadge, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: null }))).not.toContain('<img')
+    expect(renderToString(createElement(TeamBadge, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: 'http://flagcdn.com/w40/now.png' }))).not.toContain('<img')
   })
 })
 

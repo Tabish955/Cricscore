@@ -9,7 +9,7 @@ import { cleanup, render, screen, fireEvent, within } from '@testing-library/rea
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ScorecardView } from '@/components/match/ScorecardView'
 import { StandingsTable } from '@/components/StandingsTable'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { normalizeScorecard, normalizeStandings } from '@/lib/api/normalize'
 import { createElement, type ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
@@ -166,9 +166,9 @@ describe('StandingsTable', () => {
   })
 })
 
-describe('TeamIdentity — image failure falls down the candidate chain', () => {
+describe('TeamBadge — image failure falls down the candidate chain', () => {
   it('feed URL first, then the same-origin proxy (only with a feed URL), then monogram — a null feed URL makes NO request', () => {
-    const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/baroda.png', size: 'xs' }))
+    const { container } = render(createElement(TeamBadge, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/baroda.png', size: 'xs' }))
     // Candidate 1: the feed-verified URL (authoritative, never fabricated)
     const img1 = container.querySelector('img')!
     expect(img1.getAttribute('src')).toBe('https://cdn.example.test/baroda.png')
@@ -183,16 +183,16 @@ describe('TeamIdentity — image failure falls down the candidate chain', () => 
   })
 
   it('null feed imageUrl means NO candidate at all — nothing constructed, nothing retried', () => {
-    const { container } = render(createElement(TeamIdentity, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
+    const { container } = render(createElement(TeamBadge, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
   })
 
   it('does not proxy non-espn keys (monogram instead, feed URL if supplied)', () => {
-    const { container } = render(createElement(TeamIdentity, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
+    const { container } = render(createElement(TeamBadge, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
     expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
-    const withFeed = render(createElement(TeamIdentity, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
+    const withFeed = render(createElement(TeamBadge, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
     const img = withFeed.container.querySelector('img')!
     expect(img.getAttribute('src')).toBe('https://cdn.example.test/b.png')
   })

@@ -2,7 +2,7 @@
 
 import type { ScorecardView as Scorecard } from '@/lib/api/normalize'
 import { formatRate, formatInt, formatFetchedAt } from '@/lib/format'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { CoverageNote } from '@/components/States'
 import { ExtendedInningsSections } from '@/components/match/ExtendedInningsSections'
 import Link from 'next/link'

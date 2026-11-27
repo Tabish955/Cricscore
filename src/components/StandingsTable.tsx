@@ -1,7 +1,7 @@
 'use client'
 
 import type { StandingsView, StandingEntryView } from '@/lib/api/normalize'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { EmptyState } from '@/components/States'
 
 const KNOWN_COLUMNS: Array<{ key: keyof StandingEntryView['known']; label: string; title?: string }> = [
@@ -78,7 +78,7 @@ export function StandingsTable({ view }: { view: StandingsView }) {
                     <tr key={group.id ? `${group.id}:${entry.team?.id ?? i}` : `${entry.team?.id ?? entry.team?.name ?? i}-${i}`} className="border-b border-edge/60 last:border-0 odd:bg-slate-50/40">
                       <th scope="row" className="px-2 py-1.5">
                         <span className="flex items-center gap-2 text-xs font-semibold text-slate-800">
-                          <TeamIdentity assetKey={entry.team?.id ? `espn:${entry.team.id}` : `espn:${entry.team?.name ?? i}`} name={entry.team?.name ?? 'Team'} short={entry.team?.short} imageUrl={entry.team?.imageUrl} size="xs" />
+                          <TeamBadge assetKey={entry.team?.id ? `espn:${entry.team.id}` : `espn:${entry.team?.name ?? i}`} name={entry.team?.name ?? 'Team'} short={entry.team?.short} imageUrl={entry.team?.imageUrl} size="xs" />
                           <span className="max-w-[160px] truncate">{entry.team?.short || entry.team?.name || 'Unknown team'}</span>
                         </span>
                       </th>
