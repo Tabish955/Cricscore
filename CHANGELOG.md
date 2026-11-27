@@ -13,8 +13,8 @@
   same-origin proxy (feed crest only) → verified registry → WI local asset → feed
   flag → franchise shield → deterministic hashed monogram (WCAG-picked text).
   Lives alongside `TeamIdentity` while the phased migration rolls on.
-- Wired into Match Center, featured hero and live cards. `TeamIdentity` unchanged and
-  still serving StandingsTable / TeamDetail / teams pages (phase 2, after sign-off).
+- Wired everywhere: Match Center, featured hero, live cards, scorecard, standings,
+  team detail, teams + favorites pages. `TeamIdentity` removed.
 - Phased rollout note in `docs/UI-UX.md` gap list unchanged; Tier 3 (backend
   enrichment) intentionally skipped: this app has no DB of its own.
 ## 2026-11-27 — Flags as the left-slot badge

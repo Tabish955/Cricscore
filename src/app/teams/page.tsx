@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { fetchList } from '@/lib/api/client'
 import { listPollInterval } from '@/lib/polling'
 import { useDebouncedValue } from '@/lib/hooks'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { EmptyState, LoadingCard } from '@/components/States'
 
 interface TeamSummary {
@@ -77,7 +77,7 @@ export default function TeamsDirectoryPage() {
               : null
             const body = (
               <div className="flex h-full items-center gap-3 rounded-xl border border-edge bg-card p-3 shadow-card">
-                <TeamIdentity assetKey={t.key} name={t.name} short={t.short} imageUrl={t.imageUrl} size="lg" />
+                <TeamBadge assetKey={t.key} name={t.name} short={t.short} imageUrl={t.imageUrl} size="lg" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-800" title={t.name}>{t.name}</p>
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{t.id ? `Ref ${t.id}` : 'Team'}</p>

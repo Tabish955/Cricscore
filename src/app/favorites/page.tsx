@@ -7,7 +7,7 @@ import { loadFavorites, toggleFavoriteMatch, toggleFavoriteTeam, type FavoritesS
 import { fetchList } from '@/lib/api/client'
 import { listPollInterval } from '@/lib/polling'
 import { StatusBadge } from '@/components/StatusBadge'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { formatFetchedAt } from '@/lib/format'
 import type { MatchView } from '@/lib/api/normalize'
 
@@ -98,7 +98,7 @@ export default function FavoritesPage() {
           <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {store.teams.map((t) => (
               <li key={t.key} className="flex items-center gap-3 rounded-xl border border-edge bg-card p-3 shadow-card">
-                <TeamIdentity assetKey={t.key} name={t.name} short={t.short} size="md" />
+                <TeamBadge assetKey={t.key} name={t.name} short={t.short} size="md" />
                 <div className="min-w-0 flex-1">
                   <Link href={`/teams/${t.provider}/${encodeURIComponent(t.teamId)}?name=${encodeURIComponent(t.name)}&short=${encodeURIComponent(t.short)}`} className="block truncate text-sm font-bold text-pine-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass rounded-sm">{t.name}</Link>
                   <p className="text-[9px] uppercase tracking-wide text-slate-400">Saved {new Date(t.savedAt).toLocaleDateString()}</p>

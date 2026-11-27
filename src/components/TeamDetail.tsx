@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 import { fetchList } from '@/lib/api/client'
 import { listPollInterval } from '@/lib/polling'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { MatchCard } from '@/components/MatchCard'
 import { FavoriteTeamButton } from '@/components/FavoriteToggle'
 import { EmptyState, LoadingCard, CoverageNote } from '@/components/States'
@@ -40,7 +40,7 @@ export function TeamDetail({ provider, id, name, short }: { provider: 'espn' | '
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-pine-800 bg-pine-950 p-4 text-[#f5f0e4]">
         <div className="flex items-center gap-4">
-          <TeamIdentity assetKey={assetKey} name={displayName} short={displayShort} imageUrl={team?.imageUrl ?? null} size="xl" />
+          <TeamBadge assetKey={assetKey} name={displayName} short={displayShort} imageUrl={team?.imageUrl ?? null} size="xl" />
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">{team?.id ? `Ref ${team.id}` : 'Team'}</p>
             <h1 className="text-lg font-black tracking-tight sm:text-2xl">{displayName}</h1>
