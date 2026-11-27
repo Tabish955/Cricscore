@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-11-27 — Team identity hardening: teamId join + decorative badges
+
+### Changed
+- **Score↔team matching now joins on `scores[].teamId`** (provider-qualified, carried
+  through normalization and scorecard innings) — never on array position, never on
+  abbreviation alone. Legacy id-less rows fall back to full-name comparison;
+  id-bearing rows never name-match the other side. Shared `scoreForTeam` /
+  `sideForScore` in `src/lib/score.ts` replace the three drift-prone local copies
+  (MatchCard, HeroMatch, MatchCenter) including the score-moment change tracker.
+- **Badge imagery is decorative** per spec: `alt=""`, monogram and shield are
+  `aria-hidden` (the adjacent visible name is the accessible label). `object-fit:
+  contain` everywhere; reserved dimensions unchanged.
+- **Innings headings and squad tabs now render the shared TeamBadge** (dead
+  `TeamBadge` import in ScorecardView wired up); scorecard innings join to match
+  sides by `innings[].teamId`.
+- New `tests/score-matching.test.tsx`: reordered innings, MI vs MI Women and
+  Pakistan vs Pakistan A disambiguation, id-bearing rows refuse name aliasing,
+  abbreviation-only rows refuse to match, WI asset chain termination, a failed-image
+  advances one candidate and a new `imageUrl` resets the chain.
 ## 2026-11-27 — Team badge cascade (phase 1: live match surfaces)
 
 ### Added

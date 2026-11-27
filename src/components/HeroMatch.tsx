@@ -8,16 +8,7 @@ import { TeamBadge } from './TeamBadge'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
-import { splitScoreForDisplay } from '@/lib/score'
-
-function scoreForTeam(m: MatchView, name: string, short: string) {
-  const lower = name.toLowerCase()
-  const hit = m.scores.find((s) => {
-    const t = s.team.toLowerCase()
-    return t === lower || t === short.toLowerCase() || lower.includes(t) || t.includes(lower)
-  })
-  return hit ?? null
-}
+import { splitScoreForDisplay, scoreForTeam } from '@/lib/score'
 
 /**
  * Featured live match – the scoreboard hero pinned above the grid.
@@ -29,8 +20,8 @@ export function HeroMatch({ match }: { match: MatchView }) {
   const href = matchHref(match)
   const t1 = match.team1
   const t2 = match.team2
-  const s1 = t1 ? scoreForTeam(match, t1.name, t1.short) : null
-  const s2 = t2 ? scoreForTeam(match, t2.name, t2.short) : null
+  const s1 = t1 ? scoreForTeam(match.scores, t1) : null
+  const s2 = t2 ? scoreForTeam(match.scores, t2) : null
   const time = formatMatchTime(match.startDateMs)
   const venue = venueLine(match.venueGround, match.venueCity, match.venueCountry)
   const dateText = match.startDateMs ? `${formatMatchDate(match.startDateMs)}${time ? ` · ${time}` : ''}` : match.startTimeText ?? ''

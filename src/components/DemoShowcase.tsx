@@ -22,6 +22,7 @@ const FICTIONAL_SCORECARD: Scorecard = {
   innings: [
     {
       inningsId: 1,
+      teamId: null,
       team: 'Harbour City CC',
       score: '132/6',
       overs: '16.2',
@@ -80,6 +81,7 @@ const FICTIONAL_SCORECARD: Scorecard = {
     },
     {
       inningsId: 2,
+      teamId: null,
       team: 'Valley Riders',
       score: '129/9',
       overs: '20',

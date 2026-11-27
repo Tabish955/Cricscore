@@ -40,6 +40,8 @@ export interface InningsScoreView {
   score: string
   overs: string
   declared: boolean
+  /** Provider-qualified id from `scores[].teamId` — the spec's join key to team1/team2. */
+  teamId: string | null
 }
 
 export type MatchBadge = 'live' | 'result' | 'upcoming' | 'unknown'
@@ -211,6 +213,7 @@ function normalizeScores(v: unknown): InningsScoreView[] {
       score,
       overs,
       declared: bool(r.declared) ?? false,
+      teamId: str(r.teamId) || null,
     })
   }
   return out
@@ -459,6 +462,8 @@ export interface PartnershipView {
 export interface InningsView {
   inningsId: number | null
   team: string
+  /** Provider-qualified id from `innings[].teamId` when supplied; null otherwise. */
+  teamId: string | null
   score: string
   overs: string
   declared: boolean
@@ -566,6 +571,7 @@ export function normalizeScorecard(json: unknown): ScorecardView {
     return {
       inningsId: inn.inningsId ?? i + 1,
       team: str(inn.team),
+      teamId: str(inn.teamId) || null,
       score: scoreText(inn.score),
       overs: str(inn.overs),
       declared: bool(inn.declared) ?? false,

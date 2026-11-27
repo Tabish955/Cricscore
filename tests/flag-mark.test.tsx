@@ -8,7 +8,7 @@ describe('TeamBadge flag handling', () => {
   it('uses the feed-supplied flag as the badge when no crest exists', () => {
     const html = renderToString(createElement(TeamBadge, { assetKey: 'espn:668', name: 'Bangladesh A', short: 'BAN-A', imageUrl: null, flagUrl: 'https://flagcdn.com/w40/bd.png' }))
     expect(html).toContain('https://flagcdn.com/w40/bd.png')
-    expect(html).toContain('Bangladesh A badge')
+    expect(html).toContain('alt=""') // decorative beside the visible name (spec §4)
   })
 
   it('prefers a verified crest image over the flag', () => {

@@ -24,6 +24,7 @@ export const TeamRefSchema = z
 export const InningsScoreSchema = z
   .object({
     inningsId: z.number().optional().nullable(),
+    teamId: idLike.optional().nullable(),
     team: z.string().optional().nullable(),
     score: z.union([z.string(), z.number()]).optional().nullable(),
     overs: z.union([z.string(), z.number()]).optional().nullable(),

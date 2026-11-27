@@ -4,14 +4,13 @@ import type { ShieldSpec } from '@/lib/team-visuals'
  * Trademark-safe two-tone shield for a configured franchise. Silhouette only;
  * no official artwork, no league marks. Short codes are generic abbreviations.
  */
-export function ShieldMark({ shield, size, className = '', label }: { shield: ShieldSpec; size: number; className?: string; label: string }) {
+export function ShieldMark({ shield, size, className = '' }: { shield: ShieldSpec; size: number; className?: string }) {
   const { shortCode, primary, secondary, text } = shield
   const clipId = `shield-clip-${shortCode.toLowerCase()}`
   const fontSize = shortCode.length <= 2 ? 15 : shortCode.length === 3 ? 11.5 : 8.5
   return (
     <svg
-      role="img"
-      aria-label={`${label} team shield`}
+      aria-hidden="true"
       width={size}
       height={size}
       viewBox="0 0 48 48"

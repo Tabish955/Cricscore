@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import type { SquadsView } from '@/lib/api/normalize'
+import type { Provider, SquadsView, TeamView } from '@/lib/api/normalize'
 import { CoverageNote } from '@/components/States'
+import { TeamBadge } from '@/components/TeamBadge'
 
-export function SquadsPanel({ view }: { view: SquadsView }) {
+export function SquadsPanel({ view, provider = 'espn', team1 = null, team2 = null }: { view: SquadsView; provider?: Provider; team1?: TeamView | null; team2?: TeamView | null }) {
   const [active, setActive] = useState(0)
   if (view.teams.length === 0) {
     return <CoverageNote>The squads endpoint answered but listed no teams – common for fixtures far from kickoff.</CoverageNote>
@@ -13,18 +14,22 @@ export function SquadsPanel({ view }: { view: SquadsView }) {
   return (
     <div className="flex flex-col gap-2">
       <div role="tablist" aria-label="Squads" className="flex flex-wrap gap-1.5">
-        {view.teams.map((t, i) => (
+        {view.teams.map((t, i) => {
+          const side = [team1, team2].find((x) => x?.id && x.id === t.teamId) ?? null
+          return (
           <button
             key={`${t.teamId ?? i}`}
             role="tab"
             aria-selected={active === i}
             onClick={() => setActive(i)}
-            className={`rounded-lg border px-3 py-2 text-xs font-bold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${active === i ? 'border-pine-900 bg-pine-900 text-white' : 'border-edge bg-white text-slate-600 hover:text-pine-900'}`}
+            className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-bold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${active === i ? 'border-pine-900 bg-pine-900 text-white' : 'border-edge bg-white text-slate-600 hover:text-pine-900'}`}
           >
+            <TeamBadge assetKey={t.teamId ? `${provider}:${t.teamId}` : `squads:${t.teamName}`} name={side?.name ?? t.teamName} short={side?.short ?? null} imageUrl={side?.imageUrl ?? null} flagUrl={side?.flagUrl ?? null} size="xs" />
             {t.teamName}
             <span className="tabular ml-1.5 text-[9px] font-semibold opacity-70">{t.players.length} players</span>
           </button>
-        ))}
+          )
+        })}
       </div>
       <CoverageNote>
         &quot;XI&quot; marks the starter flag as published, not a confirmed playing combination. Roles and styles are as reported;

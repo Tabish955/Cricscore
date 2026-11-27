@@ -8,22 +8,12 @@ import { TeamBadge } from './TeamBadge'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
-import { splitScoreForDisplay } from '@/lib/score'
-
-function scoreForTeam(m: MatchView, name: string, short: string): { score: string; overs: string; declared: boolean } | null {
-  const lower = name.toLowerCase()
-  const shortLower = short.toLowerCase()
-  const hit = m.scores.find((s) => {
-    const t = s.team.toLowerCase()
-    return t === lower || t === shortLower || lower.includes(t) || t.includes(lower)
-  })
-  return hit ? { score: hit.score, overs: hit.overs, declared: hit.declared } : null
-}
+import { splitScoreForDisplay, scoreForTeam } from '@/lib/score'
 
 function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
   const label = team?.name ?? 'Team not supplied'
   const short = team?.short ?? ''
-  const hit = team ? scoreForTeam(m, label, short) : null
+  const hit = team ? scoreForTeam(m.scores, team) : null
   const disp = hit ? splitScoreForDisplay(hit.score) : null
   return (
     <div className="flex items-center gap-3 py-2.5">
@@ -61,7 +51,7 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
   const used = new Set<string>()
   for (const t of [t1, t2]) {
     if (t) {
-      const hit = scoreForTeam(match, t.name, t.short)
+      const hit = scoreForTeam(match.scores, t)
       if (hit) used.add(hit.score + hit.overs)
     }
   }
