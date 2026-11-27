@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
-import { TeamIdentity } from './TeamIdentity'
+import { TeamBadge } from './TeamBadge'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
@@ -27,7 +27,7 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
   const disp = hit ? splitScoreForDisplay(hit.score) : null
   return (
     <div className="flex items-center gap-3 py-2.5">
-      <TeamIdentity
+      <TeamBadge
         assetKey={team?.id ? `${m.provider}:${team.id}` : `${m.provider}:${label}`}
         name={label}
         short={short}

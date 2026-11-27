@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
-import { TeamIdentity } from './TeamIdentity'
+import { TeamBadge } from './TeamBadge'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
@@ -40,7 +40,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
     const disp = score ? splitScoreForDisplay(score.score) : null
     return (
       <div className="flex min-w-0 items-center gap-4 border-b border-white/10 py-3 last:border-b-0">
-        <TeamIdentity
+        <TeamBadge
           assetKey={team?.id ? `${match.provider}:${team.id}` : `${match.provider}:${label}`}
           name={label}
           short={team?.short ?? ''}
