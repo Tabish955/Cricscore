@@ -92,7 +92,7 @@ describe('TeamBadge reset semantics (spec §4)', () => {
     expect(img1.getAttribute('src')).toBe('https://cdn.example.test/old.png')
     fireEvent.error(img1)
     const img2 = container.querySelector('img')!
-    expect(img2.getAttribute('src')).toBe('/api/team-logo/espn/60') // proxy fallback, no retry loop
+    expect(img2.getAttribute('src')).toBe(`/api/team-logo/feed?u=${encodeURIComponent('https://cdn.example.test/old.png')}`) // same-origin proxy of the exact feed asset, no retry loop
     rerender(createElement(TeamBadge, { assetKey: 'espn:60', name: 'Some Club', short: 'SC', imageUrl: 'https://cdn.example.test/new.png', size: 'xs' }))
     const img3 = container.querySelector('img')!
     expect(img3.getAttribute('src')).toBe('https://cdn.example.test/new.png') // chain restarted, not stuck on the proxy

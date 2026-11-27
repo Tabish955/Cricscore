@@ -16,6 +16,7 @@ export function SquadsPanel({ view, provider = 'espn', team1 = null, team2 = nul
       <div role="tablist" aria-label="Squads" className="flex flex-wrap gap-1.5">
         {view.teams.map((t, i) => {
           const side = [team1, team2].find((x) => x?.id && x.id === t.teamId) ?? null
+          const feedFlag = side?.flagUrl ?? t.flagUrl ?? null
           return (
           <button
             key={`${t.teamId ?? i}`}
@@ -24,7 +25,7 @@ export function SquadsPanel({ view, provider = 'espn', team1 = null, team2 = nul
             onClick={() => setActive(i)}
             className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-bold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass ${active === i ? 'border-pine-900 bg-pine-900 text-white' : 'border-edge bg-white text-slate-600 hover:text-pine-900'}`}
           >
-            <TeamBadge assetKey={t.teamId ? `${provider}:${t.teamId}` : `squads:${t.teamName}`} name={side?.name ?? t.teamName} short={side?.short ?? null} imageUrl={side?.imageUrl ?? null} flagUrl={side?.flagUrl ?? null} size="xs" />
+            <TeamBadge assetKey={t.teamId ? `${provider}:${t.teamId}` : `squads:${t.teamName}`} name={side?.name ?? t.teamName} short={side?.short ?? null} imageUrl={side?.imageUrl ?? null} flagUrl={feedFlag} size="xs" />
             {t.teamName}
             <span className="tabular ml-1.5 text-[9px] font-semibold opacity-70">{t.players.length} players</span>
           </button>
@@ -32,8 +33,8 @@ export function SquadsPanel({ view, provider = 'espn', team1 = null, team2 = nul
         })}
       </div>
       <CoverageNote>
-        &quot;XI&quot; marks the starter flag as published, not a confirmed playing combination. Roles and styles are as reported;
-        no biographies, caps or portraits are available.
+        Players flagged “XI” are the provider&apos;s published playing combination. Before line-ups are announced this list is the
+        provisional squad, not a confirmed XI. Roles/styles are as published — “Unknown” means the provider supplied no role.
       </CoverageNote>
       <ul className="grid gap-1.5 sm:grid-cols-2">
         {current.players.map((p, i) => (

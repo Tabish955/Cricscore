@@ -17,8 +17,7 @@ const assetCache: { map: Map<string, string> | null } = { map: null }
  * be missing, so a miss gets NO network request at all — never a guessed or
  * substituted URL, never a retry of a known-404.
  */
-const espnIdFromKey = (key: string): string | null => /^espn:(\d{1,7})$/.exec(key.trim())?.[1] ?? null
-const proxyLogo = (id: string) => `/api/team-logo/espn/${id}`
+const proxyFeed = (url: string) => `/api/team-logo/feed?u=${encodeURIComponent(url)}`
 
 function initials(short: string, name: string): string {
   const base = (short || name).trim()
@@ -55,15 +54,14 @@ export function TeamBadge({ assetKey, name, short, imageUrl, flagUrl, size = 'md
 
   const candidates = useMemo(() => {
     const list: Array<{ src: string; isFlag: boolean }> = []
-    const espnId = espnIdFromKey(assetKey)
     const feedUrl = imageUrl && /^https:\/\//i.test(imageUrl) ? imageUrl : null
     const flag = flagUrl && /^https:\/\//i.test(flagUrl) ? flagUrl : null
     const registryUrl = assetCache.map?.get(assetKey) ?? null
     if (feedUrl) list.push({ src: feedUrl, isFlag: false })
-    // Only when the feed verified a crest exists: the same-origin proxy serves
-    // the server-side copy of the official asset, for browsers that cannot
-    // hotlink the CDN directly. No feed URL, no proxy — nothing guessed.
-    if (feedUrl && espnId) list.push({ src: proxyLogo(espnId), isFlag: false })
+    // Only when the feed verified an asset exists: the same-origin proxy serves
+    // the server-side copy of that exact asset (any allowlisted image host,
+    // not just the ESPN template), for browsers/CDNs that cannot hotlink it.
+    if (feedUrl) list.push({ src: proxyFeed(feedUrl), isFlag: false })
     if (registryUrl && registryUrl !== feedUrl) list.push({ src: registryUrl, isFlag: false })
     // Sanctioned local asset (the West Indies flag) — ours, reliable, no feed needed.
     const local = resolveLocalVisual(name)
