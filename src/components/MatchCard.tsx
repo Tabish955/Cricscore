@@ -5,7 +5,6 @@ import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import { TeamIdentity } from './TeamIdentity'
-import { FlagMark } from './FlagMark'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
@@ -33,9 +32,9 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
         name={label}
         short={short}
         imageUrl={team?.imageUrl ?? null}
+        flagUrl={team?.flagUrl}
         size="md"
       />
-      <FlagMark flagUrl={team?.flagUrl} name={label} className="shrink-0" />
       <span className="min-w-0 flex-1 truncate text-base font-semibold text-ink" title={label}>
         {label}
       </span>
