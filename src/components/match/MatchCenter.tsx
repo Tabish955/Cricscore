@@ -237,22 +237,24 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <div className="min-w-0 flex-1 basis-60">
             {headerMatch.seriesName ? <p className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-brass-light">{headerMatch.seriesName}{headerMatch.format ? ` · ${headerMatch.format}` : ''}</p> : <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brass-light">{headerMatch.format || 'Series not supplied'}</p>}
-            <div className="mt-2 flex items-center gap-4">
-              <TeamIdentity assetKey={headerMatch.team1?.id ? `${headerMatch.provider}:${headerMatch.team1.id}` : `${headerMatch.provider}:${headerMatch.team1?.name ?? 't1'}`} name={headerMatch.team1?.name ?? 'Team 1'} short={headerMatch.team1?.short} imageUrl={headerMatch.team1?.imageUrl} size="lg" />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team1?.name ?? splitTeams(headerMatch)?.[0] ?? 'Team not supplied'}</span>
-                  <FlagMark flagUrl={headerMatch.team1?.flagUrl} name={headerMatch.team1?.name ?? 'Team 1'} />
-                  <ScoreMomentButton match={headerMatch} side={1} moment={moment} onOpen={() => setMomentOpen(true)} />
-                </div>
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team2?.name ?? splitTeams(headerMatch)?.[1] ?? 'Team not supplied'}</span>
-                  <FlagMark flagUrl={headerMatch.team2?.flagUrl} name={headerMatch.team2?.name ?? 'Team 2'} />
-                  <ScoreMomentButton match={headerMatch} side={2} moment={moment} onOpen={() => setMomentOpen(true)} />
-                </div>
-                <RatesLine scores={headerMatch.scores} />
-              </div>
-              <TeamIdentity assetKey={headerMatch.team2?.id ? `${headerMatch.provider}:${headerMatch.team2.id}` : `${headerMatch.provider}:${headerMatch.team2?.name ?? 't2'}`} name={headerMatch.team2?.name ?? 'Team 2'} short={headerMatch.team2?.short} imageUrl={headerMatch.team2?.imageUrl} size="lg" />
+            <div className="mt-2 flex flex-col gap-1.5">
+              {([1, 2] as const).map((side) => {
+                const team = side === 1 ? headerMatch.team1 : headerMatch.team2
+                const fallbackName = side === 1 ? splitTeams(headerMatch)?.[0] : splitTeams(headerMatch)?.[1]
+                const label = team?.name ?? fallbackName ?? (side === 1 ? 'Team 1' : 'Team 2')
+                const assetKey = team?.id ? `${headerMatch.provider}:${team.id}` : `${headerMatch.provider}:${team?.name ?? (side === 1 ? 't1' : 't2')}`
+                return (
+                  <div key={side} className="flex items-center gap-3 border-b border-white/10 py-2 last:border-b-0 last:pb-1">
+                    <TeamIdentity assetKey={assetKey} name={label} short={team?.short} imageUrl={team?.imageUrl} size="md" />
+                    <span className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-paper sm:text-xl" title={label}>
+                      {label}
+                      <FlagMark flagUrl={team?.flagUrl} name={label} className="h-[14px] w-[20px] rounded-[3px]" />
+                    </span>
+                    <ScoreMomentButton match={headerMatch} side={side} moment={moment} onOpen={() => setMomentOpen(true)} />
+                  </div>
+                )
+              })}
+              <RatesLine scores={headerMatch.scores} />
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">

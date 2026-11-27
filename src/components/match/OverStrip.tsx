@@ -29,9 +29,11 @@ function Chip({ chip }: { chip: BallChip }) {
 }
 
 /**
- * The "runs bar" – a Google-style strip of the latest balls of the current
- * over (and the previous over, dimmed), for live matches only. Reads the
- * recorded latest commentary page; renders nothing when it has no data.
+ * The "runs bar" – a Google/Cricinfo-style strip of the recorded balls, over by
+ * over. Renders as many recorded overs as the latest commentary pages cover
+ * (horizontally scrollable, oldest → newest, current over emphasised). For
+ * live matches only. Reads the recorded tail pages; renders nothing when
+ * there is no data.
  */
 export function OverStrip({ match, isLive }: { match: MatchView; isLive: boolean }) {
   const query = useQuery({
@@ -45,33 +47,39 @@ export function OverStrip({ match, isLive }: { match: MatchView; isLive: boolean
   const strip = buildOverStrip(query.data ?? [])
   if (!strip) return null
 
-  const both = strip.previousBalls.length > 0
+  const totalOvers = strip.overs.length
 
   return (
     <section
-      aria-label={`Recent balls, over ${overOrdinal(strip.currentOver)}`}
-      className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-edge bg-card px-4 py-2.5 shadow-card"
+      aria-label={`Ball by ball by over, up to over ${overOrdinal(strip.currentOver)}`}
+      className="rounded-2xl border border-edge bg-card px-4 py-2.5 shadow-card"
     >
-      <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Recent balls</span>
-
-      {/* Current over */}
-      <span className="flex items-center gap-2">
-        <span className="tabular text-[10px] font-black uppercase tracking-[0.14em] text-pine-900">{overOrdinal(strip.currentOver)}</span>
-        <span className="flex items-center gap-1.5">
-          {strip.currentBalls.map((chip) => <Chip key={chip.key} chip={chip} />)}
-        </span>
-      </span>
-
-      {/* Previous over, dimmed */}
-      {both ? (
-        <span className="flex items-center gap-2 opacity-60">
-          <span aria-hidden="true" className="h-4 w-px bg-edge" />
-          <span className="tabular text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{overOrdinal(strip.previousOver!)}</span>
-          <span className="flex items-center gap-1.5">
-            {strip.previousBalls.map((chip) => <Chip key={chip.key} chip={chip} />)}
-          </span>
-        </span>
-      ) : null}
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Runs by over</span>
+        <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">{totalOvers} over{totalOvers === 1 ? '' : 's'} recorded</span>
+      </div>
+      <div className="mt-1.5 overflow-x-auto pb-1">
+        <div className="flex w-max items-center gap-3">
+          {strip.overs.map((group, i) => {
+            const isCurrent = i === strip.overs.length - 1
+            return (
+              <span
+                key={group.over}
+                className={`flex items-center gap-1.5 rounded-lg border px-2 py-1 ${
+                  isCurrent ? 'border-pine-700/40 bg-pine-50 ring-1 ring-[#a87b24]/60' : 'border-transparent'
+                }`}
+              >
+                <span className={`tabular text-[9px] font-black uppercase tracking-[0.12em] ${isCurrent ? 'text-pine-900' : 'text-slate-500'}`}>
+                  {overOrdinal(group.over)}
+                </span>
+                <span className="flex items-center gap-1">
+                  {group.balls.map((chip) => <Chip key={chip.key} chip={chip} />)}
+                </span>
+              </span>
+            )
+          })}
+        </div>
+      </div>
     </section>
   )
 }

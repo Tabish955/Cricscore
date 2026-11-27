@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-27 — Runs bar everywhere (by over), Cricinfo-pattern scoreboard
+
+### Changed
+- **Runs bar shows as many recorded overs as possible.** The strip now reads the
+  latest ~5 commentary pages (~20 overs, `fetchLatestCommentaryItems(..., 5)`) and renders
+  every recorded over horizontally scrollable, oldest → newest, current over emphasised.
+  Previously: current over + previous only. Ball-tap replay overlay fetches only 2 pages
+  (needs just the last ball).
+- **Match Center scoreboard flipped to Cricinfo rows**: crest + flag + name on the left,
+  right-aligned tabular score (tap-to-replay unchanged); featured live-match hero matches
+  the same pattern.
+- New `docs/UI-UX.md`: analysis of Cricbuzz & ESPNcricinfo (screenshots + live fetch),
+  gap list with priorities, definition of done, and standing rejections.
 ## 2026-11-26 — Logos/crests honesty chain, CRR/RRR, ball-by-ball fix
 
 ### Fixed
