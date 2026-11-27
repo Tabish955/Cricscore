@@ -11,7 +11,20 @@ export const dynamic = 'force-dynamic'
  * Allowlist: health, cb/(live|recent|upcoming), espn/match/<id>/commentary[?page=n]
  * No cookies, no secrets; upstream is the public production cricket API.
  */
-const ALLOW = /^((health)|(cb\/(live|recent|upcoming))|(espn\/match\/\d+\/commentary))((\?|\&)(league=\d+&date=\d{8})?(page=\d+)?)?$/
+const BASE_ALLOW = /^(health|cb\/(live|recent|upcoming)|espn\/match\/\d+\/commentary)$/
+const PARAM_ALLOW: Record<string, RegExp> = { league: /^\d{1,12}$/, date: /^\d{8}$/, page: /^\d{1,6}$/ }
+
+function isAllowed(path: string): boolean {
+  const [base, query = ''] = path.split('?')
+  if (!base || !BASE_ALLOW.test(base)) return false
+  if (!query) return true
+  const params = new URLSearchParams(query)
+  for (const [k, v] of params) {
+    const rule = PARAM_ALLOW[k]
+    if (!rule || !rule.test(v)) return false
+  }
+  return true
+}
 
 const pickHeaders = (h: Headers) => ({
   contentType: h.get('content-type'),
@@ -27,7 +40,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url)
   const path = url.searchParams.get('path') ?? ''
   const method = url.searchParams.get('method') ?? 'both'
-  if (!ALLOW.test(path)) {
+  if (!isAllowed(path)) {
     return NextResponse.json({ error: 'path not allowlisted' }, { status: 400 })
   }
   const target = `https://cricketapi-beryl.vercel.app/${path}`
