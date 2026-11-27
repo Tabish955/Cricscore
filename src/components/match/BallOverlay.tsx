@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { CommentaryView, MatchView } from '@/lib/api/normalize'
-import { dedupeCommentary, latestCommentaryPage } from '@/lib/api/normalize'
-import { fetchCommentaryPage } from '@/lib/api/client'
+import { fetchLatestCommentaryItems } from '@/lib/latest-commentary'
 import { classifyBallEvent } from '@/lib/event-glyph'
 
 /** What the scoreboard noticed between two polls, if anything. */
@@ -58,16 +57,11 @@ export function BallOverlay({ match, fallback, onClose }: { match: MatchView; fa
     staleTime: 15_000,
     refetchOnWindowFocus: false,
     queryFn: async ({ signal }): Promise<CommentaryView | null> => {
-      const first = await fetchCommentaryPage(match, 1, signal)
-      const pageCount = first.data.pageCount
-      let items = first.data.items
-      if (pageCount > 1) {
-        const last = await fetchCommentaryPage(match, latestCommentaryPage(pageCount), signal)
-        items = last.data.items
-      }
-      const list = dedupeCommentary(items)
+      const NOTE_RE = /milestone|fifty|hundred|century/i
+      const list = await fetchLatestCommentaryItems(match, signal)
       for (let i = list.length - 1; i >= 0; i--) {
-        if (list[i]!.event !== 'info') return list[i]!
+        const raw = list[i]!.eventRaw || list[i]!.event
+        if (!NOTE_RE.test(raw)) return list[i]!
       }
       return list[list.length - 1] ?? null
     },
