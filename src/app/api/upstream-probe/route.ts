@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
  * Allowlist: health, cb/(live|recent|upcoming), espn/match/<id>/commentary[?page=n]
  * No cookies, no secrets; upstream is the public production cricket API.
  */
-const ALLOW = /^((health)|(cb\/(live|recent|upcoming))|(espn\/match\/\d+\/commentary))(\?page=\d+)?$/
+const ALLOW = /^((health)|(cb\/(live|recent|upcoming))|(espn\/match\/\d+\/commentary))((\?|\&)(league=\d+&date=\d{8})?(page=\d+)?)?$/
 
 const pickHeaders = (h: Headers) => ({
   contentType: h.get('content-type'),
