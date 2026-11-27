@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-27 — Runs bar resets at the innings break
+
+### Fixed
+- **New innings, old overs.** `buildOverStrip` grouped deliveries across the innings
+  break — after the break started, innings 1's ball chips lingered in the strip. The
+  strip now scopes to the newest recorded `inningsId`, and the meta line shows
+  `Innings N · K overs recorded`. No other change to the by-over behaviour.
 ## 2026-11-27 — Flag placement, stale-on-return, ball-strip freshness
 
 ### Fixed

@@ -96,3 +96,18 @@ describe('multi-over coverage', () => {
     expect(strip.overs[strip.overs.length - 1]!.over).toBe(strip.currentOver)
   })
 })
+
+describe('innings boundary', () => {
+  it('drops the finished innings from the strip once innings 2 starts', () => {
+    const items = [
+      { ...ball('49.6', 1, { inningsId: 1 }) },
+      { ...ball('50.1', 2, { inningsId: 2 }) },
+      { ...ball('50.2', 4, { inningsId: 2 }) },
+    ]
+    const strip = buildOverStrip(items)!
+    expect(strip.inningsId).toBe(2)
+    expect(strip.currentOver).toBe(50)
+    expect(strip.overs.map((g) => g.over)).toEqual([50])
+    expect(strip.overs.flatMap((g) => g.balls.map((b) => b.label))).toEqual(['2', '4'])
+  })
+})

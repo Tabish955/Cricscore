@@ -55,7 +55,7 @@ export function OverStrip({ match, isLive }: { match: MatchView; isLive: boolean
     >
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Runs by over</span>
-        <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">{totalOvers} over{totalOvers === 1 ? '' : 's'} recorded</span>
+        <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400">{strip.inningsId !== null ? `Innings ${strip.inningsId} · ` : ''}{totalOvers} over{totalOvers === 1 ? '' : 's'} recorded</span>
       </div>
       <div className="mt-1.5 overflow-x-auto pb-1">
         <div className="flex w-max items-center gap-3">
