@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-11-27 — Team badge cascade (phase 1: live match surfaces)
+
+### Added
+- **`resolveLocalVisual`** (`src/lib/team-visuals.ts`): pure normalization, trailing
+  variant-token stripping (women/U19/A/XI/Shaheens) and a two-tier lookup:
+  sanctioned local asset (West Indies → `/flags/west-indies.png`) → franchise shield.
+- **Trademark-safe two-tone shields** (`ShieldMark`) for IPL, PSL, BBL, CPL, SA20,
+  ILT20, BPL, WPL and The Hundred, keyed by normalized slug with alias dictionary;
+  colours are ours, not official marks.
+- **`<TeamBadge />`** (`src/components/TeamBadge.tsx`): full cascade — feed crest →
+  same-origin proxy (feed crest only) → verified registry → WI local asset → feed
+  flag → franchise shield → deterministic hashed monogram (WCAG-picked text).
+  Lives alongside `TeamIdentity` while the phased migration rolls on.
+- Wired into Match Center, featured hero and live cards. `TeamIdentity` unchanged and
+  still serving StandingsTable / TeamDetail / teams pages (phase 2, after sign-off).
+- Phased rollout note in `docs/UI-UX.md` gap list unchanged; Tier 3 (backend
+  enrichment) intentionally skipped: this app has no DB of its own.
 ## 2026-11-27 — Flags as the left-slot badge
 
 ### Changed

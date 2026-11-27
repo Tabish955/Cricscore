@@ -18,7 +18,7 @@ import { venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import type { MatchView } from '@/lib/api/normalize'
 import { parseScoreText, splitScoreForDisplay } from '@/lib/score'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
-import { TeamIdentity } from '@/components/TeamIdentity'
+import { TeamBadge } from '@/components/TeamBadge'
 import { RatesLine } from '@/components/RatesLine'
 import { StatusBadge } from '@/components/StatusBadge'
 import { BallOverlay, type ScoreMoment } from './BallOverlay'
@@ -244,7 +244,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
                 const assetKey = team?.id ? `${headerMatch.provider}:${team.id}` : `${headerMatch.provider}:${team?.name ?? (side === 1 ? 't1' : 't2')}`
                 return (
                   <div key={side} className="flex items-center gap-3 border-b border-white/10 py-2 last:border-b-0 last:pb-1">
-                    <TeamIdentity assetKey={assetKey} name={label} short={team?.short} imageUrl={team?.imageUrl} flagUrl={team?.flagUrl} size="md" />
+                    <TeamBadge assetKey={assetKey} name={label} short={team?.short} imageUrl={team?.imageUrl} flagUrl={team?.flagUrl} size="md" />
                     <span className="flex min-w-0 flex-1 items-center truncate text-lg font-bold text-paper sm:text-xl" title={label}>
                       {label}
                     </span>
