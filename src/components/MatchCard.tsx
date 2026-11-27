@@ -35,10 +35,10 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
         imageUrl={team?.imageUrl ?? null}
         size="md"
       />
+      <FlagMark flagUrl={team?.flagUrl} name={label} className="shrink-0" />
       <span className="min-w-0 flex-1 truncate text-base font-semibold text-ink" title={label}>
         {label}
       </span>
-      <FlagMark flagUrl={team?.flagUrl} name={label} />
       {hit ? (
         <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-xl font-black text-pine-950">
           {disp!.main}

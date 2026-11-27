@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-27 — Flag placement, stale-on-return, ball-strip freshness
+
+### Fixed
+- **Flags sat after the team name and clipped.** Flag now renders **before** the name
+  (Cricbuzz/Cricinfo placement), `shrink-0`, consistent 15×22 badge in Match Center,
+  featured hero and live cards. This was our markup, not the API.
+- **Backgrounded tab returned to a stale scoreboard.** Added a global
+  `VisibilityRefresh` net in QueryProvider: one refetch of *active* queries when the
+  page becomes visible (debounced 10 s; background tabs still never poll). The two
+  queries that opted out of focus refetch (runs strip, ball-tap overlay) now follow
+  the global focus behaviour instead of pinning stale data.
+- **Ball-by-ball strip lagged behind live play.** Same root cause (focus opt-out +
+  single page fetch, fixed previously); now also covered by the visibility net.
 ## 2026-11-27 — Runs bar everywhere (by over), Cricinfo-pattern scoreboard
 
 ### Changed
