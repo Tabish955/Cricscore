@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-11-26 — Logos/crests honesty chain, CRR/RRR, ball-by-ball fix
+
+### Fixed
+- **Ball-by-ball strip rendered nothing (regression).** The feed publishes `over`
+  as a cricket-notation *float* (`41.1` = over 41, ball 1) plus a separate `ball`
+  counter. `normalizeCommentary` joined them into `"41.1.1"`, which the strip's
+  over-label parser rejected, so every delivery was skipped and the runs bar was
+  invisible. Overs now collapse to `floor(over).ball` once (`"41.1"`).
+- **Crest requests for known-missing teams.** A null feed `imageUrl` is
+  authoritative — the app no longer constructs the CDN URL or hammers the
+  same-origin proxy for verified-missing crests. Chain is now: feed-verified URL →
+  same-origin proxy of that same asset (only when a feed URL exists) → verified
+  registry → monogram. No candidates, no requests, no retries when the feed is null.
+
+### Added
+- **CRR / RRR line** (Google-style) on the live scoreboard surfaces (Match Center,
+  HeroMatch, live MatchCard). Computed from the score string's embedded context
+  (`"141/6 (19.2/20 ov, target 168)"`): CRR always when overs are known; RRR only
+  for a chase with an embedded target and innings allowance; omitted once the chase
+  is over. Never estimated.
+- **FlagMark**: feed-supplied `flagUrl` is now passed through the schema/normalize
+  layer and rendered beside team names when present. No feed flag, no flag —
+  nothing is inferred or substituted. (The current API returns `flagUrl: null`
+  everywhere; flags will appear only if the API starts providing them.)
+
+### Notes
+- Backend asset fix (PR #6) remains the source of crest truth: missing crests are
+  `imageUrl: null` by design, so those teams intentionally render initials monograms.
 ## 2026-11-26 — Runs bar: the latest balls of the over, Google-style
 
 ### Added

@@ -19,6 +19,8 @@ import type { MatchView } from '@/lib/api/normalize'
 import { parseScoreText, splitScoreForDisplay } from '@/lib/score'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
 import { TeamIdentity } from '@/components/TeamIdentity'
+import { FlagMark } from '@/components/FlagMark'
+import { RatesLine } from '@/components/RatesLine'
 import { StatusBadge } from '@/components/StatusBadge'
 import { BallOverlay, type ScoreMoment } from './BallOverlay'
 import { FetchStatus } from '@/components/FetchStatus'
@@ -240,12 +242,15 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team1?.name ?? splitTeams(headerMatch)?.[0] ?? 'Team not supplied'}</span>
+                  <FlagMark flagUrl={headerMatch.team1?.flagUrl} name={headerMatch.team1?.name ?? 'Team 1'} />
                   <ScoreMomentButton match={headerMatch} side={1} moment={moment} onOpen={() => setMomentOpen(true)} />
                 </div>
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <span className="truncate text-base font-bold sm:text-lg">{headerMatch.team2?.name ?? splitTeams(headerMatch)?.[1] ?? 'Team not supplied'}</span>
+                  <FlagMark flagUrl={headerMatch.team2?.flagUrl} name={headerMatch.team2?.name ?? 'Team 2'} />
                   <ScoreMomentButton match={headerMatch} side={2} moment={moment} onOpen={() => setMomentOpen(true)} />
                 </div>
+                <RatesLine scores={headerMatch.scores} />
               </div>
               <TeamIdentity assetKey={headerMatch.team2?.id ? `${headerMatch.provider}:${headerMatch.team2.id}` : `${headerMatch.provider}:${headerMatch.team2?.name ?? 't2'}`} name={headerMatch.team2?.name ?? 'Team 2'} short={headerMatch.team2?.short} imageUrl={headerMatch.team2?.imageUrl} size="lg" />
             </div>

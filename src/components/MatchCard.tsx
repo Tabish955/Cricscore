@@ -5,6 +5,8 @@ import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import { TeamIdentity } from './TeamIdentity'
+import { FlagMark } from './FlagMark'
+import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
 import { splitScoreForDisplay } from '@/lib/score'
@@ -36,6 +38,7 @@ function TeamRow({ m, team }: { m: MatchView; team: MatchView['team1'] }) {
       <span className="min-w-0 flex-1 truncate text-base font-semibold text-ink" title={label}>
         {label}
       </span>
+      <FlagMark flagUrl={team?.flagUrl} name={label} />
       {hit ? (
         <span key={hit.score + hit.overs} className="score-flash score-nums whitespace-nowrap font-display text-xl font-black text-pine-950">
           {disp!.main}
@@ -117,6 +120,7 @@ export function MatchCard({ match, index }: { match: MatchView; index?: number }
             {match.status}
           </p>
         ) : null}
+        {live ? <RatesLine scores={match.scores} tone="light" /> : null}
       </Link>
 
       <div className="mt-auto flex flex-wrap items-center gap-x-2 border-t border-edge/70 px-4 py-2 text-[10px] text-slate-400">
