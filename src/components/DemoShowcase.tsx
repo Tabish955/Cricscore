@@ -122,6 +122,7 @@ const FICTIONAL_SQUADS: SquadsView = {
     {
       teamId: 'demo-har',
       teamName: 'Harbour City CC',
+      flagUrl: null,
       players: [
         { id: 'demo-p1', name: 'A. Rafiq', role: 'Batter', isCaptain: true, isStarter: true, battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm off-break' },
         { id: 'demo-p2', name: 'T. Okafor', role: 'Wicket Keeper', isCaptain: false, isStarter: true, battingStyle: 'Right-hand bat', bowlingStyle: null },
@@ -135,6 +136,7 @@ const FICTIONAL_SQUADS: SquadsView = {
     {
       teamId: 'demo-val',
       teamName: 'Valley Riders',
+      flagUrl: null,
       players: [
         { id: 'demo-q1', name: 'L. Brandt', role: 'Batter', isCaptain: true, isStarter: true, battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium-fast' },
         { id: 'demo-q2', name: 'D. Menon', role: 'All Rounder', isCaptain: false, isStarter: true, battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm leg-break' },

@@ -255,6 +255,7 @@ export const SquadsResponseSchema = z.object({
         z.object({
           teamId: idLike.optional().nullable(),
           teamName: z.string().optional().nullable(),
+          flagUrl: z.string().optional().nullable(),
           players: z
             .array(
               z

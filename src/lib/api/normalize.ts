@@ -311,6 +311,19 @@ export function normalizeListPayload(json: unknown, feedCategory?: string): List
 
 /* ------------------------------------------------------------- details */
 
+function mergeTeamView(raw: { id?: unknown; name?: unknown; short?: unknown; imageUrl?: unknown; flagUrl?: unknown } | null | undefined, fb: TeamView | null | undefined): TeamView | null {
+  const d = teamView(raw)
+  if (!d) return fb ?? null
+  if (!fb) return d
+  return {
+    id: d.id ?? fb.id,
+    name: d.name || fb.name,
+    short: d.short || fb.short,
+    imageUrl: d.imageUrl ?? fb.imageUrl,
+    flagUrl: d.flagUrl ?? fb.flagUrl,
+  }
+}
+
 export function normalizeMatchDetail(json: unknown, listFallback?: MatchView | null): MatchView | null {
   const parsed = MatchDetailResponseSchema.safeParse(json)
   if (!parsed.success || !parsed.data.success) return listFallback ?? null
@@ -353,8 +366,8 @@ export function normalizeMatchDetail(json: unknown, listFallback?: MatchView | n
     provider,
     matchId,
     teams: listFallback?.teams || [teamView(raw.team1)?.name, teamView(raw.team2)?.name].filter(Boolean).join(' vs '),
-    team1: teamView(raw.team1) ?? listFallback?.team1 ?? null,
-    team2: teamView(raw.team2) ?? listFallback?.team2 ?? null,
+    team1: mergeTeamView(raw.team1, listFallback?.team1),
+    team2: mergeTeamView(raw.team2, listFallback?.team2),
     scores,
     category,
     live,
@@ -735,6 +748,8 @@ export interface PlayerView {
 export interface SquadTeamView {
   teamId: string | null
   teamName: string
+  /** Feed-supplied team flag from the squads payload (e.g. Bangladesh A → bd.png). */
+  flagUrl: string | null
   players: PlayerView[]
 }
 
@@ -753,6 +768,7 @@ export function normalizeSquads(json: unknown): SquadsView {
   const teams: SquadTeamView[] = (r.teams ?? []).map((t) => ({
     teamId: str(t.teamId) || null,
     teamName: str(t.teamName, 'Unknown team'),
+    flagUrl: cleanUrl(t.flagUrl),
     players: (t.players ?? []).map((p) => ({
       id: str(p.id) || null,
       name: str(p.name, 'Unknown player'),

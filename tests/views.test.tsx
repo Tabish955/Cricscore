@@ -175,7 +175,7 @@ describe('TeamBadge — image failure falls down the candidate chain', () => {
     // Candidate 2: the same-origin proxy of the same official asset (hotlink-blocked browsers)
     fireEvent.error(img1)
     const img2 = container.querySelector('img')!
-    expect(img2.getAttribute('src')).toBe('/api/team-logo/espn/1559')
+    expect(img2.getAttribute('src')).toBe(`/api/team-logo/feed?u=${encodeURIComponent('https://cdn.example.test/baroda.png')}`)
     // Exhausted → monogram, never a substituted crest
     fireEvent.error(img2)
     expect(container.querySelector('img')).toBeNull()

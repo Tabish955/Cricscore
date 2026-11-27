@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-27 — Fix: match-centre assets, same-origin asset proxy, squad flags
+
+### Fixed
+- **Match detail no longer erases list-supplied assets**: teams merge per-field
+  (`id/name/short/imageUrl/flagUrl`) instead of detail-replaces-list wholesale.
+- **Badge images no longer depend on CDN hotlink luck**: new same-origin proxy
+  `GET /api/team-logo/feed?u=<feed-supplied-url>` fetches the exact asset the feed
+  references — any allowlisted public image host (a.espncdn.com, img1/2.hscicdn.com,
+  flagcdn.com, i.cricbuzz.com), HTTPS-only, image/*-only, 512 KB cap, no redirects —
+  and serves it from our origin. The previous espn-id-template proxy was replaced;
+  the recovered hscicdn crests now proxy too.
+- Squads tabs show the squads payload's own team `flagUrl`; “XI” copy now marks
+  published XIs as line-ups as published, and `role: "Unknown"` renders as
+  “Role not supplied”.
 ## 2026-11-27 — Team identity hardening: teamId join + decorative badges
 
 ### Changed
