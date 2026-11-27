@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-26 — Runs bar: the latest balls of the over, Google-style
+
+### Added
+- `OverStrip` in Match Center (live, deep-dive matches only): chips for the recorded
+  balls of the current over (dots, runs, 4, 6, W, wides/extras) plus the previous over,
+  dimmed — the Google/ESPNcricinfo panel pattern. Derived from the recorded latest
+  commentary page (same on-demand fetch as the replay overlay); renders nothing when no
+  deliveries are recorded. No fabrication; no new polling surface beyond Match Center.
+- Shared `fetchLatestCommentaryItems` (`src/lib/latest-commentary.ts`) for the replay
+  overlay and the runs strip; `buildOverStrip` unit-tested (extras share the ball index;
+  milestone notes are never chips).
+
 ## 2026-11-26 — Score display split for embedded chase context
 
 ### Changed

@@ -26,6 +26,7 @@ import { CoverageNote, ErrorState, LoadingCard, Spinner } from '@/components/Sta
 import { FavoriteMatchButton } from '@/components/FavoriteToggle'
 import { ScorecardView } from './ScorecardView'
 import { CommentaryPanel } from './CommentaryPanel'
+import { OverStrip } from './OverStrip'
 import { SquadsPanel } from './SquadsPanel'
 import { TablePanel } from './TablePanel'
 
@@ -277,6 +278,9 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
           compact
         />
       </section>
+
+      {/* Runs bar: the latest balls of this over, for live matches with coverage */}
+      {effLive && canDeepDive ? <OverStrip match={headerMatch} isLive={effLive} /> : null}
 
       {/* Tabs */}
       <div role="tablist" aria-label="Match sections" className="flex gap-1 overflow-x-auto border-b border-edge pb-2 pt-1">
