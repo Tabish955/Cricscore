@@ -52,7 +52,8 @@ describe('TeamBadge rendering', () => {
   it('renders the franchise shield when only an alias matches', () => {
     const html = renderToString(createElement(TeamBadge, { assetKey: 'cb:1', name: 'Kings XI Punjab', short: 'PBKS' }))
     expect(html).toContain('PBKS')
-    expect(html).toContain('team shield')
+    expect(html).toContain('aria-hidden="true"') // decorative (spec §4): the adjacent name is the accessible label
+    expect(html).toContain('<svg')
   })
 
   it('renders the WI asset as the badge when the feed has nothing', () => {
@@ -73,6 +74,7 @@ describe('TeamBadge rendering', () => {
   it('falls back to a monogram for unknown clubs with no feed data', () => {
     const html = renderToString(createElement(TeamBadge, { assetKey: 'cb:88', name: 'Harbour City CC', short: 'HAR' }))
     expect(html).not.toContain('<img')
-    expect(html).toContain('fallback badge')
+    expect(html).toContain('aria-hidden="true"')
+    expect(html).toContain('HAR'.slice(0, 2)) // initials, decorative
   })
 })

@@ -179,19 +179,19 @@ describe('TeamBadge — image failure falls down the candidate chain', () => {
     // Exhausted → monogram, never a substituted crest
     fireEvent.error(img2)
     expect(container.querySelector('img')).toBeNull()
-    expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+    expect(container.querySelector('span[aria-hidden="true"]')).toBeTruthy()
   })
 
   it('null feed imageUrl means NO candidate at all — nothing constructed, nothing retried', () => {
     const { container } = render(createElement(TeamBadge, { assetKey: 'espn:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
-    expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+    expect(container.querySelector('span[aria-hidden="true"]')).toBeTruthy()
   })
 
   it('does not proxy non-espn keys (monogram instead, feed URL if supplied)', () => {
     const { container } = render(createElement(TeamBadge, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', size: 'xs' }))
     expect(container.querySelector('img')).toBeNull()
-    expect(screen.getByRole('img', { name: /fallback badge/i })).toBeTruthy()
+    expect(container.querySelector('span[aria-hidden="true"]')).toBeTruthy()
     const withFeed = render(createElement(TeamBadge, { assetKey: 'cb:1559', name: 'Baroda', short: 'BRO', imageUrl: 'https://cdn.example.test/b.png', size: 'xs' }))
     const img = withFeed.container.querySelector('img')!
     expect(img.getAttribute('src')).toBe('https://cdn.example.test/b.png')

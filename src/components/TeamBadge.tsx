@@ -86,11 +86,11 @@ export function TeamBadge({ assetKey, name, short, imageUrl, flagUrl, size = 'md
   const label = name || short || 'Unknown team'
   const hue = hueFromKey(assetKey || label)
 
+  // Decorative: the team's visible name sits beside this in every surface, so the
+  // badge carries no independent accessible name (spec §4). Initials are text only.
   const monogram = (
     <span
-      role={src ? undefined : 'img'}
-      aria-hidden={src ? true : undefined}
-      aria-label={src ? undefined : `${label} fallback badge (not an official crest)`}
+      aria-hidden="true"
       title="Fallback badge – not an official crest"
       style={{
         width: px,
@@ -108,8 +108,8 @@ export function TeamBadge({ assetKey, name, short, imageUrl, flagUrl, size = 'md
     <span className={`relative inline-block shrink-0 ${className}`} style={{ width: px, height: px }}>
       {monogram}
       {!src && shield ? (
-        <span role="img" aria-label={`${label} team shield (original Cricline artwork, not official art)`} className="absolute inset-0">
-          <ShieldMark shield={shield} size={px} label={label} />
+        <span aria-hidden="true" className="absolute inset-0">
+          <ShieldMark shield={shield} size={px} />
         </span>
       ) : null}
       {src ? (
@@ -117,13 +117,13 @@ export function TeamBadge({ assetKey, name, short, imageUrl, flagUrl, size = 'md
         <img
           key={src}
           src={src}
-          alt={`${label} badge`}
+          alt=""
           width={px}
           height={px}
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
-          style={{ width: px, height: px, objectFit: isFlag ? 'cover' : 'contain', opacity: loaded ? 1 : 0 }}
+          style={{ width: px, height: px, objectFit: 'contain', opacity: loaded ? 1 : 0 }}
           className={`mark-fade absolute inset-0 bg-card ring-1 ring-edge ${isFlag ? 'rounded-lg' : 'rounded-full'}`}
           onLoad={() => setLoaded(true)}
           onError={() => setIdx((i) => i + 1)}

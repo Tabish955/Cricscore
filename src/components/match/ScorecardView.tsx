@@ -1,6 +1,6 @@
 'use client'
 
-import type { ScorecardView as Scorecard } from '@/lib/api/normalize'
+import type { ScorecardView as Scorecard, Provider, TeamView } from '@/lib/api/normalize'
 import { formatRate, formatInt, formatFetchedAt } from '@/lib/format'
 import { TeamBadge } from '@/components/TeamBadge'
 import { CoverageNote } from '@/components/States'
@@ -34,13 +34,15 @@ function playerHref(id: string, name: string, ctx?: PlayerLinkContext): string {
   return `${base}?${p.toString()}`
 }
 
-export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching, matchContext }: {
+export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching, matchContext, teams }: {
   view: Scorecard
   stale: boolean
   refreshedAt: number | null
   onRefresh: () => void
   isFetching: boolean
   matchContext?: PlayerLinkContext
+  /** Match sides for the innings-header badges; absent → name-only monograms. */
+  teams?: { provider: Provider; 1: TeamView | null; 2: TeamView | null }
 }) {
   if (view.innings.length === 0) {
     return (
@@ -75,11 +77,22 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
         </ul>
       ) : null}
 
-      {view.innings.map((inn) => (
+      {view.innings.map((inn) => {
+        // Innings→side join is by provider-qualified teamId (spec §1); fall back to
+        // a name match only when the innings carries no id.
+        const side = ((): TeamView | null => {
+          const sides = [teams?.[1], teams?.[2]].filter(Boolean) as TeamView[]
+          if (inn.teamId) return sides.find((t) => t.id === inn.teamId) ?? null
+          const n = inn.team.toLowerCase()
+          return sides.find((t) => t.name.toLowerCase() === n || (t.short && t.short.toLowerCase() === n)) ?? null
+        })()
+        const sideKey = side?.id ? `${teams!.provider}:${side.id}` : `scorecard:${inn.team || inn.inningsId}`
+        return (
         <section key={inn.inningsId ?? inn.team} className="overflow-hidden rounded-xl border border-edge bg-card" aria-labelledby={`inn-${inn.inningsId ?? inn.team}`}>
-          <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-edge bg-pine-100/40 px-3 py-2">
-            <h3 id={`inn-${inn.inningsId ?? inn.team}`} className="text-xs font-black uppercase tracking-[0.14em] text-pine-900">
-              {inn.team || `Innings ${inn.inningsId ?? ''}`}{inn.declared ? ' – declared' : ''}
+          <header className="flex flex-wrap items-center justify-between gap-2 border-b border-edge bg-pine-100/40 px-3 py-2">
+            <h3 id={`inn-${inn.inningsId ?? inn.team}`} className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-pine-900">
+              <TeamBadge assetKey={sideKey} name={side?.name ?? (inn.team || `Innings ${inn.inningsId ?? ''}`)} short={side?.short ?? inn.team} imageUrl={side?.imageUrl ?? null} flagUrl={side?.flagUrl ?? null} size="xs" />
+              <span>{inn.team || `Innings ${inn.inningsId ?? ''}`}{inn.declared ? ' – declared' : ''}</span>
             </h3>
             <p className="score-nums text-xs font-bold text-pine-900">
               {inn.score || '–'}{inn.overs ? ` (${inn.overs} ov)` : ''}
@@ -158,7 +171,8 @@ export function ScorecardView({ view, stale, refreshedAt, onRefresh, isFetching,
             {!extAllMissing && <ExtendedInningsSections innings={inn} />}
           </div>
         </section>
-      ))}
+        )
+      })}
       {extAllMissing ? (
         <p className="rounded-md border border-edge bg-slate-50 px-3 py-2 text-[10px] leading-4 text-slate-500">
           <strong className="font-semibold text-slate-600">Extras, fall of wickets and partnerships:</strong> not included for this match. &quot;Not supplied&quot; means nothing was sent; it is not zero. These sections render automatically when they are included.

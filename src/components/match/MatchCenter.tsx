@@ -16,7 +16,7 @@ import { POLL } from '@/lib/polling'
 import { useOnlineStatus } from '@/lib/hooks'
 import { venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import type { MatchView } from '@/lib/api/normalize'
-import { parseScoreText, splitScoreForDisplay } from '@/lib/score'
+import { parseScoreText, splitScoreForDisplay, scoreForTeam, sideForScore } from '@/lib/score'
 import { teamAssetsFromMatches } from '@/lib/teamAssets'
 import { TeamBadge } from '@/components/TeamBadge'
 import { RatesLine } from '@/components/RatesLine'
@@ -185,15 +185,18 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
   // Watch the polled scores; when a side moves, fire the score-moment burst.
   useEffect(() => {
     const next = new Map<string, { runs: number; wickets: number }>()
+    // Track per side by provider-qualified team id when the feed supplies one,
+    // never by abbreviation.
+    const keyOf = (s: MatchView['scores'][number]) => s.teamId ?? `${s.team}`.toLowerCase()
     for (const s of match.scores) {
       const parsed = parseScoreText(s.score)
-      if (parsed) next.set(`${s.team}`.toLowerCase(), parsed)
+      if (parsed) next.set(keyOf(s), parsed)
     }
     const prev = prevScoresRef.current
     if (prev) {
       for (const s of match.scores) {
-        const parsed = next.get(s.team.toLowerCase())
-        const before = prev.get(s.team.toLowerCase())
+        const parsed = next.get(keyOf(s))
+        const before = prev.get(keyOf(s))
         if (!parsed || !before) continue
         const runsDelta = parsed.runs - before.runs
         const wicketDelta = parsed.wickets - before.wickets
@@ -324,7 +327,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
           scorecardQ.isPending ? <LoadingCard label="Fetching scorecard…" /> : scorecardQ.isError && !scorecardQ.data ? (
             <ErrorState title="Scorecard unavailable" detail={scorecardQ.error instanceof Error ? scorecardQ.error.message : undefined} onRetry={() => scorecardQ.refetch()} />
           ) : scorecardQ.data ? (
-            <ScorecardView view={scorecardQ.data.data} stale={scorecardQ.isError} refreshedAt={scorecardQ.dataUpdatedAt} onRefresh={() => scorecardQ.refetch()} isFetching={scorecardQ.isFetching} matchContext={{ matchId, league, date }} />
+            <ScorecardView view={scorecardQ.data.data} stale={scorecardQ.isError} refreshedAt={scorecardQ.dataUpdatedAt} onRefresh={() => scorecardQ.refetch()} isFetching={scorecardQ.isFetching} matchContext={{ matchId, league, date }} teams={{ provider: match.provider, 1: match.team1, 2: match.team2 }} />
           ) : null
         ) : (
           <LimitedCoverage what="a full batting/bowling scorecard" />
@@ -342,7 +345,7 @@ export function MatchCenter({ provider, matchId, league, date, tab }: { provider
           squadsQ.isPending ? <LoadingCard label="Fetching squads…" /> : squadsQ.isError && !squadsQ.data ? (
             <ErrorState title="Squads unavailable" detail={squadsQ.error instanceof Error ? squadsQ.error.message : undefined} onRetry={() => squadsQ.refetch()} />
           ) : squadsQ.data ? (
-            <SquadsPanel view={squadsQ.data.data} />
+            <SquadsPanel view={squadsQ.data.data} provider={match.provider} team1={match.team1} team2={match.team2} />
           ) : null
         ) : (
           <LimitedCoverage what="squad lists" />
@@ -372,18 +375,9 @@ function dateFromMs(ms: number | null): string {
   return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`
 }
 
-/** Which side (1 or 2) a score entry belongs to; mirrors the score button's matching. */
+/** Which side (1 or 2) a score entry belongs to; id first, name fallback (spec §1). */
 function headerSideForScore(m: MatchView, score: MatchView['scores'][number]): 1 | 2 | null {
-  const t = score.team.toLowerCase()
-  const lower1 = (m.team1?.name ?? '').toLowerCase()
-  const sh1 = (m.team1?.short ?? '').toLowerCase()
-  const lower2 = (m.team2?.name ?? '').toLowerCase()
-  const sh2 = (m.team2?.short ?? '').toLowerCase()
-  const hit1 = lower1 && t && (t === lower1 || t === sh1 || lower1.includes(t) || t.includes(lower1))
-  const hit2 = lower2 && t && (t === lower2 || t === sh2 || lower2.includes(t) || t.includes(lower2))
-  if (hit1) return 1
-  if (hit2) return 2
-  return null
+  return sideForScore(m, score)
 }
 
 function splitTeams(m: MatchView): [string, string] | null {
@@ -398,12 +392,7 @@ function splitTeams(m: MatchView): [string, string] | null {
 function ScoreMomentButton({ match, side, moment, onOpen }: { match: MatchView; side: 1 | 2; moment: ScoreMoment | null; onOpen: () => void }) {
   const team = side === 1 ? match.team1 : match.team2
   const label = team?.name ?? ''
-  const hit = match.scores.find((s) => {
-    const t = s.team.toLowerCase()
-    const n = label.toLowerCase()
-    const sh = (team?.short ?? '').toLowerCase()
-    return t && (t === n || t === sh || n.includes(t) || t.includes(n))
-  })
+  const hit = scoreForTeam(match.scores, team ?? null)
   if (!hit) return <span className="score-nums text-sm text-[#a9bfb0]">–</span>
   const disp = splitScoreForDisplay(hit.score)
   const fresh = moment?.side === side ? moment : null
