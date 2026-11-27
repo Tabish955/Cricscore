@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-27 — Flags as the left-slot badge
+
+### Changed
+- **Feed-verified flags now carry the left badge slot** when no verified crest exists
+  (`TeamIdentity` gains `flagUrl`): crest (feed) → same-origin proxy (feed crest only) →
+  verified registry → **feed flag** → monogram. The flag renders as a rounded badge,
+  flags crop to cover.
+- Removed the separate flag element that rendered AFTER the team name (duplicate and
+  visually misaligned); every surface (Match Center, hero, live cards) inherits the new
+  single-badge behavior. `FlagMark` deleted; SSR tests updated accordingly.
+
+### Notes
+- The flag is still strictly feed-supplied; absence stays a monogram.
 ## 2026-11-27 — Runs bar resets at the innings break
 
 ### Fixed

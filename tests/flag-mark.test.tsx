@@ -1,24 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { renderToString } from 'react-dom/server'
 import { createElement } from 'react'
-import { FlagMark } from '@/components/FlagMark'
+import { TeamIdentity } from '@/components/TeamIdentity'
 import { normalizeMatch } from '@/lib/api/normalize'
 
-describe('FlagMark', () => {
-  it('renders nothing when the feed supplies no flagUrl', () => {
-    expect(renderToString(createElement(FlagMark, { flagUrl: null, name: 'Bangladesh A' }))).toBe('')
-    expect(renderToString(createElement(FlagMark, { flagUrl: undefined, name: 'Dubai Capitals' }))).toBe('')
-  })
-
-  it('renders nothing for non-https URLs', () => {
-    expect(renderToString(createElement(FlagMark, { flagUrl: 'http://flagcdn.com/w40/bd.png', name: 'X' }))).toBe('')
-    expect(renderToString(createElement(FlagMark, { flagUrl: 'javascript:alert(1)', name: 'X' }))).toBe('')
-  })
-
-  it('renders the feed-supplied flag', () => {
-    const html = renderToString(createElement(FlagMark, { flagUrl: 'https://flagcdn.com/w40/bd.png', name: 'Bangladesh A' }))
+describe('TeamIdentity flag handling', () => {
+  it('uses the feed-supplied flag as the badge when no crest exists', () => {
+    const html = renderToString(createElement(TeamIdentity, { assetKey: 'espn:668', name: 'Bangladesh A', short: 'BAN-A', imageUrl: null, flagUrl: 'https://flagcdn.com/w40/bd.png' }))
     expect(html).toContain('https://flagcdn.com/w40/bd.png')
-    expect(html).toContain('Bangladesh A flag')
+    expect(html).toContain('Bangladesh A badge')
+  })
+
+  it('prefers a verified crest image over the flag', () => {
+    const html = renderToString(createElement(TeamIdentity, { assetKey: 'espn:6', name: 'India', short: 'IND', imageUrl: 'https://a.espncdn.com/i/teamlogos/cricket/500/6.png', flagUrl: 'https://flagcdn.com/w40/in.png' }))
+    expect(html).toContain('500/6.png')
+    expect(html).not.toContain('w40/in.png')
+  })
+
+  it('renders no <img> for non-https or absent flags', () => {
+    expect(renderToString(createElement(TeamIdentity, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: null }))).not.toContain('<img')
+    expect(renderToString(createElement(TeamIdentity, { assetKey: 'espn:1', name: 'Nowhere', short: 'NOW', imageUrl: null, flagUrl: 'http://flagcdn.com/w40/now.png' }))).not.toContain('<img')
   })
 })
 

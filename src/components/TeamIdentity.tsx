@@ -8,7 +8,7 @@ const assetCache: { map: Map<string, string> | null } = { map: null }
 /**
  * Marks chain for a team: feed-verified imageUrl -> same-origin proxy of that
  * same official asset (only when the feed supplied one) -> verified registry
- * -> monogram. Each candidate advances on a failed image load; the monogram
+ * -> feed-verified flag -> monogram. Each candidate advances on a failed image load; the monogram
  * renders underneath at all times, and the <img> fades in once loaded.
  *
  * A null feed imageUrl is authoritative: the API only nulls what is known to
@@ -37,15 +37,17 @@ export interface TeamIdentityProps {
   assetKey: string
   name: string
   short?: string | null
-  /** Verified URL from feed/detail metadata. Preferred over the registry. */
+  /** Verified URL from feed/detail metadata. Preferred over the registry and over any flag. */
   imageUrl?: string | null
+  /** Feed-supplied flag URL; used as the left-slot badge only when no verified crest exists. */
+  flagUrl?: string | null
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   className?: string
 }
 
 const SIZES = { xs: 24, sm: 32, md: 40, lg: 64, xl: 88 } as const
 
-export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', className = '' }: TeamIdentityProps) {
+export function TeamIdentity({ assetKey, name, short, imageUrl, flagUrl, size = 'md', className = '' }: TeamIdentityProps) {
   const px = SIZES[size]
   const [idx, setIdx] = useState(0)
   const [loaded, setLoaded] = useState(false)
@@ -55,25 +57,30 @@ export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', cla
   }
 
   const candidates = useMemo(() => {
-    const list: string[] = []
+    const list: Array<{ src: string; isFlag: boolean }> = []
     const espnId = espnIdFromKey(assetKey)
     const feedUrl = imageUrl && /^https:\/\//i.test(imageUrl) ? imageUrl : null
+    const flag = flagUrl && /^https:\/\//i.test(flagUrl) ? flagUrl : null
     const registryUrl = assetCache.map?.get(assetKey) ?? null
-    if (feedUrl) list.push(feedUrl)
+    if (feedUrl) list.push({ src: feedUrl, isFlag: false })
     // Only when the feed verified a crest exists: the same-origin proxy serves
     // the server-side copy of the official asset, for browsers that cannot
     // hotlink the CDN directly. No feed URL, no proxy — nothing guessed.
-    if (feedUrl && espnId) list.push(proxyLogo(espnId))
-    if (registryUrl && registryUrl !== feedUrl) list.push(registryUrl)
+    if (feedUrl && espnId) list.push({ src: proxyLogo(espnId), isFlag: false })
+    if (registryUrl && registryUrl !== feedUrl) list.push({ src: registryUrl, isFlag: false })
+    // A feed-verified flag is a legitimate national-team badge — allowed to carry the slot when no crest exists.
+    if (flag && flag !== feedUrl && flag !== registryUrl) list.push({ src: flag, isFlag: true })
     return list
-  }, [imageUrl, assetKey])
+  }, [imageUrl, flagUrl, assetKey])
 
   // Restart the chain when the inputs change (e.g. provider switch).
   useEffect(() => setIdx(0), [candidates])
   // A new candidate must prove itself before it covers the monogram.
   useEffect(() => setLoaded(false), [idx])
 
-  const src = candidates[idx] ?? null
+  const current = candidates[idx] ?? null
+  const src = current?.src ?? null
+  const isFlag = current?.isFlag ?? false
   const label = name || short || 'Unknown team'
   const hue = hueFromKey(assetKey || label)
 
@@ -109,8 +116,8 @@ export function TeamIdentity({ assetKey, name, short, imageUrl, size = 'md', cla
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
-          style={{ width: px, height: px, objectFit: 'contain', opacity: loaded ? 1 : 0 }}
-          className="mark-fade absolute inset-0 rounded-full bg-card ring-1 ring-edge"
+          style={{ width: px, height: px, objectFit: isFlag ? 'cover' : 'contain', opacity: loaded ? 1 : 0 }}
+          className={`mark-fade absolute inset-0 bg-card ring-1 ring-edge ${isFlag ? 'rounded-lg' : 'rounded-full'}`}
           onLoad={() => setLoaded(true)}
           onError={() => setIdx((i) => i + 1)}
         />

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import type { MatchView } from '@/lib/api/normalize'
 import { matchHref, venueLine, formatMatchDate, formatMatchTime } from '@/lib/format'
 import { TeamIdentity } from './TeamIdentity'
-import { FlagMark } from './FlagMark'
 import { RatesLine } from './RatesLine'
 import { StatusBadge } from './StatusBadge'
 import { FavoriteMatchButton } from './FavoriteToggle'
@@ -46,9 +45,10 @@ export function HeroMatch({ match }: { match: MatchView }) {
           name={label}
           short={team?.short ?? ''}
           imageUrl={team?.imageUrl ?? null}
+          flagUrl={team?.flagUrl}
           size="lg"
         />
-        <p className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-[#f5f0e4] sm:text-xl" title={label}><FlagMark flagUrl={team?.flagUrl} name={label} className="h-[15px] w-[22px] shrink-0 rounded-[3px] ring-white/20" />{label}</p>
+        <p className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-[#f5f0e4] sm:text-xl" title={label}>{label}</p>
         {score ? (
           <p className="score-nums whitespace-nowrap text-right font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
             {disp!.main}
