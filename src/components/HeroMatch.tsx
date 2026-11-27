@@ -40,7 +40,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
     const label = team?.name ?? 'Team not supplied'
     const disp = score ? splitScoreForDisplay(score.score) : null
     return (
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 items-center gap-4 border-b border-white/10 py-3 last:border-b-0">
         <TeamIdentity
           assetKey={team?.id ? `${match.provider}:${team.id}` : `${match.provider}:${label}`}
           name={label}
@@ -48,17 +48,15 @@ export function HeroMatch({ match }: { match: MatchView }) {
           imageUrl={team?.imageUrl ?? null}
           size="lg"
         />
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 truncate text-base font-bold text-[#f5f0e4] sm:text-lg" title={label}>{label}<FlagMark flagUrl={team?.flagUrl} name={label} /></p>
-          {score ? (
-            <p className="score-nums mt-1 font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
-              {disp!.main}
-              {score.overs ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">({score.overs} ov)</span> : disp!.sub ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">{disp!.sub}</span> : null}
-            </p>
-          ) : (
-            <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8aa392]">To bat</p>
-          )}
-        </div>
+        <p className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-[#f5f0e4] sm:text-xl" title={label}>{label}<FlagMark flagUrl={team?.flagUrl} name={label} className="h-[14px] w-[20px] rounded-[3px] ring-white/20" /></p>
+        {score ? (
+          <p className="score-nums whitespace-nowrap text-right font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
+            {disp!.main}
+            {score.overs ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">({score.overs} ov)</span> : disp!.sub ? <span className="ml-2 align-baseline font-sans text-xs font-semibold text-[#9db4a4]">{disp!.sub}</span> : null}
+          </p>
+        ) : (
+          <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8aa392]">To bat</p>
+        )}
       </div>
     )
   }
@@ -78,9 +76,8 @@ export function HeroMatch({ match }: { match: MatchView }) {
 
       <Link href={href} className="block px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brass-light">
         {match.live ? <div className="mb-1 sm:mb-2"><RatesLine scores={match.scores} /></div> : null}
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col">
           <TeamBlock team={t1} score={s1} />
-          <span className="hidden select-none font-display text-xl font-black text-brass/60 sm:block">v</span>
           <TeamBlock team={t2} score={s2} />
         </div>
         {match.status ? (

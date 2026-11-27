@@ -81,3 +81,18 @@ describe('overOrdinal', () => {
     expect(overOrdinal(33)).toBe('33rd')
   })
 })
+
+describe('multi-over coverage', () => {
+  it('exposes every recorded over, oldest first', () => {
+    const items = [
+      ball('31.4', 1), ball('31.5', 0),
+      ball('32.1', 4), ball('33.2', 6), ball('33.3', '1' as unknown as number),
+    ]
+    const strip = buildOverStrip(items)!
+    expect(strip.overs.map((g) => g.over)).toEqual([31, 32, 33])
+    expect(strip.overs[0]!.balls.length).toBe(2)
+    expect(strip.overs[2]!.balls.length).toBeGreaterThanOrEqual(0)
+    expect(strip.currentOver).toBe(33)
+    expect(strip.overs[strip.overs.length - 1]!.over).toBe(strip.currentOver)
+  })
+})

@@ -58,7 +58,7 @@ export function BallOverlay({ match, fallback, onClose }: { match: MatchView; fa
     refetchOnWindowFocus: false,
     queryFn: async ({ signal }): Promise<CommentaryView | null> => {
       const NOTE_RE = /milestone|fifty|hundred|century/i
-      const list = await fetchLatestCommentaryItems(match, signal)
+      const list = await fetchLatestCommentaryItems(match, signal, 2)
       for (let i = list.length - 1; i >= 0; i--) {
         const raw = list[i]!.eventRaw || list[i]!.event
         if (!NOTE_RE.test(raw)) return list[i]!

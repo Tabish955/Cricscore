@@ -15,6 +15,12 @@ export interface BallChip {
   phrase: string
 }
 
+export interface OverGroup {
+  /** Over integer, e.g. 44. */
+  over: number
+  balls: BallChip[]
+}
+
 export interface OverStripData {
   /** Innings the strip belongs to (latest non-info ball's innings). */
   inningsId: number | null
@@ -24,6 +30,8 @@ export interface OverStripData {
   /** Over integer of the previous over, when present on the page. */
   previousOver: number | null
   previousBalls: BallChip[]
+  /** Every recorded over in the fetched window, oldest first — the "as many as possible" view. */
+  overs: OverGroup[]
 }
 
 /** Note tokens: commentary notes share the ball slot but are not deliveries. */
@@ -90,6 +98,7 @@ export function buildOverStrip(items: CommentaryView[]): OverStripData | null {
     currentBalls: ordered(currentOver),
     previousOver,
     previousBalls: previousOver !== null ? ordered(previousOver) : [],
+    overs: overs.map((over) => ({ over, balls: ordered(over) })),
   }
 }
 
