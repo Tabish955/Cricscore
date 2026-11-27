@@ -39,7 +39,6 @@ export function OverStrip({ match, isLive }: { match: MatchView; isLive: boolean
   const query = useQuery({
     queryKey: ['over-strip', match.key],
     staleTime: 15_000,
-    refetchOnWindowFocus: false,
     refetchInterval: isLive ? POLL.commentaryLive : false,
     queryFn: ({ signal }) => fetchLatestCommentaryItems(match, signal),
   })

@@ -55,7 +55,6 @@ export function BallOverlay({ match, fallback, onClose }: { match: MatchView; fa
   const query = useQuery({
     queryKey: ['latest-ball', match.key],
     staleTime: 15_000,
-    refetchOnWindowFocus: false,
     queryFn: async ({ signal }): Promise<CommentaryView | null> => {
       const NOTE_RE = /milestone|fifty|hundred|century/i
       const list = await fetchLatestCommentaryItems(match, signal, 2)

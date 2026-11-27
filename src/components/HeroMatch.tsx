@@ -48,7 +48,7 @@ export function HeroMatch({ match }: { match: MatchView }) {
           imageUrl={team?.imageUrl ?? null}
           size="lg"
         />
-        <p className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-[#f5f0e4] sm:text-xl" title={label}>{label}<FlagMark flagUrl={team?.flagUrl} name={label} className="h-[14px] w-[20px] rounded-[3px] ring-white/20" /></p>
+        <p className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-bold text-[#f5f0e4] sm:text-xl" title={label}><FlagMark flagUrl={team?.flagUrl} name={label} className="h-[15px] w-[22px] shrink-0 rounded-[3px] ring-white/20" />{label}</p>
         {score ? (
           <p className="score-nums whitespace-nowrap text-right font-display text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
             {disp!.main}
