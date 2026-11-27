@@ -64,8 +64,18 @@ export function buildOverStrip(items: CommentaryView[]): OverStripData | null {
   }
   if (deliveries.length === 0) return null
 
+  // New innings = fresh strip. A tail page can span the innings break; scope to the
+  // newest innings recorded so innings 1's overs never linger into innings 2.
+  const newestInnings = deliveries.reduce<number | null>((acc, d) => {
+    const inn = d.item.inningsId
+    if (inn === null || inn === undefined || !Number.isFinite(inn)) return acc
+    return acc === null || inn > acc ? inn : acc
+  }, null)
+  const scoped = newestInnings !== null ? deliveries.filter((d) => d.item.inningsId === newestInnings) : deliveries
+  if (scoped.length === 0) return null
+
   const byOver = new Map<number, Array<{ item: CommentaryView; ball: number }>>()
-  for (const d of deliveries) {
+  for (const d of scoped) {
     const list = byOver.get(d.over) ?? []
     list.push({ item: d.item, ball: d.ball })
     byOver.set(d.over, list)
@@ -89,7 +99,7 @@ export function buildOverStrip(items: CommentaryView[]): OverStripData | null {
       .sort((a, b) => a.ball - b.ball) // page order preserved for equal ball numbers (wides share notation)
       .map(chip)
 
-  const lastDelivery = deliveries[deliveries.length - 1]!
+  const lastDelivery = scoped[scoped.length - 1]!
   const inningsId = lastDelivery.item.inningsId
 
   return {
