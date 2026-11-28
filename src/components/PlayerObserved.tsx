@@ -6,6 +6,7 @@ import { fetchScorecard, fetchSquads } from '@/lib/api/client'
 import { formatInt, formatRate } from '@/lib/format'
 import { CoverageNote, ErrorState, LoadingCard } from '@/components/States'
 import { matchesPlayer, playerProfileUrl } from '@/lib/player-identity'
+import { PlayerCareer } from '@/components/PlayerCareer'
 import type { MatchView } from '@/lib/api/normalize'
 
 function seedMatch(provider: string, matchId: string, league: string, date: string): MatchView {
@@ -63,7 +64,7 @@ export function PlayerObserved({ provider, playerId, name, matchId, league, date
   return (
     <div className="flex flex-col gap-4">
       <section className="rounded-xl border border-pine-800 bg-pine-950 p-4 text-[#f5f0e4]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">Match-observed player</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brass-light">Player</p>
         <h1 className="mt-0.5 text-xl font-black tracking-tight sm:text-2xl">{squadPlayer?.name || name || `Player ${playerId}`}</h1>
         {squadPlayer ? (
           <p className="mt-1 text-[11px] text-[#a9bfb0]">{squadPlayer.teamName} · {squadPlayer.role || 'Unknown role'}{squadPlayer.isCaptain ? ' · Captain' : ''}{squadPlayer.isStarter ? ' · Starter (XI)' : ''}</p>
@@ -73,10 +74,12 @@ export function PlayerObserved({ provider, playerId, name, matchId, league, date
         ) : null}
       </section>
 
+      <PlayerCareer provider={provider} playerId={playerId} />
+
       <CoverageNote>
         <strong>Match performance</strong>{matchId ? ` (match ${matchId}${date ? `, ${date}` : ''})` : ''}: the tables below contain this match only, not career totals.
-        {' '}This view does not currently request biography, career statistics, portraits, rankings or records. Missing values are shown as dashes, not zero.
-        {profileUrl ? <p className="mt-2"><a href={profileUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline">Open player profile on ESPNcricinfo ↗</a>{' '}for the provider’s published profile and career coverage. This opens an external website; its data is not imported here.</p> : null}
+        {' '}The profile and any verified career coverage load separately above. Portraits, rankings and records are not imported. Missing values are shown as dashes, not zero.
+        {profileUrl ? <p className="mt-2"><a href={profileUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline">Open player profile on ESPNcricinfo ↗</a>{' '}for the provider’s published profile and career coverage. This opens an external website.</p> : null}
       </CoverageNote>
 
       {!canFetch ? (

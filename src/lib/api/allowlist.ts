@@ -17,6 +17,7 @@ const PATH_PATTERNS: RegExp[] = [
   /^cb\/(live|recent|upcoming|search)$/,
   /^espn\/(live|recent|upcoming)$/,
   /^crex\/(live|recent|upcoming)$/,
+  /^espn\/player\/[1-9]\d{0,11}$/,
   // ESPN match detail family (IDs are digits)
   /^espn\/match\/\d{1,12}(\/(scorecard|squads|commentary))?$/,
   // Dated series scoreboard

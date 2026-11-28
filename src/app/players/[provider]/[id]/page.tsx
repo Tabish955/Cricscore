@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: { params: Promise<{ provider:
 }
 
 /**
- * Match-observed player view. Career profiles, bios, portraits and records are
- * not exposed by this API, so this page is always scoped to one match.
+ * Player profile with independently loaded career coverage where verified.
+ * Match-performance tables below retain their separate match context.
  * Context arrives via query params: matchId, league, date, name.
  */
 export default async function PlayerPage({
