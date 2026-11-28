@@ -342,9 +342,9 @@ export const StandingsResponseSchema = z.object({
             .array(
               z.object({
                 team: TeamRefSchema.optional().nullable(),
-                stats: z.record(z.union([z.number(), z.string(), z.boolean(), z.null()])).optional().nullable(),
+                stats: z.record(z.string(), z.union([z.number(), z.string(), z.boolean(), z.null()])).optional().nullable(),
                 // Provider-verbatim display strings (e.g. "137/20.0"); may carry signed NRR.
-                displayStats: z.record(z.unknown()).optional().nullable(),
+                displayStats: z.record(z.string(), z.unknown()).optional().nullable(),
               }),
             )
             .optional()
