@@ -1,10 +1,11 @@
 'use client'
 
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { fetchScorecard, fetchSquads } from '@/lib/api/client'
 import { formatInt, formatRate } from '@/lib/format'
 import { CoverageNote, ErrorState, LoadingCard } from '@/components/States'
+import { matchesPlayer, playerProfileUrl } from '@/lib/player-identity'
 import type { MatchView } from '@/lib/api/normalize'
 
 function seedMatch(provider: string, matchId: string, league: string, date: string): MatchView {
@@ -31,13 +32,11 @@ export function PlayerObserved({ provider, playerId, name, matchId, league, date
     queryKey: ['scorecard', `espn:${matchId}`, league, date],
     enabled: canFetch,
     queryFn: ({ signal }) => fetchScorecard(seed!, signal),
-    placeholderData: keepPreviousData,
   })
   const squadsQ = useQuery({
     queryKey: ['squads', `espn:${matchId}`, league],
     enabled: canFetch,
     queryFn: ({ signal }) => fetchSquads(seed!, signal),
-    placeholderData: keepPreviousData,
   })
 
   const batting: Array<{ innings: number; runs: number | null; balls: number | null; fours: number | null; sixes: number | null; strikeRate: number | null; dismissal: string | null }> = []
@@ -46,18 +45,20 @@ export function PlayerObserved({ provider, playerId, name, matchId, league, date
   if (scorecard) {
     for (const inn of scorecard.innings) {
       for (const b of inn.batsmen) {
-        if (b.id === playerId || (name && b.name.toLowerCase() === name.toLowerCase())) {
+        if (matchesPlayer(b, playerId, name)) {
           batting.push({ innings: inn.inningsId ?? 0, runs: b.runs, balls: b.balls, fours: b.fours, sixes: b.sixes, strikeRate: b.strikeRate, dismissal: b.dismissal })
         }
       }
       for (const b of inn.bowlers) {
-        if (b.id === playerId || (name && b.name.toLowerCase() === name.toLowerCase())) {
+        if (matchesPlayer(b, playerId, name)) {
           bowling.push({ innings: inn.inningsId ?? 0, overs: b.overs, maidens: b.maidens, runs: b.runs, wickets: b.wickets, economy: b.economy })
         }
       }
     }
   }
-  const squadPlayer = squadsQ.data?.data.teams.flatMap((t) => t.players.map((p) => ({ ...p, teamName: t.teamName }))).find((p) => p.id === playerId || (name && p.name.toLowerCase() === name.toLowerCase()))
+  const squadPlayer = squadsQ.data?.data.teams.flatMap((t) => t.players.map((p) => ({ ...p, teamName: t.teamName }))).find((p) => matchesPlayer(p, playerId, name))
+
+  const profileUrl = playerProfileUrl(provider, playerId)
 
   return (
     <div className="flex flex-col gap-4">
@@ -73,8 +74,9 @@ export function PlayerObserved({ provider, playerId, name, matchId, league, date
       </section>
 
       <CoverageNote>
-        This page carries <strong>no career profiles, bios, portraits, rankings or records</strong>. Everything below is what was
-        published for <strong>this match only</strong>{matchId ? ` (match ${matchId}${date ? `, ${date}` : ''})` : ''}. It is not a career summary; 0 and dashes mean what they mean there.
+        <strong>Match performance</strong>{matchId ? ` (match ${matchId}${date ? `, ${date}` : ''})` : ''}: the tables below contain this match only, not career totals.
+        {' '}This view does not currently request biography, career statistics, portraits, rankings or records. Missing values are shown as dashes, not zero.
+        {profileUrl ? <p className="mt-2"><a href={profileUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline">Open player profile on ESPNcricinfo ↗</a>{' '}for the provider’s published profile and career coverage. This opens an external website; its data is not imported here.</p> : null}
       </CoverageNote>
 
       {!canFetch ? (
